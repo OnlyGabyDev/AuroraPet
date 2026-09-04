@@ -1,0 +1,157 @@
+{
+  "specialists": [
+    {
+      "id": "spec-1",
+      "name": "Dra. Beatriz Santos",
+      "specialty": "Clínica Geral & Cirurgia",
+      "crmv": "CRMV-SP 42.109",
+      "bio": "Especialista em medicina preventiva e cirurgia de pequenos animais com mais de 8 anos de experiência.",
+      "photoUrl": "https://images.unsplash.com/photo-1612531385446-f7e6d131e1d0?auto=format&fit=crop&w=700&q=85",
+      "availableDays": [
+        "Segunda",
+        "Quarta",
+        "Sexta"
+      ],
+      "availableHours": [
+        "09:00",
+        "10:00",
+        "11:00",
+        "14:00",
+        "15:00",
+        "16:00"
+      ]
+    },
+    {
+      "id": "spec-2",
+      "name": "Dr. Carlos Mendes",
+      "specialty": "Cardiologia & Diagnóstico",
+      "crmv": "CRMV-SP 38.742",
+      "bio": "Mestre em clínica médica veterinária com foco em cardiologia e exames de imagem avançados.",
+      "photoUrl": "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=700&q=85",
+      "availableDays": [
+        "Terça",
+        "Quinta",
+        "Sábado"
+      ],
+      "availableHours": [
+        "08:30",
+        "09:30",
+        "10:30",
+        "13:30",
+        "14:30",
+        "15:30"
+      ]
+    },
+    {
+      "id": "spec-3",
+      "name": "Dra. Juliana Rocha",
+      "specialty": "Dermatologia & Bem-Estar",
+      "crmv": "CRMV-SP 51.204",
+      "bio": "Referência em dermatologia felina e canina e tratamentos integrativos para longevidade e conforto.",
+      "photoUrl": "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=700&q=85",
+      "availableDays": [
+        "Segunda",
+        "Terça",
+        "Quinta",
+        "Sexta"
+      ],
+      "availableHours": [
+        "10:00",
+        "11:00",
+        "14:00",
+        "16:00",
+        "17:00"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "serv-1",
+      "name": "Consulta Clínica Geral",
+      "description": "Avaliação clínica completa do animal, acompanhamento preventivo e orientação detalhada ao tutor.",
+      "duration": "45 min",
+      "price": "R$ 160,00",
+      "category": "Consultas"
+    },
+    {
+      "id": "serv-2",
+      "name": "Vacinação & Imunização",
+      "description": "Aplicação de vacinas essenciais (V10, V8, Antirrábica, Giárdia) com emissão de carteirinha digital.",
+      "duration": "30 min",
+      "price": "R$ 110,00",
+      "category": "Prevenção"
+    },
+    {
+      "id": "serv-3",
+      "name": "Exames Laboratoriais & Imagem",
+      "description": "Hemograma, ultrassonografia abdominal e raio-x digital para diagnósticos rápidos e precisos.",
+      "duration": "60 min",
+      "price": "R$ 220,00",
+      "category": "Diagnóstico"
+    },
+    {
+      "id": "serv-4",
+      "name": "Atendimento Dermatológico",
+      "description": "Investigação de alergias, dermatites, problemas de pele e controle de ectoparasitas.",
+      "duration": "50 min",
+      "price": "R$ 190,00",
+      "category": "Especialidades"
+    }
+  ],
+  "pets": [
+    {
+      "id": "pet-seed-1",
+      "userId": "demo-tutor-123",
+      "name": "Thor",
+      "species": "dog",
+      "breed": "Golden Retriever",
+      "age": "3 anos",
+      "weight": "31.5 kg",
+      "photoUrl": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=600&q=80",
+      "notes": "Alérgico a picada de pulga. Vacinação V10 em dia.",
+      "createdAt": "2026-03-01"
+    },
+    {
+      "id": "pet-seed-2",
+      "userId": "demo-tutor-123",
+      "name": "Luna",
+      "species": "cat",
+      "breed": "Siamês",
+      "age": "2 anos",
+      "weight": "4.2 kg",
+      "photoUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80",
+      "notes": "Castrada e microchipada. Ração renal preventiva.",
+      "createdAt": "2026-03-02"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "app-seed-1",
+      "userId": "demo-tutor-123",
+      "petId": "pet-seed-1",
+      "petName": "Thor",
+      "specialistId": "spec-1",
+      "specialistName": "Dra. Beatriz Santos",
+      "serviceName": "Consulta Clínica Geral",
+      "date": "2026-09-15",
+      "time": "14:00",
+      "status": "scheduled",
+      "notes": "Checkup preventivo anual e conferência de vacinas.",
+      "createdAt": "2026-09-01"
+    },
+    {
+      "id": "app-seed-2",
+      "userId": "demo-tutor-123",
+      "petId": "pet-seed-2",
+      "petName": "Luna",
+      "specialistId": "spec-3",
+      "specialistName": "Dra. Juliana Rocha",
+      "serviceName": "Vacinação & Imunização",
+      "date": "2026-08-20",
+      "time": "10:30",
+      "status": "completed",
+      "notes": "Aplicação de reforço de quádrupla felina com sucesso.",
+      "createdAt": "2026-08-15"
+    }
+  ]
+}
