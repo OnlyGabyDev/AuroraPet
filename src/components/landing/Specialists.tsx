@@ -112,7 +112,7 @@ export const Specialists: React.FC<SpecialistsProps> = ({ onOpenBooking }) => {
                   margin: 0,
                 }}
               >
-                {specialist.role}
+                {specialist.name}
               </h3>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
