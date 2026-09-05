@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
 import { HeaderBrand } from '../common/HeaderBrand';
-import { Menu, X, Calendar, User, Sun, Moon, Sparkles, ShieldAlert } from 'lucide-react-native';
+import { Menu, X, Calendar, User, Sun, Moon, Sparkles, ShieldAlert, Stethoscope } from 'lucide-react-native';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -45,7 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onNavigateSection
       style={[
         styles.headerContainer,
         {
-          backgroundColor: isDark ? '#0d1311' : '#ffffff',
+          backgroundColor: colors.surface,
           borderBottomColor: colors.border,
         },
       ]}
@@ -96,6 +96,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onNavigateSection
             ) : (
               <Moon size={18} color="#64748b" />
             )}
+          </TouchableOpacity>
+
+          {/* BOTÃO GESTÃO DA CLÍNICA */}
+          <TouchableOpacity
+            onPress={() => router.push('/(clinic)')}
+            activeOpacity={0.8}
+            style={[
+              styles.clinicButton,
+              {
+                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : '#eff6ff',
+                borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : '#bfdbfe',
+              },
+            ]}
+          >
+            <Stethoscope size={14} color="#2563eb" />
+            <Text style={styles.clinicButtonText}>Gestão Clínica</Text>
           </TouchableOpacity>
 
           {/* BOTÃO ÁREA DO TUTOR */}
@@ -174,6 +190,23 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onNavigateSection
               </Text>
             </TouchableOpacity>
           ))}
+
+          <TouchableOpacity
+            onPress={() => {
+              setMobileMenuOpen(false);
+              router.push('/(clinic)');
+            }}
+            style={[
+              styles.mobileClinicBtn,
+              {
+                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : '#eff6ff',
+                borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : '#bfdbfe',
+              },
+            ]}
+          >
+            <Stethoscope size={16} color="#2563eb" />
+            <Text style={styles.mobileClinicBtnText}>Portal de Gestão da Clínica</Text>
+          </TouchableOpacity>
 
           <View style={styles.mobileThemeRow}>
             <Text style={[styles.mobileThemeLabel, { color: colors.textSecondary }]}>
@@ -259,6 +292,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  clinicButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  clinicButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563eb',
+  },
   tutorButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -334,5 +381,21 @@ const styles = StyleSheet.create({
   mobileThemeToggleText: {
     fontSize: 11,
     fontWeight: '700',
+  },
+  mobileClinicBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  mobileClinicBtnText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2563eb',
   },
 });

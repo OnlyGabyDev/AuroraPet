@@ -22,6 +22,7 @@ import {
   Sparkles,
   Sun,
   Moon,
+  Stethoscope,
 } from 'lucide-react-native';
 
 export default function DashboardLayout() {
@@ -91,6 +92,22 @@ export default function DashboardLayout() {
             ]}
           >
             {isDark ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#64748b" />}
+          </TouchableOpacity>
+
+          {/* ATALHO PARA GESTÃO DA CLÍNICA */}
+          <TouchableOpacity
+            onPress={() => router.push('/(clinic)')}
+            activeOpacity={0.7}
+            style={[
+              styles.clinicSwitchBtn,
+              {
+                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : '#eff6ff',
+                borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : '#bfdbfe',
+              },
+            ]}
+          >
+            <Stethoscope size={15} color="#2563eb" />
+            <Text style={styles.clinicSwitchText}>Gestão Clínica</Text>
           </TouchableOpacity>
 
           {/* NAV ICONS */}
@@ -224,5 +241,19 @@ const styles = StyleSheet.create({
   demoBadgeText: {
     fontSize: 12,
     fontWeight: '700',
+  },
+  clinicSwitchBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  clinicSwitchText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2563eb',
   },
 });

@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -46,11 +46,112 @@ app.get('/api/health', (req, res) => {
 });
 
 // -------------------------------------------------------------
-// ESPECIALISTAS E SERVIÇOS
+// DADOS DA CLÍNICA & CONFIGURAÇÃO
+// -------------------------------------------------------------
+app.get('/api/clinic', (req, res) => {
+  const data = readData();
+  const defaultClinic = {
+    id: 'clinic-clyvo-matriz',
+    name: 'Clyvo Centro Médico Veterinário',
+    tradeName: 'Clyvo Clínica & Hospital Veterinário 24h',
+    cnpj: '12.345.678/0001-90',
+    mode: 'multi_vet',
+    address: 'Av. Brigadeiro Faria Lima, 3477 - Itaim Bibi, São Paulo - SP',
+    phone: '(11) 3088-4200',
+    emergencyPhone: '(11) 99876-5432',
+    openingHours: 'Atendimento 24 horas todos os dias',
+    description: 'Centro de excelência médica veterinária com equipe multidisciplinar, internação monitorada, UTI e centro cirúrgico de alta precisão.'
+  };
+  res.json(data.clinic || defaultClinic);
+});
+
+app.put('/api/clinic', (req, res) => {
+  const data = readData();
+  data.clinic = {
+    ...(data.clinic || {}),
+    ...req.body,
+    updatedAt: new Date().toISOString()
+  };
+  writeData(data);
+  res.json(data.clinic);
+});
+
+// -------------------------------------------------------------
+// ESPECIALISTAS E VETERINÁRIOS (CRUD)
 // -------------------------------------------------------------
 app.get('/api/specialists', (req, res) => {
   const data = readData();
   res.json(data.specialists || []);
+});
+
+app.get('/api/specialists/:id', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const spec = (data.specialists || []).find(s => s.id === id);
+  if (!spec) {
+    return res.status(404).json({ error: 'Veterinário não encontrado' });
+  }
+  res.json(spec);
+});
+
+app.post('/api/specialists', (req, res) => {
+  const { name, specialty, crmv, bio, photoUrl, availableDays, availableHours, email, phone } = req.body;
+  if (!name || !crmv || !specialty) {
+    return res.status(400).json({ error: 'Nome, CRMV e Especialidade são obrigatórios.' });
+  }
+
+  const data = readData();
+  const newSpec = {
+    id: 'spec-' + Date.now(),
+    name: name.trim(),
+    specialty: specialty.trim(),
+    crmv: crmv.trim(),
+    bio: (bio || 'Médico veterinário dedicado ao cuidado e bem-estar animal.').trim(),
+    photoUrl: photoUrl || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=700&q=85',
+    availableDays: Array.isArray(availableDays) && availableDays.length > 0 ? availableDays : ['Segunda', 'Quarta', 'Sexta'],
+    availableHours: Array.isArray(availableHours) && availableHours.length > 0 ? availableHours : ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'],
+    email: email || '',
+    phone: phone || '',
+    active: true,
+    createdAt: new Date().toISOString()
+  };
+
+  data.specialists = [...(data.specialists || []), newSpec];
+  writeData(data);
+  res.status(201).json(newSpec);
+});
+
+app.put('/api/specialists/:id', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const index = (data.specialists || []).findIndex(s => s.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Veterinário não encontrado para atualização.' });
+  }
+
+  data.specialists[index] = {
+    ...data.specialists[index],
+    ...req.body,
+    updatedAt: new Date().toISOString()
+  };
+
+  writeData(data);
+  res.json(data.specialists[index]);
+});
+
+app.delete('/api/specialists/:id', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const initialLength = (data.specialists || []).length;
+  data.specialists = (data.specialists || []).filter(s => s.id !== id);
+
+  if (data.specialists.length === initialLength) {
+    return res.status(404).json({ error: 'Veterinário não encontrado para exclusão.' });
+  }
+
+  writeData(data);
+  res.json({ message: 'Veterinário removido com sucesso.', id });
 });
 
 app.get('/api/services', (req, res) => {
@@ -261,6 +362,79 @@ app.delete('/api/appointments/:id', (req, res) => {
 
   writeData(data);
   res.json({ message: 'Agendamento excluído com sucesso.', id });
+});
+
+// 6. RELATÓRIO CLÍNICO / PRONTUÁRIO DA CONSULTA
+// Buscar relatório clínico de uma consulta
+app.get('/api/appointments/:id/report', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const appItem = (data.appointments || []).find(a => a.id === id);
+
+  if (!appItem) {
+    return res.status(404).json({ error: 'Consulta não encontrada.' });
+  }
+
+  if (!appItem.report) {
+    return res.status(404).json({ error: 'Nenhum relatório clínico emitido para esta consulta ainda.' });
+  }
+
+  res.json(appItem.report);
+});
+
+// Emitir ou atualizar relatório clínico (conclui o atendimento)
+app.post('/api/appointments/:id/report', (req, res) => {
+  const { id } = req.params;
+  const {
+    veterinarianName,
+    crmv,
+    specialty,
+    anamnesis,
+    physicalExam,
+    vitalSigns,
+    diagnosis,
+    prescriptions,
+    instructions,
+    followUpDate
+  } = req.body;
+
+  if (!anamnesis || !diagnosis) {
+    return res.status(400).json({ error: 'Anamnese e diagnóstico são obrigatórios para emissão do relatório.' });
+  }
+
+  const data = readData();
+  const index = (data.appointments || []).findIndex(a => a.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Consulta não encontrada para atendimento.' });
+  }
+
+  const appItem = data.appointments[index];
+  const newReport = {
+    completedAt: new Date().toISOString(),
+    veterinarianName: (veterinarianName || appItem.specialistName || 'Médico Veterinário').trim(),
+    crmv: (crmv || 'CRMV-SP Regular').trim(),
+    specialty: specialty || 'Clínica Geral',
+    anamnesis: (anamnesis || '').trim(),
+    physicalExam: (physicalExam || '').trim(),
+    vitalSigns: vitalSigns || {},
+    diagnosis: (diagnosis || '').trim(),
+    prescriptions: Array.isArray(prescriptions) ? prescriptions : [],
+    instructions: (instructions || '').trim(),
+    followUpDate: followUpDate || ''
+  };
+
+  const updatedAppointment = {
+    ...appItem,
+    status: 'completed',
+    report: newReport,
+    updatedAt: new Date().toISOString()
+  };
+
+  data.appointments[index] = updatedAppointment;
+  writeData(data);
+
+  res.status(200).json(updatedAppointment);
 });
 
 // Inicia servidor

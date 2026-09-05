@@ -135,9 +135,35 @@
       "serviceName": "Consulta Clínica Geral",
       "date": "2026-09-15",
       "time": "14:00",
-      "status": "scheduled",
+      "status": "completed",
       "notes": "Checkup preventivo anual e conferência de vacinas.",
-      "createdAt": "2026-09-01"
+      "createdAt": "2026-09-01",
+      "report": {
+        "completedAt": "2026-09-05T13:31:04.968Z",
+        "veterinarianName": "Dra. Beatriz Santos",
+        "crmv": "CRMV-SP 42.109",
+        "specialty": "Clínica Geral",
+        "anamnesis": "Animal trazido pelo tutor para checkup geral preventivo anual.",
+        "physicalExam": "",
+        "vitalSigns": {
+          "weight": "31.5 kg",
+          "temperature": "38.5 �C",
+          "heartRate": "110 bpm"
+        },
+        "diagnosis": "C�o saud�vel, dentes limpos, pelagem brilhante e peso ideal.",
+        "prescriptions": [
+          {
+            "id": "rx-test-1",
+            "medication": "Simparic 40mg",
+            "dosage": "1 comprimido",
+            "frequency": "Mensal",
+            "duration": "3 meses"
+          }
+        ],
+        "instructions": "Manter rotina de exerc�cios di�rios e hidrata��o abundante.",
+        "followUpDate": "2027-09-01"
+      },
+      "updatedAt": "2026-09-05T13:31:04.968Z"
     },
     {
       "id": "app-seed-2",
@@ -151,7 +177,55 @@
       "time": "10:30",
       "status": "completed",
       "notes": "Aplicação de reforço de quádrupla felina com sucesso.",
-      "createdAt": "2026-08-15"
+      "createdAt": "2026-08-15",
+      "report": {
+        "completedAt": "2026-08-20T11:15:00Z",
+        "veterinarianName": "Dra. Juliana Rocha",
+        "crmv": "CRMV-SP 51.204",
+        "specialty": "Dermatologia & Imunização",
+        "anamnesis": "Tutor relata que felina está ativa, com bom apetite e sem histórico recente de êmese ou diarreia. Compareceu para atualização da vacina quádrupla felina.",
+        "physicalExam": "Mucosas normocoradas, linfonodos não reativos, ausculta cardiopulmonar fisiológica. Temperatura corporal 38.4°C e hidratação adequada.",
+        "vitalSigns": {
+          "weight": "4.2 kg",
+          "temperature": "38.4 °C",
+          "heartRate": "135 bpm",
+          "respiratoryRate": "26 rpm"
+        },
+        "diagnosis": "Felina clinicamente saudável, higiênica e apta para protocolo de imunização.",
+        "prescriptions": [
+          {
+            "id": "rx-1",
+            "medication": "Vacina Quádrupla Felina (Felocell 4)",
+            "dosage": "1 dose (1 mL)",
+            "frequency": "Dose única via subcutânea",
+            "duration": "Reforço anual",
+            "instructions": "Aplicado na região interescapular. Observar nas próximas 24h sonolência leve transitória."
+          },
+          {
+            "id": "rx-2",
+            "medication": "Vermífugo Felino Suspensão",
+            "dosage": "1 mL por via oral",
+            "frequency": "Repetir em 15 dias",
+            "duration": "2 doses",
+            "instructions": "Administrar preferencialmente junto a um sachê de ração úmida."
+          }
+        ],
+        "instructions": "Manter água fresca e hidratação. Evitar banhos ou estresse nas próximas 48 horas. Retornar caso apresente inapetência persistente ou inchaço no local da aplicação.",
+        "followUpDate": "2027-08-20"
+      }
     }
-  ]
+  ],
+  "clinic": {
+    "id": "clinic-clyvo-matriz",
+    "name": "Clyvo Centro Médico Veterinário",
+    "tradeName": "Clyvo Clínica & Hospital Veterinário 24h",
+    "cnpj": "12.345.678/0001-90",
+    "mode": "multi_vet",
+    "address": "Av. Brigadeiro Faria Lima, 3477 - Itaim Bibi, São Paulo - SP",
+    "phone": "(11) 3088-4200",
+    "emergencyPhone": "(11) 99876-5432",
+    "openingHours": "Atendimento 24 horas todos os dias",
+    "description": "Centro M�dico Testado com Sucesso",
+    "updatedAt": "2026-09-05T13:31:04.950Z"
+  }
 }

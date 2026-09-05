@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -26,8 +26,10 @@ import {
   XCircle,
   Trash2,
   Ban,
+  FileText,
 } from 'lucide-react-native';
-import { AppointmentStatus } from '../../../src/types/appointment';
+import { Appointment, AppointmentStatus } from '../../../src/types/appointment';
+import { ConsultationReportModal } from '../../../src/components/dashboard/ConsultationReportModal';
 
 export default function AppointmentsListPage() {
   const router = useRouter();
@@ -37,6 +39,7 @@ export default function AppointmentsListPage() {
   const cancelMutation = useCancelAppointment();
   const deleteMutation = useDeleteAppointment();
   const [statusFilter, setStatusFilter] = useState<'all' | AppointmentStatus>('all');
+  const [selectedForReport, setSelectedForReport] = useState<Appointment | null>(null);
 
   const filtered =
     statusFilter === 'all'
@@ -320,6 +323,25 @@ export default function AppointmentsListPage() {
                   </View>
 
                   <View style={styles.actionButtonsRow}>
+                    {item.status === 'completed' && (
+                      <TouchableOpacity
+                        onPress={() => setSelectedForReport(item)}
+                        style={[
+                          styles.actionBtn,
+                          styles.reportBtn,
+                          {
+                            backgroundColor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5',
+                            borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : '#a7f3d0',
+                          },
+                        ]}
+                      >
+                        <FileText size={14} color="#10b981" />
+                        <Text style={[styles.reportBtnText, { color: '#10b981' }]}>
+                          Ver Relatório
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+
                     {item.status === 'scheduled' && (
                       <TouchableOpacity
                         onPress={() => handleCancel(item.id)}
@@ -357,6 +379,13 @@ export default function AppointmentsListPage() {
           )}
         </View>
       )}
+
+      {/* MODAL DE PRONTUÁRIO E RELATÓRIO CLÍNICO */}
+      <ConsultationReportModal
+        visible={Boolean(selectedForReport)}
+        onClose={() => setSelectedForReport(null)}
+        appointment={selectedForReport}
+      />
     </View>
   );
 }
@@ -560,6 +589,14 @@ const styles = StyleSheet.create({
   },
   cancelText: {
     color: '#dc2626',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  reportBtn: {
+    paddingHorizontal: 10,
+    gap: 5,
+  },
+  reportBtnText: {
     fontSize: 11,
     fontWeight: '700',
   },
