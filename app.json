@@ -18,7 +18,12 @@
       },
       "predictiveBackGestureEnabled": false
     },
+    "scheme": "clyvo-vet",
+    "plugins": [
+      "expo-router"
+    ],
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     }
   }
