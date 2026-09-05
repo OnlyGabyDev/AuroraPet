@@ -1,14 +1,32 @@
-import React, { useState, useEffect } from 'react';
+Ôªøimport React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../../src/hooks/useAuth';
 import { usePets } from '../../../src/hooks/usePets';
 import { useSpecialists, useClinicServices } from '../../../src/hooks/useSpecialists';
 import { useAddAppointment } from '../../../src/hooks/useAppointments';
-import { ArrowLeft, Calendar, Clock, Stethoscope, AlertCircle, Save, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../../../src/contexts/ThemeContext';
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Stethoscope,
+  AlertCircle,
+  Save,
+  PawPrint,
+} from 'lucide-react-native';
 
 export default function NewAppointmentPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const searchParams = useLocalSearchParams<{ petId?: string; petName?: string }>();
 
   const { data: pets = [] } = usePets(user?.uid);
@@ -20,10 +38,12 @@ export default function NewAppointmentPage() {
   const [customPetName, setCustomPetName] = useState<string>('');
   const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>('');
   const [selectedServiceId, setSelectedServiceId] = useState<string>('');
-  const [date, setDate] = useState<string>('');
+  const [date, setDate] = useState<string>('2026-09-10');
   const [time, setTime] = useState<string>('14:00');
   const [notes, setNotes] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+
+  const times = ['09:00', '10:30', '14:00', '15:30', '17:00'];
 
   useEffect(() => {
     if (searchParams.petId) {
@@ -45,18 +65,7 @@ export default function NewAppointmentPage() {
     }
   }, [services]);
 
-  // Data default para amanh„
-  useEffect(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const yyyy = tomorrow.getFullYear();
-    const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-    const dd = String(tomorrow.getDate()).padStart(2, '0');
-    setDate(`${yyyy}-${mm}-${dd}`);
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     const chosenPet = pets.find((p) => p.id === selectedPetId);
@@ -67,23 +76,19 @@ export default function NewAppointmentPage() {
       return;
     }
 
-    if (!date || !time) {
-      setError('Por favor, selecione data e hor·rio desejados.');
-      return;
-    }
-
-    const specialist = specialists.find((s) => s.id === selectedSpecialistId);
-    const service = services.find((s) => s.id === selectedServiceId);
+    const currentService = services.find((s) => s.id === selectedServiceId) || services[0];
+    const currentSpecialist =
+      specialists.find((sp) => sp.id === selectedSpecialistId) || specialists[0];
 
     try {
       await addAppointmentMutation.mutateAsync({
         userId: user?.uid || 'demo-tutor-123',
-        petId: selectedPetId || '',
+        petId: selectedPetId || 'custom-pet',
         petName,
-        specialistId: specialist?.id || 'spec-1',
-        specialistName: specialist?.name || 'Veterin·rio de Plant„o',
-        serviceId: service?.id || 'serv-1',
-        serviceName: service?.name || service?.title || 'Consulta ClÌnica',
+        specialistId: currentSpecialist?.id || 'spec-1',
+        specialistName: currentSpecialist?.name || 'Veterin√°rio de Plant√£o',
+        serviceId: currentService?.id || 'serv-1',
+        serviceName: currentService?.title || currentService?.name || 'Consulta Cl√≠nica',
         date,
         time,
         notes: notes.trim(),
@@ -91,295 +96,475 @@ export default function NewAppointmentPage() {
 
       router.push('/(dashboard)/appointments');
     } catch (err: any) {
-      console.error('Erro ao agendar consulta:', err);
-      setError(err?.message || 'Falha ao salvar agendamento na API HTTP.');
+      console.error('Erro ao criar agendamento:', err);
+      setError(err?.message || 'Falha ao salvar agendamento na API.');
     }
   };
 
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <button
-        onClick={() => router.back()}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'none',
-          border: 'none',
-          color: '#667085',
-          fontSize: '14px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          marginBottom: '20px',
-        }}
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => router.back()}
+        style={styles.backBtn}
+        activeOpacity={0.7}
       >
-        <ArrowLeft size={16} /> Voltar para Consultas
-      </button>
+        <ArrowLeft size={16} color={colors.textSecondary} />
+        <Text style={[styles.backBtnText, { color: colors.textSecondary }]}>
+          Voltar para Consultas
+        </Text>
+      </TouchableOpacity>
 
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid #edf1ef',
-          padding: '36px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
-        }}
+      <View
+        style={[
+          styles.formCard,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
+        ]}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '16px',
-              background: 'var(--verde-neve, #ecfdf5)',
-              color: 'var(--verde, #10b981)',
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <Calendar size={24} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#172422', margin: 0 }}>
-              Novo Agendamento
-            </h1>
-            <p style={{ color: '#667085', fontSize: '13px', margin: '3px 0 0' }}>
-              Selecione o pet, serviÁo veterin·rio, especialista e data (HTTP POST)
-            </p>
-          </div>
-        </div>
+        <View style={styles.cardHeader}>
+          <View style={[styles.iconBox, { backgroundColor: colors.primaryLight }]}>
+            <Calendar size={22} color={colors.accent} />
+          </View>
+          <View>
+            <Text style={[styles.title, { color: colors.text }]}>Agendar Nova Consulta</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              Selecione o paciente, especialista e especialidade desejada (HTTP POST)
+            </Text>
+          </View>
+        </View>
 
         {error && (
-          <div
-            style={{
-              padding: '12px 16px',
-              borderRadius: '12px',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#b91c1c',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '20px',
-            }}
-          >
-            <AlertCircle size={16} />
-            <span>{error}</span>
-          </div>
+          <View style={styles.errorBox}>
+            <AlertCircle size={16} color="#b91c1c" />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* SeleÁ„o do Pet */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Pet a ser atendido *
-            </label>
-            {pets.length > 0 ? (
-              <select
-                value={selectedPetId}
-                onChange={(e) => setSelectedPetId(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  background: '#ffffff',
-                }}
-              >
-                {pets.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.species === 'dog' ? 'C„o' : p.species === 'cat' ? 'Gato' : 'Pet'} - {p.breed})
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <div>
-                <input
-                  type="text"
-                  required
-                  placeholder="Nome do seu pet (ex: Rex, Mel)"
-                  value={customPetName}
-                  onChange={(e) => setCustomPetName(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    borderRadius: '12px',
-                    border: '1px solid #cbd5e1',
-                    fontSize: '14px',
-                  }}
-                />
-                <small style={{ color: '#667085', display: 'block', marginTop: '4px' }}>
-                  Dica: VocÍ tambÈm pode cadastrar seu pet na aba "Meus Pets".
-                </small>
-              </div>
-            )}
-          </div>
-
-          {/* SeleÁ„o do ServiÁo */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Procedimento / ServiÁo Veterin·rio *
-            </label>
-            <select
-              value={selectedServiceId}
-              onChange={(e) => setSelectedServiceId(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                background: '#ffffff',
-              }}
-            >
-              {services.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name || s.title} {s.price ? `ó ${typeof s.price === 'number' ? `R$ ${s.price}` : s.price}` : ''}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* SeleÁ„o do Especialista */}
-          <div style={{ marginBottom: '18px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              MÈdico(a) Veterin·rio(a) *
-            </label>
-            <select
-              value={selectedSpecialistId}
-              onChange={(e) => setSelectedSpecialistId(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                background: '#ffffff',
-              }}
-            >
-              {specialists.map((spec) => (
-                <option key={spec.id} value={spec.id}>
-                  {spec.name} ó {spec.specialty} ({spec.crmv})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Data e Hor·rio */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '18px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Data *
-              </label>
-              <input
-                type="date"
-                required
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Hor·rio *
-              </label>
-              <select
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  background: '#ffffff',
-                }}
-              >
-                <option value="09:00">09:00</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-                <option value="17:00">17:00</option>
-              </select>
-            </div>
-          </div>
-
-          {/* ObservaÁıes / Motivo */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              ObservaÁıes ou Sintomas do Animal
-            </label>
-            <textarea
-              rows={3}
-              placeholder="Ex: Animal apresentou vÙmito ontem, necessita de reforÁo vacinal V10..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-                resize: 'vertical',
-              }}
+        {/* PACIENTE */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Paciente (Pet) *</Text>
+          {pets.length > 0 ? (
+            <View style={styles.petChips}>
+              {pets.map((p) => {
+                const isSelected = selectedPetId === p.id;
+                return (
+                  <TouchableOpacity
+                    key={p.id}
+                    onPress={() => setSelectedPetId(p.id)}
+                    style={[
+                      styles.petChip,
+                      {
+                        backgroundColor: isSelected ? colors.primaryLight : colors.surfaceSubtle,
+                        borderColor: isSelected ? colors.accent : colors.border,
+                      },
+                    ]}
+                  >
+                    <PawPrint size={14} color={isSelected ? colors.accent : colors.textMuted} />
+                    <Text
+                      style={[
+                        styles.petChipText,
+                        { color: isSelected ? colors.accent : colors.text },
+                      ]}
+                    >
+                      {p.name} ({p.breed})
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : (
+            <TextInput
+              placeholder="Nome do animal"
+              placeholderTextColor={colors.textMuted}
+              value={customPetName}
+              onChangeText={setCustomPetName}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
             />
-          </div>
+          )}
+        </View>
 
-          {/* Botıes */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              style={{
-                padding: '13px 20px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                background: '#ffffff',
-                color: '#475467',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
+        {/* SERVI√áO */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Procedimento / Servi√ßo *</Text>
+          <View style={styles.serviceChips}>
+            {services.map((s) => {
+              const isSelected = selectedServiceId === s.id;
+              return (
+                <TouchableOpacity
+                  key={s.id}
+                  onPress={() => setSelectedServiceId(s.id)}
+                  style={[
+                    styles.serviceChip,
+                    {
+                      backgroundColor: isSelected ? colors.primaryLight : colors.surfaceSubtle,
+                      borderColor: isSelected ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.serviceChipText,
+                      { color: isSelected ? colors.accent : colors.text },
+                    ]}
+                  >
+                    {s.title || s.name}
+                  </Text>
+                  <Text style={[styles.serviceChipPrice, { color: colors.accent }]}>
+                    R$ {s.price}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* VETERIN√ÅRIO */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Veterin√°rio Especialista *</Text>
+          <View style={styles.specialistChips}>
+            {specialists.map((sp) => {
+              const isSelected = selectedSpecialistId === sp.id;
+              return (
+                <TouchableOpacity
+                  key={sp.id}
+                  onPress={() => setSelectedSpecialistId(sp.id)}
+                  style={[
+                    styles.specialistChip,
+                    {
+                      backgroundColor: isSelected ? colors.primaryLight : colors.surfaceSubtle,
+                      borderColor: isSelected ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.specialistChipName,
+                      { color: isSelected ? colors.accent : colors.text },
+                    ]}
+                  >
+                    {sp.name}
+                  </Text>
+                  <Text style={[styles.specialistChipSub, { color: colors.textSecondary }]}>
+                    {sp.specialty}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* DATA E HORA */}
+        <View style={styles.rowFields}>
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>Data</Text>
+            <TextInput
+              placeholder="AAAA-MM-DD"
+              placeholderTextColor={colors.textMuted}
+              value={date}
+              onChangeText={setDate}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
+            />
+          </View>
+
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>Hor√°rio</Text>
+            <View style={styles.timeChips}>
+              {times.map((t) => {
+                const isSelected = time === t;
+                return (
+                  <TouchableOpacity
+                    key={t}
+                    onPress={() => setTime(t)}
+                    style={[
+                      styles.timeChip,
+                      {
+                        backgroundColor: isSelected ? colors.accent : colors.surfaceSubtle,
+                        borderColor: isSelected ? colors.accent : colors.border,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.timeChipText,
+                        { color: isSelected ? '#ffffff' : colors.text },
+                      ]}
+                    >
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+
+        {/* OBSERVA√á√ïES */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>
+            Motivo da Consulta / Observa√ß√µes
+          </Text>
+          <TextInput
+            multiline
+            numberOfLines={3}
+            placeholder="Ex: Vacina√ß√£o anual, v√¥mitos h√° 2 dias, consulta de rotina..."
+            placeholderTextColor={colors.textMuted}
+            value={notes}
+            onChangeText={setNotes}
+            style={[
+              styles.textArea,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* BOT√ïES */}
+        <View style={styles.actionsRow}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={[
+              styles.cancelBtn,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>
               Cancelar
-            </button>
+            </Text>
+          </TouchableOpacity>
 
-            <button
-              type="submit"
-              disabled={addAppointmentMutation.isPending}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '13px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 10px 20px rgba(6, 78, 59, 0.15)',
-              }}
-            >
-              <Save size={16} />
-              {addAppointmentMutation.isPending ? 'Confirmando...' : 'Confirmar Agendamento (POST)'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={addAppointmentMutation.isPending}
+            activeOpacity={0.85}
+            style={styles.saveBtn}
+          >
+            {addAppointmentMutation.isPending ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <>
+                <Save size={16} color="#ffffff" />
+                <Text style={styles.saveBtnText}>Confirmar Consulta</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: 640,
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  backBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  formCard: {
+    borderRadius: 22,
+    borderWidth: 1,
+    padding: 24,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+  },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  subtitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#b91c1c',
+    fontSize: 12,
+  },
+  field: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  petChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  petChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  petChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  serviceChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  serviceChip: {
+    flex: 1,
+    minWidth: 100,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  serviceChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  serviceChipPrice: {
+    fontSize: 11,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  specialistChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  specialistChip: {
+    flex: 1,
+    minWidth: 120,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  specialistChipName: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  specialistChipSub: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  rowFields: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  timeChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  timeChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  timeChipText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  input: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+  },
+  textArea: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  cancelBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  cancelBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  saveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#064e3b',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  saveBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+});

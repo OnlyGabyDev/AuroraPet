@@ -1,26 +1,33 @@
 ﻿import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../src/hooks/useAuth';
+import { useTheme } from '../../../src/contexts/ThemeContext';
 import { usePets, useDeletePet } from '../../../src/hooks/usePets';
-import { PawPrint, Plus, Trash2, Edit3, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import {
+  PawPrint,
+  Plus,
+  Trash2,
+  Edit3,
+  ArrowRight,
+  AlertCircle,
+  Calendar,
+} from 'lucide-react-native';
 import { PetSpecies } from '../../../src/types/pet';
-
-export const speciesIcon = (species: PetSpecies) => {
-  switch (species) {
-    case 'dog':
-      return '🐶';
-    case 'cat':
-      return '🐱';
-    case 'bird':
-      return '🦜';
-    default:
-      return '🐾';
-  }
-};
 
 export default function PetsListPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const { data: pets = [], isLoading, isError, error } = usePets(user?.uid);
   const deletePetMutation = useDeletePet();
   const [speciesFilter, setSpeciesFilter] = useState<'all' | PetSpecies>('all');
@@ -32,367 +39,445 @@ export default function PetsListPage() {
       : pets.filter((p) => p.species === speciesFilter);
 
   const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Deseja realmente remover o pet "${name}" do sistema?`)) {
+    const doDelete = async () => {
       setDeletingId(id);
       try {
         await deletePetMutation.mutateAsync(id);
       } catch (err) {
         console.error('Erro ao excluir pet:', err);
-        alert('Não foi possível remover o pet. Tente novamente.');
       } finally {
         setDeletingId(null);
       }
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm(`Deseja realmente remover o pet "${name}" do sistema?`)) {
+        await doDelete();
+      }
+    } else {
+      Alert.alert('Remover Pet', `Deseja realmente remover o pet "${name}"?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Remover', style: 'destructive', onPress: doDelete },
+      ]);
     }
   };
 
   return (
-    <div>
+    <View style={styles.container}>
       {/* CABEÇALHO */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '28px',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#172422', margin: 0 }}>
-            Meus Pets
-          </h1>
-          <p style={{ color: '#667085', fontSize: '14px', marginTop: '4px' }}>
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={[styles.title, { color: colors.text }]}>Meus Pets</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
             Gerencie o prontuário, peso e histórico de saúde dos seus animais via API HTTP
-          </p>
-        </div>
+          </Text>
+        </View>
 
-        <button
-          onClick={() => router.push('/(dashboard)/pets/new')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '13px 20px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-            color: '#ffffff',
-            fontSize: '14px',
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 10px 25px rgba(6, 78, 59, 0.15)',
-            transition: 'all 0.2s ease',
-          }}
+        <TouchableOpacity
+          onPress={() => router.push('/(dashboard)/pets/new')}
+          activeOpacity={0.85}
+          style={styles.newBtn}
         >
-          <Plus size={18} /> Cadastrar Novo Pet
-        </button>
-      </div>
+          <Plus size={16} color="#ffffff" />
+          <Text style={styles.newBtnText}>Cadastrar Novo Pet</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* FILTROS POR ESPÉCIE */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <button
-          onClick={() => setSpeciesFilter('all')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: speciesFilter === 'all' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: speciesFilter === 'all' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: speciesFilter === 'all' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+      <View style={styles.filtersRow}>
+        <TouchableOpacity
+          onPress={() => setSpeciesFilter('all')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: speciesFilter === 'all' ? colors.primaryLight : colors.surface,
+              borderColor: speciesFilter === 'all' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          Todos ({pets.length})
-        </button>
-        <button
-          onClick={() => setSpeciesFilter('dog')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: speciesFilter === 'dog' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: speciesFilter === 'dog' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: speciesFilter === 'dog' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
-        >
-          🐶 Cães ({pets.filter((p) => p.species === 'dog').length})
-        </button>
-        <button
-          onClick={() => setSpeciesFilter('cat')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: speciesFilter === 'cat' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: speciesFilter === 'cat' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: speciesFilter === 'cat' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
-        >
-          🐱 Gatos ({pets.filter((p) => p.species === 'cat').length})
-        </button>
-      </div>
-
-      {/* ESTADO DE CARREGAMENTO */}
-      {isLoading && (
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              border: '3px solid rgba(16, 185, 129, 0.2)',
-              borderTopColor: '#10b981',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              margin: '0 auto 16px',
-            }}
-          />
-          <p style={{ color: '#667085', fontSize: '14px', fontWeight: 600 }}>
-            Consultando pets no servidor HTTP...
-          </p>
-        </div>
-      )}
-
-      {/* ERRO DE REQUISIÇÃO */}
-      {isError && (
-        <div
-          style={{
-            padding: '16px 20px',
-            borderRadius: '16px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#b91c1c',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '20px',
-          }}
-        >
-          <AlertCircle size={20} />
-          <div>
-            <strong>Erro na comunicação com a API:</strong>
-            <div style={{ fontSize: '13px' }}>{(error as Error)?.message || 'Falha ao buscar pets.'}</div>
-          </div>
-        </div>
-      )}
-
-      {/* ESTADO VAZIO */}
-      {!isLoading && !isError && filteredPets.length === 0 && (
-        <div
-          style={{
-            background: '#ffffff',
-            borderRadius: '24px',
-            border: '1px dashed #cbd5e1',
-            padding: '60px 20px',
-            textAlign: 'center',
-          }}
-        >
-          <PawPrint size={48} color="#94a3b8" style={{ margin: '0 auto 16px' }} />
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#334155', margin: 0 }}>
-            Nenhum pet cadastrado no momento
-          </h3>
-          <p style={{ color: '#667085', fontSize: '14px', marginTop: '6px', maxWidth: '400px', margin: '6px auto 20px' }}>
-            Comece cadastrando o perfil do seu cão, gato ou outro animal de estimação para acompanhar vacinas e consultas.
-          </p>
-          <button
-            onClick={() => router.push('/(dashboard)/pets/new')}
-            style={{
-              padding: '12px 22px',
-              borderRadius: '12px',
-              background: 'var(--verde-escuro, #064e3b)',
-              color: '#ffffff',
-              fontSize: '14px',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-            }}
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: speciesFilter === 'all' ? colors.accent : colors.textSecondary },
+            ]}
           >
-            + Cadastrar Meu Primeiro Pet
-          </button>
-        </div>
-      )}
+            Todos ({pets.length})
+          </Text>
+        </TouchableOpacity>
 
-      {/* GRID DE CARDS DOS PETS */}
-      {!isLoading && filteredPets.length > 0 && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '24px',
-          }}
+        <TouchableOpacity
+          onPress={() => setSpeciesFilter('dog')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: speciesFilter === 'dog' ? colors.primaryLight : colors.surface,
+              borderColor: speciesFilter === 'dog' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          {filteredPets.map((pet) => (
-            <div
-              key={pet.id}
-              style={{
-                background: '#ffffff',
-                borderRadius: '24px',
-                border: '1px solid #edf1ef',
-                padding: '24px',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.02)',
-                display: 'flex',
-                flexDirection: 'column',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-              }}
-            >
-              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
-                <div style={{ position: 'relative' }}>
-                  <img
-                    src={
-                      pet.photoUrl ||
-                      'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80'
-                    }
-                    alt={pet.name}
-                    style={{
-                      width: '74px',
-                      height: '74px',
-                      borderRadius: '18px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      bottom: '-4px',
-                      right: '-4px',
-                      background: '#ffffff',
-                      borderRadius: '50%',
-                      padding: '2px',
-                      fontSize: '14px',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.12)',
-                    }}
-                  >
-                    {speciesIcon(pet.species)}
-                  </span>
-                </div>
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: speciesFilter === 'dog' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            🐶 Cães ({pets.filter((p) => p.species === 'dog').length})
+          </Text>
+        </TouchableOpacity>
 
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#172422', margin: 0 }}>
-                      {pet.name}
-                    </h3>
-                    <button
-                      onClick={() => handleDelete(pet.id, pet.name)}
-                      disabled={deletingId === pet.id}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: deletingId === pet.id ? '#cbd5e1' : '#94a3b8',
-                        cursor: 'pointer',
-                        padding: '4px',
-                      }}
-                      title="Excluir pet"
-                    >
-                      {deletingId === pet.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                    </button>
-                  </div>
+        <TouchableOpacity
+          onPress={() => setSpeciesFilter('cat')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: speciesFilter === 'cat' ? colors.primaryLight : colors.surface,
+              borderColor: speciesFilter === 'cat' ? colors.accent : colors.border,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: speciesFilter === 'cat' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            🐱 Gatos ({pets.filter((p) => p.species === 'cat').length})
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-                  <div style={{ color: '#667085', fontSize: '13px', marginTop: '3px' }}>
-                    {pet.breed}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', flexWrap: 'wrap' }}>
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        background: '#f1f5f9',
-                        color: '#475467',
-                        fontWeight: 600,
-                      }}
-                    >
-                      {pet.age}
-                    </span>
-                    {pet.weight && (
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          background: 'var(--verde-neve, #ecfdf5)',
-                          color: '#08775a',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {pet.weight}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {pet.notes && (
-                <div
-                  style={{
-                    background: '#f8fafc',
-                    borderRadius: '12px',
-                    padding: '12px 14px',
-                    fontSize: '12px',
-                    color: '#475467',
-                    lineHeight: 1.5,
-                    marginBottom: '16px',
-                  }}
-                >
-                  <strong style={{ display: 'block', color: '#334155', marginBottom: '2px' }}>
-                    Observações / Alergias:
-                  </strong>
-                  {pet.notes}
-                </div>
-              )}
-
-              {/* AÇÕES */}
-              <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
-                <button
-                  onClick={() => router.push(`/(dashboard)/pets/${pet.id}` as any)}
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '10px',
-                    borderRadius: '10px',
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
-                    color: '#334155',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <Edit3 size={14} /> Editar Prontuário
-                </button>
-
-                <button
-                  onClick={() => router.push(`/(dashboard)/appointments/new?petId=${pet.id}&petName=${encodeURIComponent(pet.name)}` as any)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    background: 'var(--verde-neve, #ecfdf5)',
-                    border: '1px solid rgba(16, 185, 129, 0.25)',
-                    color: '#065f46',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Agendar <ArrowRight size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* CARREGAMENTO */}
+      {isLoading && (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#10b981" />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+            Buscando pets cadastrados na API REST...
+          </Text>
+        </View>
       )}
-    </div>
+
+      {/* ERRO */}
+      {isError && (
+        <View style={styles.errorBox}>
+          <AlertCircle size={20} color="#b91c1c" />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.errorTitle}>Erro na API HTTP:</Text>
+            <Text style={styles.errorDesc}>
+              {(error as Error)?.message || 'Falha ao buscar pets cadastrados.'}
+            </Text>
+          </View>
+        </View>
+      )}
+
+      {/* LISTA DE PETS */}
+      {!isLoading && !isError && (
+        <View style={styles.grid}>
+          {filteredPets.length === 0 ? (
+            <View
+              style={[
+                styles.emptyBox,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              <PawPrint size={48} color={colors.textMuted} />
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>
+                Nenhum pet encontrado
+              </Text>
+              <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+                Você ainda não possui nenhum animal cadastrado nesta categoria. Adicione um novo pet para acompanhar suas consultas.
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push('/(dashboard)/pets/new')}
+                style={styles.emptyBtn}
+              >
+                <Text style={styles.emptyBtnText}>+ Cadastrar Primeiro Pet</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            filteredPets.map((pet) => (
+              <View
+                key={pet.id}
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                  },
+                ]}
+              >
+                <View style={styles.cardTop}>
+                  <Image
+                    source={{
+                      uri:
+                        pet.photoUrl ||
+                        'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80',
+                    }}
+                    style={styles.avatar}
+                    resizeMode="cover"
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.petName, { color: colors.text }]}>{pet.name}</Text>
+                    <Text style={[styles.petBreed, { color: colors.textSecondary }]}>
+                      {pet.breed} • {pet.age}
+                    </Text>
+                    {pet.weight && (
+                      <Text style={[styles.petWeight, { color: colors.textMuted }]}>
+                        Peso: {pet.weight}
+                      </Text>
+                    )}
+                  </View>
+                </View>
+
+                {pet.notes ? (
+                  <Text
+                    numberOfLines={2}
+                    style={[styles.notes, { color: colors.textSecondary }]}
+                  >
+                    {pet.notes}
+                  </Text>
+                ) : null}
+
+                <View style={[styles.cardFooter, { borderTopColor: colors.border }]}>
+                  <TouchableOpacity
+                    onPress={() => router.push(`/(dashboard)/pets/${pet.id}` as any)}
+                    style={[
+                      styles.footerActionBtn,
+                      {
+                        backgroundColor: colors.surfaceSubtle,
+                        borderColor: colors.border,
+                      },
+                    ]}
+                  >
+                    <Edit3 size={14} color={colors.text} />
+                    <Text style={[styles.footerActionText, { color: colors.text }]}>
+                      Prontuário
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() =>
+                      router.push(
+                        `/(dashboard)/appointments/new?petId=${pet.id}&petName=${encodeURIComponent(pet.name)}` as any
+                      )
+                    }
+                    style={[
+                      styles.footerActionBtn,
+                      {
+                        backgroundColor: colors.primaryLight,
+                        borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+                      },
+                    ]}
+                  >
+                    <Calendar size={14} color={colors.accent} />
+                    <Text style={[styles.footerActionText, { color: colors.accent }]}>
+                      Agendar
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => handleDelete(pet.id, pet.name)}
+                    disabled={deletingId === pet.id}
+                    style={[
+                      styles.deleteIconBtn,
+                      {
+                        backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#fef2f2',
+                        borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fecaca',
+                      },
+                    ]}
+                  >
+                    <Trash2 size={14} color="#dc2626" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
+        </View>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  newBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    borderRadius: 12,
+  },
+  newBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  filtersRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+  },
+  filterBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  filterBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  centerContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 14,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 20,
+  },
+  errorTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#b91c1c',
+  },
+  errorDesc: {
+    fontSize: 12,
+    color: '#b91c1c',
+    marginTop: 2,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  emptyBox: {
+    width: '100%',
+    padding: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginTop: 12,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 6,
+    maxWidth: 400,
+    lineHeight: 20,
+  },
+  emptyBtn: {
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 18,
+  },
+  emptyBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  card: {
+    flex: 1,
+    minWidth: 280,
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 18,
+  },
+  cardTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+  },
+  petName: {
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  petBreed: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  petWeight: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  notes: {
+    fontSize: 12,
+    marginTop: 12,
+    lineHeight: 18,
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: 1,
+  },
+  footerActionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  footerActionText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  deleteIconBtn: {
+    padding: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+});

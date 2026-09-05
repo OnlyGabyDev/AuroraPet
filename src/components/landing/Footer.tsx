@@ -1,112 +1,87 @@
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { HeaderBrand } from '../common/HeaderBrand';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const Footer: React.FC = () => {
+  const { colors, isDark } = useTheme();
+
   return (
-    <footer
-      style={{
-        padding: '50px 0 35px',
-        borderTop: '1px solid #edf1ef',
-        background: '#fbfcfc',
-      }}
+    <View
+      style={[
+        styles.footer,
+        {
+          backgroundColor: isDark ? '#090d0c' : '#f8faf9',
+          borderTopColor: colors.border,
+        },
+      ]}
     >
-      <div style={{ width: 'min(1180px, calc(100% - 48px))', margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-            gap: '40px',
-            paddingBottom: '35px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div style={{ maxWidth: '340px' }}>
-            <a href="#inicio" style={{ textDecoration: 'none' }}>
-              <HeaderBrand size="sm" />
-            </a>
+      <View style={styles.container}>
+        <View style={styles.topRow}>
+          <View style={styles.brandBox}>
+            <HeaderBrand size="sm" />
+            <Text style={[styles.description, { color: colors.textSecondary }]}>
+              Plataforma digital integrada para cuidados veterinários, prontuário
+              clínico e acompanhamento de pets.
+            </Text>
+          </View>
+        </View>
 
-            <p
-              style={{
-                marginTop: '15px',
-                color: '#87919e',
-                fontSize: '13px',
-                lineHeight: 1.65,
-              }}
-            >
-              Uma experiência digital pensada para aproximar tecnologia e cuidado veterinário.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '24px',
-              alignItems: 'center',
-            }}
-          >
-            <a
-              href="#inicio"
-              style={{ color: '#697482', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}
-              className="hover:text-[#7c3aed]"
-            >
-              Início
-            </a>
-            <a
-              href="#servicos"
-              style={{ color: '#697482', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}
-              className="hover:text-[#7c3aed]"
-            >
-              Serviços
-            </a>
-            <a
-              href="#clinica"
-              style={{ color: '#697482', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}
-              className="hover:text-[#7c3aed]"
-            >
-              A clínica
-            </a>
-            <a
-              href="#especialistas"
-              style={{ color: '#697482', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}
-              className="hover:text-[#7c3aed]"
-            >
-              Especialistas
-            </a>
-            <a
-              href="#agendamento"
-              style={{ color: '#697482', fontSize: '13px', fontWeight: 600, textDecoration: 'none' }}
-              className="hover:text-[#7c3aed]"
-            >
-              Contato
-            </a>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '20px',
-            paddingTop: '25px',
-            borderTop: '1px solid #edf1ef',
-            color: '#9099a4',
-            fontSize: '12px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <span>© 2026 Clyvo. Todos os direitos reservados.</span>
-
-          <a
-            href="#inicio"
-            style={{ color: '#9099a4', textDecoration: 'none', fontWeight: 600 }}
-            className="hover:text-[#064e3b]"
-          >
-            Voltar ao início ↑
-          </a>
-        </div>
-      </div>
-    </footer>
+        <View style={[styles.bottomRow, { borderTopColor: colors.border }]}>
+          <Text style={[styles.copyright, { color: colors.textMuted }]}>
+            © 2026 Clyvo Clínica Veterinária. Todos os direitos reservados.
+          </Text>
+          <Text style={[styles.sprintInfo, { color: colors.textMuted }]}>
+            Engenharia de Software • Sprint 3 Delivery
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  footer: {
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    width: '100%',
+  },
+  container: {
+    width: '100%',
+    maxWidth: 1180,
+    marginHorizontal: 'auto',
+  },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    gap: 30,
+    paddingBottom: 25,
+  },
+  brandBox: {
+    maxWidth: 380,
+  },
+  description: {
+    marginTop: 12,
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 12,
+    paddingTop: 20,
+    borderTopWidth: 1,
+  },
+  copyright: {
+    fontSize: 12,
+  },
+  sprintInfo: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+});

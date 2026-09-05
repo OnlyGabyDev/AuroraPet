@@ -1,6 +1,17 @@
 import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { useAuth } from '../../src/hooks/useAuth';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import { HeaderBrand } from '../../src/components/common/HeaderBrand';
 import {
   LayoutDashboard,
@@ -9,12 +20,15 @@ import {
   User,
   LogOut,
   Sparkles,
-} from 'lucide-react';
+  Sun,
+  Moon,
+} from 'lucide-react-native';
 
 export default function DashboardLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, loading, logout, isDemoUser } = useAuth();
+  const { colors, isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -24,32 +38,12 @@ export default function DashboardLayout() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#f8faf9',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              border: '3px solid rgba(16, 185, 129, 0.2)',
-              borderTopColor: '#10b981',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              margin: '0 auto 16px',
-            }}
-          />
-          <p style={{ color: '#667085', fontSize: '14px', fontWeight: 600 }}>
-            Carregando seus dados...
-          </p>
-        </div>
-      </div>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color="#10b981" />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+          Carregando painel do tutor...
+        </Text>
+      </View>
     );
   }
 
@@ -68,178 +62,167 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', backgroundColor: '#f8faf9' }}>
-      {/* SIDEBAR DESKTOP */}
-      <aside
-        style={{
-          width: '260px',
-          backgroundColor: '#ffffff',
-          borderRight: '1px solid #edf1ef',
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '24px',
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-        }}
-        className="hidden md:flex"
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* TOPBAR / HEADER MOBILE E UNIVERSAL */}
+      <View
+        style={[
+          styles.topHeader,
+          {
+            backgroundColor: colors.surface,
+            borderBottomColor: colors.border,
+          },
+        ]}
       >
-        <div style={{ marginBottom: '32px' }}>
-          <HeaderBrand size="sm" />
-        </div>
+        <TouchableOpacity activeOpacity={0.8} onPress={() => router.push('/(dashboard)')}>
+          <HeaderBrand size="sm" showSubtitle={false} />
+        </TouchableOpacity>
 
-        {isDemoUser && (
-          <div
-            style={{
-              padding: '10px 12px',
-              borderRadius: '12px',
-              background: 'var(--verde-neve, #ecfdf5)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              marginBottom: '20px',
-              fontSize: '11px',
-              color: '#065f46',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
+        <View style={styles.topActions}>
+          {/* THEME TOGGLE */}
+          <TouchableOpacity
+            onPress={toggleTheme}
+            activeOpacity={0.7}
+            style={[
+              styles.iconBtn,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
           >
-            <Sparkles size={14} color="#10b981" />
-            <span>Modo Demonstração Ativo</span>
-          </div>
-        )}
+            {isDark ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#64748b" />}
+          </TouchableOpacity>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
+          {/* NAV ICONS */}
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.href === '/(dashboard)'
                 ? pathname === '/(dashboard)' || pathname === '/(dashboard)/'
                 : pathname.startsWith(item.href);
+
             return (
-              <button
+              <TouchableOpacity
                 key={item.href}
-                onClick={() => router.push(item.href as any)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 16px',
-                  borderRadius: '12px',
-                  border: 'none',
-                  background: isActive ? 'var(--verde-neve, #ecfdf5)' : 'transparent',
-                  color: isActive ? 'var(--verde-escuro, #064e3b)' : '#667085',
-                  fontWeight: isActive ? 700 : 500,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s ease',
-                }}
-                className="hover:bg-[#f1f5f9] hover:text-[#172422]"
+                onPress={() => router.push(item.href as any)}
+                activeOpacity={0.7}
+                style={[
+                  styles.iconBtn,
+                  {
+                    backgroundColor: isActive ? colors.primaryLight : colors.surfaceSubtle,
+                    borderColor: isActive ? colors.accent : colors.border,
+                  },
+                ]}
               >
-                <Icon size={18} color={isActive ? 'var(--verde, #10b981)' : '#94a3b8'} />
-                {item.label}
-              </button>
+                <Icon size={17} color={isActive ? colors.accent : colors.textSecondary} />
+              </TouchableOpacity>
             );
           })}
-        </nav>
 
-        {/* Informações do Tutor & Sair */}
-        <div style={{ borderTop: '1px solid #edf1ef', paddingTop: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-            <div
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '50%',
-                background: '#e0e7ff',
-                color: '#4338ca',
-                display: 'grid',
-                placeItems: 'center',
-                fontWeight: 700,
-                fontSize: '14px',
-              }}
-            >
-              {user.displayName?.charAt(0).toUpperCase() || 'T'}
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#172422', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user.displayName || 'Tutor'}
-              </div>
-              <div style={{ fontSize: '11px', color: '#8a94a3', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user.email}
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 14px',
-              borderRadius: '10px',
-              border: '1px solid #fee2e2',
-              background: '#fef2f2',
-              color: '#dc2626',
-              fontSize: '12px',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+          {/* LOGOUT */}
+          <TouchableOpacity
+            onPress={handleLogout}
+            activeOpacity={0.7}
+            style={[
+              styles.iconBtn,
+              {
+                backgroundColor: isDark ? 'rgba(239, 68, 68, 0.15)' : '#fee2e2',
+                borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fecaca',
+              },
+            ]}
           >
-            <LogOut size={15} /> Sair da Conta
-          </button>
-        </div>
-      </aside>
+            <LogOut size={16} color="#ef4444" />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      {/* ÁREA PRINCIPAL */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflowX: 'hidden' }}>
-        {/* TOPBAR MOBILE */}
-        <header
-          style={{
-            backgroundColor: '#ffffff',
-            borderBottom: '1px solid #edf1ef',
-            padding: '12px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-          className="md:hidden"
-        >
-          <HeaderBrand size="sm" showSubtitle={false} />
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button
-              onClick={() => router.push('/(dashboard)')}
-              style={{ padding: '8px', borderRadius: '8px', background: '#f1f5f9', border: 'none' }}
-            >
-              <LayoutDashboard size={18} />
-            </button>
-            <button
-              onClick={() => router.push('/(dashboard)/pets')}
-              style={{ padding: '8px', borderRadius: '8px', background: '#f1f5f9', border: 'none' }}
-            >
-              <PawPrint size={18} />
-            </button>
-            <button
-              onClick={() => router.push('/(dashboard)/appointments')}
-              style={{ padding: '8px', borderRadius: '8px', background: '#f1f5f9', border: 'none' }}
-            >
-              <Calendar size={18} />
-            </button>
-            <button
-              onClick={handleLogout}
-              style={{ padding: '8px', borderRadius: '8px', background: '#fee2e2', color: '#dc2626', border: 'none' }}
-            >
-              <LogOut size={18} />
-            </button>
-          </div>
-        </header>
+      {/* ÁREA DE CONTEÚDO PRINCIPAL */}
+      <ScrollView
+        style={styles.mainScroll}
+        contentContainerStyle={styles.mainContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {isDemoUser && (
+          <View
+            style={[
+              styles.demoBadge,
+              {
+                backgroundColor: colors.primaryLight,
+                borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+              },
+            ]}
+          >
+            <Sparkles size={14} color="#10b981" />
+            <Text style={[styles.demoBadgeText, { color: colors.accent }]}>
+              Modo Demonstração Ativo — Acesso Total ao Sistema
+            </Text>
+          </View>
+        )}
 
-        <main style={{ padding: '32px', flex: 1, maxWidth: '1200px', width: '100%', margin: '0 auto' }}>
-          <Slot />
-        </main>
-      </div>
-    </div>
+        <Slot />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  loadingText: {
+    marginTop: 14,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  topHeader: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    zIndex: 100,
+  },
+  topActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mainScroll: {
+    flex: 1,
+  },
+  mainContent: {
+    padding: 20,
+    maxWidth: 1200,
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  demoBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 20,
+  },
+  demoBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+});

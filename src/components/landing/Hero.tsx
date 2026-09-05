@@ -1,11 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
 import { Sparkles, ArrowRight, Stethoscope, ShieldCheck, HeartPulse } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface HeroProps {
   onOpenBooking: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
+  const { colors, isDark } = useTheme();
+
   return (
     <section
       id="inicio"
@@ -17,7 +20,10 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
         alignItems: 'center',
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(120deg, #ffffff 0%, #fbfffd 45%, #f2faf7 100%)',
+        background: isDark
+          ? 'linear-gradient(120deg, #090d0c 0%, #0e1714 45%, #13221c 100%)'
+          : 'linear-gradient(120deg, #ffffff 0%, #fbfffd 45%, #f2faf7 100%)',
+        transition: 'background 0.3s ease',
       }}
     >
       {/* GRID SUTIL */}
@@ -26,8 +32,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(rgba(6,78,59,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(6,78,59,0.025) 1px, transparent 1px)
+            linear-gradient(${isDark ? 'rgba(16,185,129,0.03)' : 'rgba(6,78,59,0.025)'} 1px, transparent 1px),
+            linear-gradient(90deg, ${isDark ? 'rgba(16,185,129,0.03)' : 'rgba(6,78,59,0.025)'} 1px, transparent 1px)
           `,
           backgroundSize: '54px 54px',
           maskImage: 'linear-gradient(to bottom, black, transparent 85%)',
@@ -43,7 +49,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           position: 'absolute',
           borderRadius: '50%',
           filter: 'blur(100px)',
-          opacity: 0.42,
+          opacity: isDark ? 0.28 : 0.42,
           pointerEvents: 'none',
           width: '600px',
           height: '500px',
@@ -58,7 +64,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           position: 'absolute',
           borderRadius: '50%',
           filter: 'blur(100px)',
-          opacity: 0.42,
+          opacity: isDark ? 0.22 : 0.42,
           pointerEvents: 'none',
           width: '480px',
           height: '480px',
@@ -73,7 +79,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
           position: 'absolute',
           borderRadius: '50%',
           filter: 'blur(100px)',
-          opacity: 0.42,
+          opacity: isDark ? 0.15 : 0.42,
           pointerEvents: 'none',
           width: '300px',
           height: '300px',
@@ -83,10 +89,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
         }}
       />
 
-      {/* CONTAINER */}
       <div
         style={{
-          width: 'min(1180px, calc(100% - 48px))',
+          width: 'min(1200px, calc(100% - 48px))',
           margin: '0 auto',
           position: 'relative',
           zIndex: 5,
@@ -106,9 +111,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               gap: '8px',
               padding: '8px 14px',
               borderRadius: '999px',
-              background: 'rgba(236,253,245,.85)',
-              border: '1px solid rgba(16,185,129,.16)',
-              color: '#08775a',
+              background: colors.primaryLight,
+              border: `1px solid ${isDark ? 'rgba(16,185,129,.3)' : 'rgba(16,185,129,.16)'}`,
+              color: colors.accent,
               fontSize: '12px',
               fontWeight: 700,
               marginBottom: '25px',
@@ -125,7 +130,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               fontSize: 'clamp(40px, 5.2vw, 72px)',
               lineHeight: 1.05,
               letterSpacing: '-3px',
-              color: '#172422',
+              color: colors.text,
             }}
           >
             Cuidado que acompanha{' '}
@@ -146,7 +151,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             style={{
               maxWidth: '590px',
               marginTop: '25px',
-              color: '#667085',
+              color: colors.textSecondary,
               fontSize: '17px',
               lineHeight: 1.75,
             }}
@@ -172,13 +177,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 gap: '11px',
                 padding: '16px 24px',
                 borderRadius: '14px',
-                background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
+                background: 'linear-gradient(135deg, #064e3b 0%, #087c5d 60%, #10b981 100%)',
                 color: '#ffffff',
                 fontSize: '14px',
                 fontWeight: 700,
                 border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 15px 32px rgba(6,78,59,.19)',
+                boxShadow: '0 15px 32px rgba(6,78,59,.25)',
                 transition: 'all 0.3s ease',
               }}
               className="hover:translate-y-[-3px] hover:shadow-[0_18px_38px_rgba(124,58,237,.25)]"
@@ -195,16 +200,16 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 justifyContent: 'center',
                 padding: '15px 22px',
                 borderRadius: '14px',
-                border: '1px solid rgba(15,23,42,.09)',
-                background: 'rgba(255,255,255,.75)',
-                color: '#344054',
+                border: `1px solid ${colors.border}`,
+                background: colors.surface,
+                color: colors.text,
                 fontSize: '14px',
                 fontWeight: 700,
                 textDecoration: 'none',
                 backdropFilter: 'blur(12px)',
                 transition: 'all 0.3s ease',
               }}
-              className="hover:translate-y-[-3px] hover:text-[#064e3b] hover:bg-white"
+              className="hover:translate-y-[-3px] hover:text-[#10b981]"
             >
               Conheça nossa clínica
             </a>
@@ -221,13 +226,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             <div style={{ display: 'flex' }}>
               <div
                 style={{
-                  width: '39px',
-                  height: '39px',
+                  width: '40px',
+                  height: '40px',
                   display: 'grid',
                   placeItems: 'center',
                   borderRadius: '50%',
-                  border: '2px solid white',
-                  background: '#eef5f2',
+                  border: `2px solid ${colors.surface}`,
+                  background: colors.surfaceSubtle,
                   fontSize: '18px',
                 }}
               >
@@ -235,14 +240,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </div>
               <div
                 style={{
-                  width: '39px',
-                  height: '39px',
+                  width: '40px',
+                  height: '40px',
                   display: 'grid',
                   placeItems: 'center',
-                  marginLeft: '-7px',
+                  marginLeft: '-8px',
                   borderRadius: '50%',
-                  border: '2px solid white',
-                  background: '#eef5f2',
+                  border: `2px solid ${colors.surface}`,
+                  background: colors.surfaceSubtle,
                   fontSize: '18px',
                 }}
               >
@@ -250,14 +255,14 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </div>
               <div
                 style={{
-                  width: '39px',
-                  height: '39px',
+                  width: '40px',
+                  height: '40px',
                   display: 'grid',
                   placeItems: 'center',
-                  marginLeft: '-7px',
+                  marginLeft: '-8px',
                   borderRadius: '50%',
-                  border: '2px solid white',
-                  background: '#eef5f2',
+                  border: `2px solid ${colors.surface}`,
+                  background: colors.surfaceSubtle,
                   fontSize: '18px',
                 }}
               >
@@ -266,40 +271,18 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             </div>
 
             <div>
-              <strong style={{ display: 'block', fontSize: '13px', color: '#172422' }}>
+              <strong style={{ display: 'block', fontSize: '13px', color: colors.text }}>
                 Cuidado em cada etapa
               </strong>
-              <span style={{ display: 'block', marginTop: '3px', color: '#8993a0', fontSize: '12px' }}>
-                Informação, prevenção e acompanhamento.
+              <span style={{ display: 'block', marginTop: '2px', color: colors.textMuted, fontSize: '12px' }}>
+                Informação, prevenção e acompanhamento clínico contínuo.
               </span>
             </div>
           </div>
         </div>
 
         {/* VISUAL HERO */}
-        <div
-          style={{
-            position: 'relative',
-            maxWidth: '470px',
-            width: '100%',
-            margin: '0 auto',
-          }}
-        >
-          {/* Anéis visuais */}
-          <div
-            style={{
-              position: 'absolute',
-              width: '410px',
-              height: '410px',
-              top: '50px',
-              right: '25px',
-              borderRadius: '50%',
-              border: '1px solid rgba(16,185,129,.13)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          {/* Card Principal com Foto */}
+        <div style={{ position: 'relative', maxWidth: '470px', width: '100%', margin: '0 auto' }}>
           <div
             style={{
               position: 'relative',
@@ -307,15 +290,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               overflow: 'hidden',
               padding: '8px',
               borderRadius: '185px 185px 42px 42px',
-              border: '1px solid rgba(255,255,255,.9)',
-              background: 'rgba(255,255,255,.5)',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,.9)'}`,
+              background: isDark ? 'rgba(18, 26, 23, 0.6)' : 'rgba(255,255,255,.5)',
               backdropFilter: 'blur(16px)',
-              boxShadow: '0 35px 80px rgba(6,78,59,.14)',
+              boxShadow: isDark ? '0 35px 80px rgba(0,0,0,.5)' : '0 35px 80px rgba(6,78,59,.14)',
             }}
           >
             <img
               src="https://images.unsplash.com/photo-1558788353-f76d92427f16?auto=format&fit=crop&w=1000&q=90"
-              alt="Cachorro Golden Retriever na Clínica Clyvo"
+              alt="Cachorro saudável feliz"
               style={{
                 width: '100%',
                 height: '100%',
@@ -327,66 +310,65 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             <div
               style={{
                 position: 'absolute',
-                left: '25px',
-                right: '25px',
-                bottom: '25px',
+                left: '20px',
+                right: '20px',
+                bottom: '20px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '20px',
-                padding: '15px 18px',
+                gap: '16px',
+                padding: '14px 18px',
                 borderRadius: '17px',
-                color: 'white',
+                color: '#ffffff',
                 background: 'rgba(5,37,32,.75)',
-                border: '1px solid rgba(255,255,255,.16)',
+                border: '1px solid rgba(255,255,255,.2)',
                 backdropFilter: 'blur(20px)',
               }}
             >
               <div>
-                <small style={{ display: 'block', marginBottom: '4px', color: 'rgba(255,255,255,.7)', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                <small style={{ display: 'block', marginBottom: '2px', color: 'rgba(255,255,255,.7)', fontSize: '11px' }}>
                   Próximo cuidado
                 </small>
-                <strong style={{ fontSize: '13px' }}>Acompanhamento veterinário</strong>
+                <strong style={{ fontSize: '14px' }}>Acompanhamento veterinário</strong>
               </div>
 
               <div
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px',
-                  padding: '9px 12px',
-                  borderRadius: '11px',
-                  background: 'rgba(255,255,255,.12)',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  borderRadius: '10px',
+                  background: 'rgba(255,255,255,.15)',
                   fontSize: '11px',
                   fontWeight: 700,
                 }}
               >
-                <HeartPulse size={16} />
+                <HeartPulse size={15} color="#10b981" />
                 Saúde
               </div>
             </div>
           </div>
 
-          {/* Floating Card Esquerda */}
+          {/* FLOATING CARDS */}
           <div
             style={{
               position: 'absolute',
               zIndex: 10,
-              minWidth: '190px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              padding: '13px 15px',
-              borderRadius: '15px',
-              background: 'rgba(255,255,255,.88)',
-              border: '1px solid rgba(255,255,255,.95)',
-              backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 45px rgba(31,42,55,.12)',
               left: '-20px',
               top: '160px',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              minWidth: '180px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
+              backdropFilter: 'blur(20px)',
+              boxShadow: colors.cardShadow,
             }}
-            className="hover:translate-y-[-5px]"
+            className="hover:translate-y-[-4px]"
           >
             <div
               style={{
@@ -395,42 +377,40 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 display: 'grid',
                 placeItems: 'center',
                 borderRadius: '12px',
-                background: 'var(--verde-neve, #ecfdf5)',
-                color: '#087a59',
+                background: colors.primaryLight,
+                color: colors.accent,
               }}
             >
               <Stethoscope size={20} />
             </div>
             <div>
-              <small style={{ display: 'block', color: '#8a94a3', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <small style={{ display: 'block', color: colors.textMuted, fontSize: '10px', fontWeight: 600 }}>
                 Atendimento
               </small>
-              <strong style={{ display: 'block', marginTop: '3px', fontSize: '12px', color: '#172422' }}>
+              <strong style={{ display: 'block', marginTop: '2px', fontSize: '12px', color: colors.text }}>
                 Cuidado contínuo
               </strong>
             </div>
           </div>
 
-          {/* Floating Card Direita */}
           <div
             style={{
               position: 'absolute',
               zIndex: 10,
-              minWidth: '190px',
+              right: '-20px',
+              bottom: '120px',
+              minWidth: '180px',
               display: 'flex',
               alignItems: 'center',
-              gap: '11px',
-              padding: '13px 15px',
-              borderRadius: '15px',
-              background: 'rgba(255,255,255,.88)',
-              border: '1px solid rgba(255,255,255,.95)',
+              gap: '12px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: colors.surface,
+              border: `1px solid ${colors.border}`,
               backdropFilter: 'blur(20px)',
-              boxShadow: '0 20px 45px rgba(31,42,55,.12)',
-              right: '-20px',
-              bottom: '110px',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              boxShadow: colors.cardShadow,
             }}
-            className="hover:translate-y-[-5px]"
+            className="hover:translate-y-[-4px]"
           >
             <div
               style={{
@@ -439,17 +419,17 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 display: 'grid',
                 placeItems: 'center',
                 borderRadius: '12px',
-                background: 'var(--roxo-neve, #f5f3ff)',
-                color: 'var(--roxo, #7c3aed)',
+                background: isDark ? 'rgba(124, 58, 237, 0.2)' : '#f5f3ff',
+                color: '#a78bfa',
               }}
             >
               <ShieldCheck size={20} />
             </div>
             <div>
-              <small style={{ display: 'block', color: '#8a94a3', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <small style={{ display: 'block', color: colors.textMuted, fontSize: '10px', fontWeight: 600 }}>
                 Informações
               </small>
-              <strong style={{ display: 'block', marginTop: '3px', fontSize: '12px', color: '#172422' }}>
+              <strong style={{ display: 'block', marginTop: '2px', fontSize: '12px', color: colors.text }}>
                 Acesso protegido
               </strong>
             </div>

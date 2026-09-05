@@ -1,189 +1,338 @@
 import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../hooks/useAuth';
+import { useTheme } from '../../contexts/ThemeContext';
 import { HeaderBrand } from '../common/HeaderBrand';
-import { Menu, X, Calendar, User } from 'lucide-react';
+import { Menu, X, Calendar, User, Sun, Moon, Sparkles, ShieldAlert } from 'lucide-react-native';
 
 interface NavbarProps {
   onOpenBooking: () => void;
+  onNavigateSection?: (sectionId: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onNavigateSection }) => {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleClientAreaClick = () => {
     if (user) {
-      router.push('/(dashboard)' as any);
+      router.push('/(dashboard)');
     } else {
-      router.push('/(auth)/login' as any);
+      router.push('/(auth)/login');
     }
   };
 
   const navLinks = [
-    { label: 'Início', href: '#inicio' },
-    { label: 'Serviços', href: '#servicos' },
-    { label: 'A clínica', href: '#clinica' },
-    { label: 'Especialistas', href: '#especialistas' },
-    { label: 'Contato', href: '#agendamento' },
+    { label: 'Início', id: 'inicio' },
+    { label: 'Serviços', id: 'servicos' },
+    { label: 'A clínica', id: 'clinica' },
+    { label: 'Especialistas', id: 'especialistas' },
+    { label: 'Contato', id: 'agendamento' },
   ];
 
+  const handleLinkClick = (id: string) => {
+    setMobileMenuOpen(false);
+    if (onNavigateSection) {
+      onNavigateSection(id);
+    }
+  };
+
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 1000,
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(15, 23, 42, 0.05)',
-      }}
+    <View
+      style={[
+        styles.headerContainer,
+        {
+          backgroundColor: isDark ? '#0d1311' : '#ffffff',
+          borderBottomColor: colors.border,
+        },
+      ]}
     >
-      <div
-        style={{
-          width: 'min(1180px, calc(100% - 48px))',
-          margin: '0 auto',
-          height: '82px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '30px',
-        }}
-      >
-        {/* LOGO */}
-        <a href="#inicio" style={{ textDecoration: 'none' }}>
-          <HeaderBrand />
-        </a>
+      <View style={styles.headerInner}>
+        {/* LOGO & STATUS BADGE */}
+        <View style={styles.brandRow}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => handleLinkClick('inicio')}
+          >
+            <HeaderBrand />
+          </TouchableOpacity>
 
-        {/* DESKTOP NAV LINKS */}
-        <nav
-          className="hidden md:flex"
-          style={{
-            display: 'flex',
-            gap: '31px',
-            alignItems: 'center',
-          }}
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              style={{
-                position: 'relative',
-                padding: '9px 0',
-                color: '#475467',
-                fontSize: '14px',
-                fontWeight: 600,
-                textDecoration: 'none',
-                transition: 'color 0.25s ease',
-              }}
-              className="hover:text-[#064e3b]"
+          {/* BADGE DE PLANTÃO 24H */}
+          <View
+            style={[
+              styles.emergencyBadge,
+              {
+                backgroundColor: colors.primaryLight,
+                borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+              },
+            ]}
+          >
+            <View style={styles.pulseDot} />
+            <Text style={[styles.emergencyText, { color: colors.accent }]}>
+              Plantão 24h
+            </Text>
+          </View>
+        </View>
+
+        {/* BOTÕES DE AÇÃO & TEMA */}
+        <View style={styles.actionsRow}>
+          {/* BOTÃO MUDAR TEMA */}
+          <TouchableOpacity
+            onPress={toggleTheme}
+            activeOpacity={0.7}
+            style={[
+              styles.themeButton,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            {isDark ? (
+              <Sun size={18} color="#fbbf24" />
+            ) : (
+              <Moon size={18} color="#64748b" />
+            )}
+          </TouchableOpacity>
+
+          {/* BOTÃO ÁREA DO TUTOR */}
+          <TouchableOpacity
+            onPress={handleClientAreaClick}
+            activeOpacity={0.8}
+            style={[
+              styles.tutorButton,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <User size={15} color={isDark ? '#34d399' : '#064e3b'} />
+            <Text
+              style={[
+                styles.tutorButtonText,
+                { color: isDark ? '#34d399' : '#064e3b' },
+              ]}
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+              {user ? 'Meu Painel' : 'Área do Tutor'}
+            </Text>
+          </TouchableOpacity>
 
-        {/* ACTIONS */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '11px' }}>
-          <button
-            onClick={handleClientAreaClick}
-            style={{
-              padding: '11px 15px',
-              borderRadius: '12px',
-              color: 'var(--verde-escuro, #064e3b)',
-              fontSize: '13px',
-              fontWeight: 700,
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.3s ease',
-            }}
-            className="hover:bg-[#f5f3ff] hover:text-[#7c3aed]"
+          {/* BOTÃO AGENDAR CONSULTA */}
+          <TouchableOpacity
+            onPress={onOpenBooking}
+            activeOpacity={0.85}
+            style={styles.ctaButton}
           >
-            <User size={16} />
-            {user ? 'Meu Painel' : 'Área do cliente'}
-          </button>
+            <Calendar size={15} color="#ffffff" />
+            <Text style={styles.ctaButtonText}>Agendar</Text>
+          </TouchableOpacity>
 
-          <button
-            onClick={onOpenBooking}
-            style={{
-              padding: '13px 19px',
-              borderRadius: '13px',
-              background: 'var(--verde-escuro, #064e3b)',
-              color: '#ffffff',
-              fontSize: '13px',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 10px 25px rgba(6, 78, 59, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'all 0.3s ease',
-            }}
-            className="hover:bg-[#7c3aed] hover:shadow-[0_13px_30px_rgba(124,58,237,0.23)] hover:-translate-y-0.5"
+          {/* HAMBURGER MOBILE */}
+          <TouchableOpacity
+            onPress={() => setMobileMenuOpen(!mobileMenuOpen)}
+            activeOpacity={0.7}
+            style={[
+              styles.menuButton,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
           >
-            <Calendar size={15} />
-            Agendar consulta
-          </button>
+            {mobileMenuOpen ? (
+              <X size={19} color={colors.text} />
+            ) : (
+              <Menu size={19} color={colors.text} />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
 
-          {/* Mobile hamburger toggle */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{
-              padding: '8px',
-              borderRadius: '10px',
-              background: '#f1f5f9',
-              border: 'none',
-              cursor: 'pointer',
-              color: '#1e293b',
-            }}
-            className="md:hidden"
-          >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </div>
-
-      {/* MOBILE MENU DROPDOWN */}
+      {/* DROPDOWN MENU MOBILE */}
       {mobileMenuOpen && (
-        <div
-          style={{
-            backgroundColor: '#ffffff',
-            borderTop: '1px solid rgba(15, 23, 42, 0.08)',
-            padding: '16px 24px',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-          }}
-          className="md:hidden"
+        <View
+          style={[
+            styles.mobileDropdown,
+            {
+              backgroundColor: colors.surface,
+              borderTopColor: colors.border,
+            },
+          ]}
         >
           {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                display: 'block',
-                padding: '12px 0',
-                color: '#334155',
-                fontSize: '15px',
-                fontWeight: 600,
-                textDecoration: 'none',
-                borderBottom: '1px solid #f1f5f9',
-              }}
+            <TouchableOpacity
+              key={link.id}
+              onPress={() => handleLinkClick(link.id)}
+              style={[styles.mobileLinkItem, { borderBottomColor: colors.border }]}
             >
-              {link.label}
-            </a>
+              <Text style={[styles.mobileLinkText, { color: colors.text }]}>
+                {link.label}
+              </Text>
+            </TouchableOpacity>
           ))}
-        </div>
+
+          <View style={styles.mobileThemeRow}>
+            <Text style={[styles.mobileThemeLabel, { color: colors.textSecondary }]}>
+              Modo de Exibição
+            </Text>
+            <TouchableOpacity
+              onPress={toggleTheme}
+              style={[
+                styles.mobileThemeToggle,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                },
+              ]}
+            >
+              {isDark ? (
+                <Sun size={15} color="#fbbf24" />
+              ) : (
+                <Moon size={15} color="#64748b" />
+              )}
+              <Text style={[styles.mobileThemeToggleText, { color: colors.text }]}>
+                {isDark ? 'Modo Claro' : 'Modo Escuro'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
-    </header>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    width: '100%',
+    borderBottomWidth: 1,
+    zIndex: 1000,
+  },
+  headerInner: {
+    width: '100%',
+    maxWidth: 1200,
+    marginHorizontal: 'auto',
+    height: 74,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  emergencyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  pulseDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#10b981',
+  },
+  emergencyText: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  themeButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tutorButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  tutorButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  ctaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 10,
+    shadowColor: '#064e3b',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  ctaButtonText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  menuButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mobileDropdown: {
+    borderTopWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  mobileLinkItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+  },
+  mobileLinkText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  mobileThemeRow: {
+    paddingTop: 14,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mobileThemeLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  mobileThemeToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  mobileThemeToggleText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+});

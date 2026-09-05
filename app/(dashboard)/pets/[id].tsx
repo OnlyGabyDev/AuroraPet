@@ -1,12 +1,33 @@
-import React, { useState, useEffect } from 'react';
+ï»¿import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePet, useUpdatePet, useDeletePet } from '../../../src/hooks/usePets';
-import { ArrowLeft, PawPrint, Save, Trash2, Calendar, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTheme } from '../../../src/contexts/ThemeContext';
+import {
+  ArrowLeft,
+  PawPrint,
+  Save,
+  Trash2,
+  Calendar,
+  AlertCircle,
+  CheckCircle2,
+} from 'lucide-react-native';
 import { PetSpecies } from '../../../src/types/pet';
 
 export default function PetDetailPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { colors, isDark } = useTheme();
 
   const { data: pet, isLoading, isError, error } = usePet(id);
   const updatePetMutation = useUpdatePet();
@@ -20,6 +41,13 @@ export default function PetDetailPage() {
   const [notes, setNotes] = useState('');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  const speciesOptions: { key: PetSpecies; label: string; icon: string }[] = [
+    { key: 'dog', label: 'Cachorro', icon: 'ðŸ¶' },
+    { key: 'cat', label: 'Gato', icon: 'ðŸ±' },
+    { key: 'bird', label: 'PÃ¡ssaro', icon: 'ðŸ¦œ' },
+    { key: 'other', label: 'Outro', icon: 'ðŸ¾' },
+  ];
+
   useEffect(() => {
     if (pet) {
       setName(pet.name || '');
@@ -31,8 +59,7 @@ export default function PetDetailPage() {
     }
   }, [pet]);
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUpdate = async () => {
     if (!id) return;
     setFeedback(null);
 
@@ -49,7 +76,7 @@ export default function PetDetailPage() {
         },
       });
 
-      setFeedback({ type: 'success', message: 'Prontuário do pet atualizado com sucesso na API!' });
+      setFeedback({ type: 'success', message: 'ProntuÃ¡rio do pet atualizado com sucesso na API!' });
       setTimeout(() => setFeedback(null), 4000);
     } catch (err: any) {
       console.error('Erro ao atualizar pet:', err);
@@ -59,334 +86,508 @@ export default function PetDetailPage() {
 
   const handleDelete = async () => {
     if (!id) return;
-    if (confirm(`Tem certeza que deseja excluir o pet "${pet?.name}" definitivamente?`)) {
+    const executeDelete = async () => {
       try {
         await deletePetMutation.mutateAsync(id);
         router.replace('/(dashboard)/pets');
       } catch (err: any) {
         setFeedback({ type: 'error', message: 'Erro ao remover pet.' });
       }
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm(`Tem certeza que deseja excluir o pet "${pet?.name}" definitivamente?`)) {
+        await executeDelete();
+      }
+    } else {
+      Alert.alert(
+        'Confirmar ExclusÃ£o',
+        `Deseja realmente remover o pet "${pet?.name}"?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Excluir', style: 'destructive', onPress: executeDelete },
+        ]
+      );
     }
   };
 
   if (isLoading) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px 0' }}>
-        <div
-          style={{
-            width: '40px',
-            height: '40px',
-            border: '3px solid rgba(16, 185, 129, 0.2)',
-            borderTopColor: '#10b981',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto 16px',
-          }}
-        />
-        <p style={{ color: '#667085', fontSize: '14px', fontWeight: 600 }}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color="#10b981" />
+        <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
           Carregando dados do pet via HTTP GET...
-        </p>
-      </div>
+        </Text>
+      </View>
     );
   }
 
   if (isError || !pet) {
     return (
-      <div style={{ maxWidth: '600px', margin: '40px auto', textAlign: 'center' }}>
-        <AlertCircle size={44} color="#dc2626" style={{ margin: '0 auto 12px' }} />
-        <h2 style={{ fontSize: '20px', color: '#172422' }}>Pet não encontrado</h2>
-        <p style={{ color: '#667085', fontSize: '14px' }}>
-          {(error as Error)?.message || 'O pet solicitado não existe ou foi removido.'}
-        </p>
-        <button
-          onClick={() => router.push('/(dashboard)/pets')}
-          style={{
-            marginTop: '16px',
-            padding: '10px 20px',
-            borderRadius: '10px',
-            background: 'var(--verde-escuro, #064e3b)',
-            color: '#ffffff',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 700,
-          }}
+      <View style={[styles.errorCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <AlertCircle size={44} color="#dc2626" />
+        <Text style={[styles.errorTitle, { color: colors.text }]}>Pet nÃ£o encontrado</Text>
+        <Text style={[styles.errorDesc, { color: colors.textSecondary }]}>
+          {(error as Error)?.message || 'O pet solicitado nÃ£o existe ou foi removido.'}
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.push('/(dashboard)/pets')}
+          style={styles.returnBtn}
         >
-          Voltar para Lista
-        </button>
-      </div>
+          <Text style={styles.returnBtnText}>Voltar para Lista</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <button
-          onClick={() => router.push('/(dashboard)/pets')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'none',
-            border: 'none',
-            color: '#667085',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
+    <View style={styles.container}>
+      {/* NAVEGAÃ‡ÃƒO SUPERIOR */}
+      <View style={styles.topNavRow}>
+        <TouchableOpacity
+          onPress={() => router.push('/(dashboard)/pets')}
+          style={styles.backBtn}
         >
-          <ArrowLeft size={16} /> Voltar para Meus Pets
-        </button>
+          <ArrowLeft size={16} color={colors.textSecondary} />
+          <Text style={[styles.backBtnText, { color: colors.textSecondary }]}>
+            Voltar para Meus Pets
+          </Text>
+        </TouchableOpacity>
 
-        <button
-          onClick={() => router.push(`/(dashboard)/appointments/new?petId=${pet.id}&petName=${encodeURIComponent(pet.name)}` as any)}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '8px 14px',
-            borderRadius: '10px',
-            background: 'var(--verde-neve, #ecfdf5)',
-            border: '1px solid rgba(16, 185, 129, 0.25)',
-            color: '#065f46',
-            fontSize: '12px',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
+        <TouchableOpacity
+          onPress={() =>
+            router.push(
+              `/(dashboard)/appointments/new?petId=${pet.id}&petName=${encodeURIComponent(pet.name)}` as any
+            )
+          }
+          style={[
+            styles.bookApptBtn,
+            {
+              backgroundColor: colors.primaryLight,
+              borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+            },
+          ]}
         >
-          <Calendar size={14} /> Agendar Consulta
-        </button>
-      </div>
+          <Calendar size={14} color={colors.accent} />
+          <Text style={[styles.bookApptBtnText, { color: colors.accent }]}>
+            Agendar Consulta
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid #edf1ef',
-          padding: '36px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
-        }}
+      {/* CARD DO PRONTUÃRIO */}
+      <View
+        style={[
+          styles.formCard,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
+        ]}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-          <img
-            src={
-              pet.photoUrl ||
-              'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80'
-            }
-            alt={pet.name}
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '16px',
-              objectFit: 'cover',
+        <View style={styles.cardHeader}>
+          <Image
+            source={{
+              uri:
+                pet.photoUrl ||
+                'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80',
             }}
+            style={styles.petAvatar}
+            resizeMode="cover"
           />
-          <div>
-            <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#172422', margin: 0 }}>
-              Prontuário: {pet.name}
-            </h1>
-            <p style={{ color: '#667085', fontSize: '13px', margin: '3px 0 0' }}>
-              Atualize as informações clínicas, peso e observações médicas (HTTP PUT)
-            </p>
-          </div>
-        </div>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.title, { color: colors.text }]}>
+              ProntuÃ¡rio: {pet.name}
+            </Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+              Atualize as informaÃ§Ãµes clÃ­nicas, peso e observaÃ§Ãµes mÃ©dicas (HTTP PUT)
+            </Text>
+          </View>
+        </View>
 
         {feedback && (
-          <div
-            style={{
-              padding: '12px 16px',
-              borderRadius: '12px',
-              background: feedback.type === 'success' ? '#ecfdf5' : '#fef2f2',
-              border: `1px solid ${feedback.type === 'success' ? '#a7f3d0' : '#fecaca'}`,
-              color: feedback.type === 'success' ? '#065f46' : '#b91c1c',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '20px',
-            }}
+          <View
+            style={[
+              styles.feedbackBox,
+              {
+                backgroundColor: feedback.type === 'success' ? '#ecfdf5' : '#fef2f2',
+                borderColor: feedback.type === 'success' ? '#a7f3d0' : '#fecaca',
+              },
+            ]}
           >
-            {feedback.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-            <span>{feedback.message}</span>
-          </div>
+            {feedback.type === 'success' ? (
+              <CheckCircle2 size={16} color="#065f46" />
+            ) : (
+              <AlertCircle size={16} color="#b91c1c" />
+            )}
+            <Text
+              style={[
+                styles.feedbackText,
+                { color: feedback.type === 'success' ? '#065f46' : '#b91c1c' },
+              ]}
+            >
+              {feedback.message}
+            </Text>
+          </View>
         )}
 
-        <form onSubmit={handleUpdate}>
-          {/* Nome */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Nome do Pet
-            </label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
+        {/* Nome */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Nome do Pet</Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* EspÃ©cie */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>EspÃ©cie</Text>
+          <View style={styles.speciesRow}>
+            {speciesOptions.map((opt) => {
+              const isSelected = species === opt.key;
+              return (
+                <TouchableOpacity
+                  key={opt.key}
+                  onPress={() => setSpecies(opt.key)}
+                  style={[
+                    styles.speciesBtn,
+                    {
+                      backgroundColor: isSelected ? colors.primaryLight : colors.surfaceSubtle,
+                      borderColor: isSelected ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text style={styles.speciesEmoji}>{opt.icon}</Text>
+                  <Text
+                    style={[
+                      styles.speciesText,
+                      { color: isSelected ? colors.accent : colors.text },
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* RaÃ§a e Idade */}
+        <View style={styles.rowFields}>
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>RaÃ§a</Text>
+            <TextInput
+              value={breed}
+              onChangeText={setBreed}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
             />
-          </div>
+          </View>
 
-          {/* Espécie e Raça */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Espécie
-              </label>
-              <select
-                value={species}
-                onChange={(e) => setSpecies(e.target.value as PetSpecies)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  background: '#ffffff',
-                }}
-              >
-                <option value="dog">?? Cachorro</option>
-                <option value="cat">?? Gato</option>
-                <option value="bird">?? Pássaro</option>
-                <option value="other">?? Outro animal</option>
-              </select>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Raça
-              </label>
-              <input
-                type="text"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Idade e Peso */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Idade aproximada
-              </label>
-              <input
-                type="text"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Peso (em kg)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Observações Médicas */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Histórico de Saúde / Alergias / Observações
-            </label>
-            <textarea
-              rows={3}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-                resize: 'vertical',
-              }}
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>Idade</Text>
+            <TextInput
+              value={age}
+              onChangeText={setAge}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
             />
-          </div>
+          </View>
+        </View>
 
-          {/* Botões de Ação */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #edf1ef' }}>
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deletePetMutation.isPending}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                border: '1px solid #fee2e2',
-                background: '#fef2f2',
-                color: '#dc2626',
-                fontSize: '13px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              <Trash2 size={16} /> Excluir Pet
-            </button>
+        {/* Peso */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Peso (em kg)</Text>
+          <TextInput
+            value={weight}
+            onChangeText={setWeight}
+            keyboardType="numeric"
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
 
-            <button
-              type="submit"
-              disabled={updatePetMutation.isPending}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '13px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 10px 20px rgba(6, 78, 59, 0.15)',
-              }}
-            >
-              <Save size={16} />
-              {updatePetMutation.isPending ? 'Salvando...' : 'Salvar Alterações (PUT)'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {/* ObservaÃ§Ãµes */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>
+            HistÃ³rico de SaÃºde / Alergias / ObservaÃ§Ãµes
+          </Text>
+          <TextInput
+            multiline
+            numberOfLines={3}
+            value={notes}
+            onChangeText={setNotes}
+            style={[
+              styles.textArea,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* AÃ§Ãµes */}
+        <View style={styles.actionsRow}>
+          <TouchableOpacity
+            onPress={handleDelete}
+            disabled={deletePetMutation.isPending}
+            style={[
+              styles.deleteBtn,
+              {
+                backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#fef2f2',
+                borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fecaca',
+              },
+            ]}
+          >
+            <Trash2 size={16} color="#ef4444" />
+            <Text style={styles.deleteBtnText}>Excluir Pet</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={handleUpdate}
+            disabled={updatePetMutation.isPending}
+            activeOpacity={0.85}
+            style={styles.saveBtn}
+          >
+            {updatePetMutation.isPending ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <>
+                <Save size={16} color="#ffffff" />
+                <Text style={styles.saveBtnText}>Salvar AlteraÃ§Ãµes</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: 640,
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  loadingContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 14,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorCard: {
+    maxWidth: 500,
+    marginHorizontal: 'auto',
+    marginTop: 40,
+    padding: 30,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginTop: 12,
+  },
+  errorDesc: {
+    fontSize: 13,
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  returnBtn: {
+    marginTop: 16,
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  returnBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  topNavRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  backBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  bookApptBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  bookApptBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  formCard: {
+    borderRadius: 22,
+    borderWidth: 1,
+    padding: 24,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 20,
+  },
+  petAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  subtitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  feedbackBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
+  feedbackText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  field: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  input: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+  },
+  textArea: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  speciesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  speciesBtn: {
+    flex: 1,
+    minWidth: 70,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  speciesEmoji: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  speciesText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  rowFields: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: 10,
+  },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  deleteBtnText: {
+    color: '#ef4444',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  saveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#064e3b',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  saveBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+});

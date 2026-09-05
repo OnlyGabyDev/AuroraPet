@@ -1,13 +1,23 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../src/hooks/useAuth';
 import { useAddPet } from '../../../src/hooks/usePets';
-import { ArrowLeft, PawPrint, AlertCircle, Save } from 'lucide-react';
+import { useTheme } from '../../../src/contexts/ThemeContext';
+import { ArrowLeft, PawPrint, AlertCircle, Save } from 'lucide-react-native';
 import { PetSpecies } from '../../../src/types/pet';
 
 export default function NewPetPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const addPetMutation = useAddPet();
 
   const [name, setName] = useState('');
@@ -18,8 +28,14 @@ export default function NewPetPage() {
   const [notes, setNotes] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const speciesOptions: { key: PetSpecies; label: string; icon: string }[] = [
+    { key: 'dog', label: 'Cachorro', icon: '🐶' },
+    { key: 'cat', label: 'Gato', icon: '🐱' },
+    { key: 'bird', label: 'Pássaro', icon: '🦜' },
+    { key: 'other', label: 'Outro', icon: '🐾' },
+  ];
+
+  const handleSubmit = async () => {
     setError(null);
 
     if (!name.trim()) {
@@ -52,256 +68,353 @@ export default function NewPetPage() {
   };
 
   return (
-    <div style={{ maxWidth: '640px', margin: '0 auto' }}>
-      <button
-        onClick={() => router.back()}
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'none',
-          border: 'none',
-          color: '#667085',
-          fontSize: '14px',
-          fontWeight: 600,
-          cursor: 'pointer',
-          marginBottom: '20px',
-        }}
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => router.back()}
+        style={styles.backBtn}
+        activeOpacity={0.7}
       >
-        <ArrowLeft size={16} /> Voltar para Meus Pets
-      </button>
+        <ArrowLeft size={16} color={colors.textSecondary} />
+        <Text style={[styles.backBtnText, { color: colors.textSecondary }]}>
+          Voltar para Meus Pets
+        </Text>
+      </TouchableOpacity>
 
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid #edf1ef',
-          padding: '36px',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
-        }}
+      <View
+        style={[
+          styles.formCard,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
+        ]}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '16px',
-              background: 'var(--verde-neve, #ecfdf5)',
-              color: 'var(--verde, #10b981)',
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <PawPrint size={24} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '22px', fontWeight: 800, color: '#172422', margin: 0 }}>
-              Cadastrar Novo Pet
-            </h1>
-            <p style={{ color: '#667085', fontSize: '13px', margin: '3px 0 0' }}>
+        <View style={styles.cardHeader}>
+          <View style={[styles.iconBox, { backgroundColor: colors.primaryLight }]}>
+            <PawPrint size={22} color={colors.accent} />
+          </View>
+          <View>
+            <Text style={[styles.title, { color: colors.text }]}>Cadastrar Novo Pet</Text>
+            <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
               Preencha os dados do animal para criar o prontuário no sistema
-            </p>
-          </div>
-        </div>
+            </Text>
+          </View>
+        </View>
 
         {error && (
-          <div
-            style={{
-              padding: '12px 16px',
-              borderRadius: '12px',
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#b91c1c',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '20px',
-            }}
-          >
-            <AlertCircle size={16} />
-            <span>{error}</span>
-          </div>
+          <View style={styles.errorBox}>
+            <AlertCircle size={16} color="#b91c1c" />
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
         )}
 
-        <form onSubmit={handleSubmit}>
-          {/* Nome */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Nome do Pet *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="Ex: Thor, Luna, Pipoca, Fred"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
+        {/* Nome */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Nome do Pet *</Text>
+          <TextInput
+            placeholder="Ex: Thor, Luna, Pipoca, Fred"
+            placeholderTextColor={colors.textMuted}
+            value={name}
+            onChangeText={setName}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* Espécie */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Espécie *</Text>
+          <View style={styles.speciesRow}>
+            {speciesOptions.map((opt) => {
+              const isSelected = species === opt.key;
+              return (
+                <TouchableOpacity
+                  key={opt.key}
+                  onPress={() => setSpecies(opt.key)}
+                  style={[
+                    styles.speciesBtn,
+                    {
+                      backgroundColor: isSelected ? colors.primaryLight : colors.surfaceSubtle,
+                      borderColor: isSelected ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text style={styles.speciesEmoji}>{opt.icon}</Text>
+                  <Text
+                    style={[
+                      styles.speciesText,
+                      { color: isSelected ? colors.accent : colors.text },
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* Raça e Idade */}
+        <View style={styles.rowFields}>
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>Raça</Text>
+            <TextInput
+              placeholder="Ex: Golden, SRD, Siamês"
+              placeholderTextColor={colors.textMuted}
+              value={breed}
+              onChangeText={setBreed}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
             />
-          </div>
+          </View>
 
-          {/* Espécie e Raça */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Espécie *
-              </label>
-              <select
-                value={species}
-                onChange={(e) => setSpecies(e.target.value as PetSpecies)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  background: '#ffffff',
-                }}
-              >
-                <option value="dog">🐶 Cachorro</option>
-                <option value="cat">🐱 Gato</option>
-                <option value="bird">🦜 Pássaro</option>
-                <option value="other">🐾 Outro animal</option>
-              </select>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Raça
-              </label>
-              <input
-                type="text"
-                placeholder="Ex: Golden Retriever, SRD"
-                value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Idade e Peso */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Idade aproximada
-              </label>
-              <input
-                type="text"
-                placeholder="Ex: 2 anos, 6 meses"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-                Peso (em kg)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                placeholder="Ex: 12.5"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  borderRadius: '12px',
-                  border: '1px solid #cbd5e1',
-                  fontSize: '14px',
-                  outline: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Observações Médicas */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-              Histórico de Saúde / Alergias / Observações
-            </label>
-            <textarea
-              rows={3}
-              placeholder="Ex: Alérgico a picada de pulga, castrado, faz uso contínuo de colírio..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-                resize: 'vertical',
-              }}
+          <View style={[styles.field, { flex: 1 }]}>
+            <Text style={[styles.label, { color: colors.text }]}>Idade</Text>
+            <TextInput
+              placeholder="Ex: 2 anos, 6 meses"
+              placeholderTextColor={colors.textMuted}
+              value={age}
+              onChangeText={setAge}
+              style={[
+                styles.input,
+                {
+                  backgroundColor: colors.surfaceSubtle,
+                  borderColor: colors.border,
+                  color: colors.text,
+                },
+              ]}
             />
-          </div>
+          </View>
+        </View>
 
-          {/* Botões */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              style={{
-                padding: '13px 20px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                background: '#ffffff',
-                color: '#475467',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
+        {/* Peso */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>Peso (em kg)</Text>
+          <TextInput
+            placeholder="Ex: 12.5"
+            placeholderTextColor={colors.textMuted}
+            keyboardType="numeric"
+            value={weight}
+            onChangeText={setWeight}
+            style={[
+              styles.input,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* Observações */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { color: colors.text }]}>
+            Histórico de Saúde / Alergias / Observações
+          </Text>
+          <TextInput
+            multiline
+            numberOfLines={3}
+            placeholder="Ex: Alérgico a picada de pulga, castrado, faz uso de medicação..."
+            placeholderTextColor={colors.textMuted}
+            value={notes}
+            onChangeText={setNotes}
+            style={[
+              styles.textArea,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+                color: colors.text,
+              },
+            ]}
+          />
+        </View>
+
+        {/* Botões */}
+        <View style={styles.actionsRow}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={[
+              styles.cancelBtn,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <Text style={[styles.cancelBtnText, { color: colors.textSecondary }]}>
               Cancelar
-            </button>
+            </Text>
+          </TouchableOpacity>
 
-            <button
-              type="submit"
-              disabled={addPetMutation.isPending}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '13px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 10px 20px rgba(6, 78, 59, 0.15)',
-              }}
-            >
-              <Save size={16} />
-              {addPetMutation.isPending ? 'Salvando na API...' : 'Salvar Pet'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={addPetMutation.isPending}
+            activeOpacity={0.85}
+            style={styles.saveBtn}
+          >
+            {addPetMutation.isPending ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <>
+                <Save size={16} color="#ffffff" />
+                <Text style={styles.saveBtnText}>Salvar Pet</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: 640,
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  backBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  formCard: {
+    borderRadius: 22,
+    borderWidth: 1,
+    padding: 24,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 20,
+  },
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  subtitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#b91c1c',
+    fontSize: 12,
+  },
+  field: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  input: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+  },
+  textArea: {
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    fontSize: 14,
+    minHeight: 80,
+    textAlignVertical: 'top',
+  },
+  speciesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  speciesBtn: {
+    flex: 1,
+    minWidth: 70,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+  },
+  speciesEmoji: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  speciesText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  rowFields: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 10,
+  },
+  cancelBtn: {
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  cancelBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  saveBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#064e3b',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  saveBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+});

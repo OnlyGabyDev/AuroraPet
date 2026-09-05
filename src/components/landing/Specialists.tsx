@@ -1,6 +1,8 @@
 import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useSpecialists } from '../../hooks/useSpecialists';
-import { Calendar } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
+import { Calendar } from 'lucide-react-native';
 
 interface SpecialistsProps {
   onOpenBooking: () => void;
@@ -8,167 +10,190 @@ interface SpecialistsProps {
 
 export const Specialists: React.FC<SpecialistsProps> = ({ onOpenBooking }) => {
   const { data: specialists = [] } = useSpecialists();
+  const { colors, isDark } = useTheme();
 
   return (
-    <section
-      id="especialistas"
-      style={{
-        padding: '115px 0',
-        background: '#f8faf9',
-      }}
+    <View
+      nativeID="especialistas"
+      style={[
+        styles.section,
+        {
+          backgroundColor: isDark ? '#090d0c' : '#f8faf9',
+        },
+      ]}
     >
-      <div style={{ width: 'min(1180px, calc(100% - 48px))', margin: '0 auto' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            gap: '30px',
-            marginBottom: '50px',
-            flexWrap: 'wrap',
-          }}
-        >
-          <div>
-            <h2
-              style={{
-                maxWidth: '620px',
-                fontFamily: '"Manrope", sans-serif',
-                fontSize: 'clamp(32px, 4vw, 45px)',
-                lineHeight: 1.08,
-                letterSpacing: '-2px',
-                color: '#172422',
-                fontWeight: 800,
-              }}
-            >
+      <View style={styles.container}>
+        <View style={styles.headerRow}>
+          <View style={styles.titleColumn}>
+            <Text style={[styles.heading, { color: colors.text }]}>
               Profissionais focados{' '}
-              <span style={{ color: 'var(--verde, #10b981)' }}>
-                em cada paciente.
-              </span>
-            </h2>
-          </div>
+              <Text style={{ color: colors.accent }}>em cada paciente.</Text>
+            </Text>
+          </View>
 
-          <p
-            style={{
-              maxWidth: '420px',
-              color: '#667085',
-              lineHeight: 1.7,
-              fontSize: '14px',
-              margin: 0,
-            }}
-          >
-            Esta área é integrada aos veterinários cadastrados na plataforma Clyvo,
-            utilizando dados reais disponibilizados pelo sistema via TanStack Query.
-          </p>
-        </div>
+          <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
+            Equipe médica integrada à plataforma Clyvo, utilizando dados reais
+            disponibilizados via TanStack Query.
+          </Text>
+        </View>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '20px',
-          }}
-        >
+        <View style={styles.grid}>
           {specialists.map((specialist) => (
-            <article
+            <View
               key={specialist.id}
-              style={{
-                padding: '25px',
-                borderRadius: '24px',
-                border: '1px solid rgba(15, 23, 42, 0.08)',
-                background: '#ffffff',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
-                transition: 'all 0.35s ease',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-              className="hover:translate-y-[-7px] hover:border-[rgba(16,185,129,.3)] hover:shadow-[0_24px_55px_rgba(124,58,237,.08)]"
+              style={[
+                styles.card,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                  shadowColor: '#000000',
+                  shadowOpacity: isDark ? 0.35 : 0.04,
+                },
+              ]}
             >
-              <div
-                style={{
-                  height: '260px',
-                  borderRadius: '18px',
-                  overflow: 'hidden',
-                  marginBottom: '20px',
-                  background: 'linear-gradient(135deg, var(--verde-neve, #ecfdf5), var(--roxo-neve, #f5f3ff))',
-                }}
-              >
-                <img
-                  src={specialist.photoUrl}
-                  alt={specialist.name}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: specialist.photoUrl }}
+                  style={styles.specialistImage}
+                  resizeMode="cover"
                 />
-              </div>
+              </View>
 
-              <h3
-                style={{
-                  fontFamily: '"Manrope", sans-serif',
-                  fontSize: '20px',
-                  fontWeight: 800,
-                  color: '#172422',
-                  margin: 0,
-                }}
-              >
+              <Text style={[styles.specialistName, { color: colors.text }]}>
                 {specialist.name}
-              </h3>
+              </Text>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
-                <span
-                  style={{
-                    color: 'var(--verde, #10b981)',
-                    fontSize: '13px',
-                    fontWeight: 700,
-                  }}
-                >
+              <View style={styles.specialtyRow}>
+                <Text style={[styles.specialtyText, { color: colors.accent }]}>
                   {specialist.specialty}
-                </span>
-                <small style={{ color: '#94a3b8', fontSize: '11px', fontWeight: 600 }}>
+                </Text>
+                <Text style={[styles.crmvText, { color: colors.textMuted }]}>
                   {specialist.crmv}
-                </small>
-              </div>
+                </Text>
+              </View>
 
-              <p
-                style={{
-                  marginTop: '13px',
-                  color: '#7b8492',
-                  fontSize: '13px',
-                  lineHeight: 1.65,
-                  flexGrow: 1,
-                }}
-              >
+              <Text style={[styles.bioText, { color: colors.textSecondary }]}>
                 {specialist.bio}
-              </p>
+              </Text>
 
-              <button
-                onClick={onOpenBooking}
-                style={{
-                  marginTop: '18px',
-                  width: '100%',
-                  padding: '11px',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(16,185,129,0.25)',
-                  background: 'var(--verde-neve, #ecfdf5)',
-                  color: '#08775a',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  transition: 'all 0.2s ease',
-                }}
-                className="hover:bg-[#10b981] hover:text-white"
+              <TouchableOpacity
+                onPress={onOpenBooking}
+                activeOpacity={0.8}
+                style={[
+                  styles.bookButton,
+                  {
+                    backgroundColor: colors.primaryLight,
+                    borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+                  },
+                ]}
               >
-                <Calendar size={14} /> Agendar com este especialista
-              </button>
-            </article>
+                <Calendar size={14} color={colors.accent} />
+                <Text style={[styles.bookButtonText, { color: colors.accent }]}>
+                  Agendar com este especialista
+                </Text>
+              </TouchableOpacity>
+            </View>
           ))}
-        </div>
-      </div>
-    </section>
+        </View>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  section: {
+    paddingVertical: 70,
+    paddingHorizontal: 20,
+    width: '100%',
+  },
+  container: {
+    width: '100%',
+    maxWidth: 1180,
+    marginHorizontal: 'auto',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: 20,
+    marginBottom: 40,
+  },
+  titleColumn: {
+    maxWidth: 620,
+  },
+  heading: {
+    fontSize: 32,
+    lineHeight: 38,
+    fontWeight: '800',
+    letterSpacing: -1,
+  },
+  headerSubtitle: {
+    maxWidth: 420,
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 20,
+  },
+  card: {
+    flex: 1,
+    minWidth: 280,
+    padding: 22,
+    borderRadius: 22,
+    borderWidth: 1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 16,
+    elevation: 2,
+  },
+  imageContainer: {
+    height: 240,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 18,
+    backgroundColor: '#ecfdf5',
+  },
+  specialistImage: {
+    width: '100%',
+    height: '100%',
+  },
+  specialistName: {
+    fontSize: 19,
+    fontWeight: '800',
+  },
+  specialtyRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 6,
+    marginBottom: 10,
+  },
+  specialtyText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  crmvText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  bioText: {
+    fontSize: 13,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  bookButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  bookButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+});

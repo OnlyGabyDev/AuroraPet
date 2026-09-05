@@ -1,66 +1,114 @@
-import React from 'react';
+﻿import React from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { Slot, useRouter } from 'expo-router';
 import { HeaderBrand } from '../../src/components/common/HeaderBrand';
-import { ArrowLeft } from 'lucide-react';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import { ArrowLeft, Sun, Moon } from 'lucide-react-native';
 
 export default function AuthLayout() {
   const router = useRouter();
+  const { colors, isDark, toggleTheme } = useTheme();
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '24px',
-        position: 'relative',
-        background: 'linear-gradient(135deg, #f8fafc 0%, #ecfdf5 50%, #f5f3ff 100%)',
-      }}
-    >
-      {/* Botão voltar para Home */}
-      <button
-        onClick={() => router.push('/')}
-        style={{
-          position: 'absolute',
-          top: '24px',
-          left: '24px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '10px 16px',
-          borderRadius: '12px',
-          border: '1px solid rgba(15, 23, 42, 0.08)',
-          background: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(10px)',
-          color: '#475467',
-          fontSize: '13px',
-          fontWeight: 600,
-          cursor: 'pointer',
-        }}
-      >
-        <ArrowLeft size={16} /> Voltar para o início
-      </button>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={styles.topBar}>
+        <TouchableOpacity
+          onPress={() => router.push('/')}
+          style={[styles.backBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          activeOpacity={0.7}
+        >
+          <ArrowLeft size={16} color={colors.textSecondary} />
+          <Text style={[styles.backBtnText, { color: colors.textSecondary }]}>Início</Text>
+        </TouchableOpacity>
 
-      {/* Cartão de Autenticação */}
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          background: '#ffffff',
-          borderRadius: '24px',
-          padding: '36px 32px',
-          boxShadow: '0 25px 60px rgba(6, 78, 59, 0.1)',
-          border: '1px solid rgba(16, 185, 129, 0.12)',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <HeaderBrand size="lg" />
-        </div>
+        <TouchableOpacity
+          onPress={toggleTheme}
+          style={[styles.themeBtn, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          activeOpacity={0.7}
+        >
+          {isDark ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#64748b" />}
+        </TouchableOpacity>
+      </View>
 
-        <Slot />
-      </div>
-    </div>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={[
+            styles.authCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
+        >
+          <View style={styles.brandCenter}>
+            <HeaderBrand size="lg" />
+          </View>
+
+          <Slot />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  topBar: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  backBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  themeBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  authCard: {
+    width: '100%',
+    maxWidth: 440,
+    borderRadius: 24,
+    borderWidth: 1,
+    padding: 28,
+  },
+  brandCenter: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+});

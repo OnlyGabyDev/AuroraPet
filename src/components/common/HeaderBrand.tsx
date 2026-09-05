@@ -1,5 +1,7 @@
 import React from 'react';
-import { PawPrint } from 'lucide-react';
+import { View, Text, StyleSheet } from 'react-native';
+import { PawPrint } from 'lucide-react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface HeaderBrandProps {
   size?: 'sm' | 'md' | 'lg';
@@ -7,59 +9,105 @@ interface HeaderBrandProps {
 }
 
 export const HeaderBrand: React.FC<HeaderBrandProps> = ({ size = 'md', showSubtitle = true }) => {
-  const iconSize = size === 'sm' ? 36 : size === 'lg' ? 52 : 44;
-  const lucideIconSize = size === 'sm' ? 18 : size === 'lg' ? 26 : 22;
-  const titleSize = size === 'sm' ? '18px' : size === 'lg' ? '24px' : '20px';
+  const { colors, isDark } = useTheme();
+
+  const iconSize = size === 'sm' ? 36 : size === 'lg' ? 48 : 40;
+  const lucideIconSize = size === 'sm' ? 18 : size === 'lg' ? 24 : 20;
+  const titleSize = size === 'sm' ? 18 : size === 'lg' ? 24 : 20;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', textDecoration: 'none' }}>
-      <div
-        style={{
-          width: `${iconSize}px`,
-          height: `${iconSize}px`,
-          display: 'grid',
-          placeItems: 'center',
-          borderRadius: '14px',
-          color: '#ffffff',
-          background: 'linear-gradient(135deg, var(--verde, #10b981), #14a987 45%, var(--roxo, #7c3aed))',
-          boxShadow: '0 10px 25px rgba(16, 185, 129, 0.23)',
-          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        }}
-        className="hover:rotate-[-5deg] hover:scale-105"
+    <View style={styles.container}>
+      <View
+        style={[
+          styles.iconBox,
+          {
+            width: iconSize,
+            height: iconSize,
+            backgroundColor: '#10b981',
+            shadowColor: '#10b981',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: isDark ? 0.4 : 0.25,
+            shadowRadius: 8,
+            elevation: 4,
+          },
+        ]}
       >
-        <PawPrint size={lucideIconSize} />
-      </div>
+        <PawPrint size={lucideIconSize} color="#ffffff" />
+      </View>
 
-      <div>
-        <strong
-          style={{
-            display: 'block',
-            fontFamily: '"Manrope", sans-serif',
-            fontSize: titleSize,
-            lineHeight: titleSize,
-            letterSpacing: '-0.5px',
-            color: 'var(--texto, #172422)',
-            fontWeight: 800,
-          }}
-        >
-          Clyvo
-        </strong>
-        {showSubtitle && (
-          <span
-            style={{
-              display: 'block',
-              marginTop: '4px',
-              color: '#7c8793',
-              fontSize: '9px',
-              fontWeight: 600,
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-            }}
+      <View style={styles.textContainer}>
+        <View style={styles.titleRow}>
+          <Text
+            style={[
+              styles.title,
+              {
+                fontSize: titleSize,
+                color: colors.text,
+              },
+            ]}
           >
+            Clyvo
+          </Text>
+          <View
+            style={[
+              styles.badge,
+              {
+                backgroundColor: colors.primaryLight,
+              },
+            ]}
+          >
+            <Text style={[styles.badgeText, { color: colors.accent }]}>VET</Text>
+          </View>
+        </View>
+
+        {showSubtitle && (
+          <Text style={[styles.subtitle, { color: colors.textMuted }]}>
             Veterinary Care
-          </span>
+          </Text>
         )}
-      </div>
-    </div>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  iconBox: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+  },
+  textContainer: {
+    flexDirection: 'column',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  title: {
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  badge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  subtitle: {
+    marginTop: 2,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+});

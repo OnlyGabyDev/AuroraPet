@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
+ï»¿import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Platform,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../src/hooks/useAuth';
-import { useAppointments, useCancelAppointment, useDeleteAppointment } from '../../../src/hooks/useAppointments';
-import { Calendar, Clock, Stethoscope, Plus, AlertCircle, CheckCircle, XCircle, Trash2, Ban } from 'lucide-react';
+import {
+  useAppointments,
+  useCancelAppointment,
+  useDeleteAppointment,
+} from '../../../src/hooks/useAppointments';
+import { useTheme } from '../../../src/contexts/ThemeContext';
+import {
+  Calendar,
+  Clock,
+  Stethoscope,
+  Plus,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Ban,
+} from 'lucide-react-native';
 import { AppointmentStatus } from '../../../src/types/appointment';
 
 export default function AppointmentsListPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const { data: appointments = [], isLoading, isError, error } = useAppointments(user?.uid);
   const cancelMutation = useCancelAppointment();
   const deleteMutation = useDeleteAppointment();
@@ -22,377 +47,520 @@ export default function AppointmentsListPage() {
     switch (status) {
       case 'scheduled':
         return (
-          <span
-            style={{
-              padding: '4px 10px',
-              borderRadius: '999px',
-              background: '#dcfce7',
-              color: '#15803d',
-              fontSize: '12px',
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <CheckCircle size={12} /> Agendada
-          </span>
+          <View style={[styles.badgeContainer, { backgroundColor: '#dcfce7' }]}>
+            <CheckCircle size={12} color="#15803d" />
+            <Text style={[styles.badgeText, { color: '#15803d' }]}>Agendada</Text>
+          </View>
         );
       case 'completed':
         return (
-          <span
-            style={{
-              padding: '4px 10px',
-              borderRadius: '999px',
-              background: '#e0f2fe',
-              color: '#0369a1',
-              fontSize: '12px',
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <CheckCircle size={12} /> Realizada
-          </span>
+          <View style={[styles.badgeContainer, { backgroundColor: '#e0f2fe' }]}>
+            <CheckCircle size={12} color="#0369a1" />
+            <Text style={[styles.badgeText, { color: '#0369a1' }]}>Realizada</Text>
+          </View>
         );
       case 'cancelled':
         return (
-          <span
-            style={{
-              padding: '4px 10px',
-              borderRadius: '999px',
-              background: '#fee2e2',
-              color: '#b91c1c',
-              fontSize: '12px',
-              fontWeight: 700,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
-            <XCircle size={12} /> Cancelada
-          </span>
+          <View style={[styles.badgeContainer, { backgroundColor: '#fee2e2' }]}>
+            <XCircle size={12} color="#b91c1c" />
+            <Text style={[styles.badgeText, { color: '#b91c1c' }]}>Cancelada</Text>
+          </View>
         );
     }
   };
 
   const handleCancel = async (id: string) => {
-    if (confirm('Deseja realmente cancelar esta consulta?')) {
+    const doCancel = async () => {
       try {
         await cancelMutation.mutateAsync(id);
       } catch (err) {
         console.error('Erro ao cancelar agendamento:', err);
-        alert('Erro ao cancelar consulta na API.');
       }
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm('Deseja realmente cancelar esta consulta?')) {
+        await doCancel();
+      }
+    } else {
+      Alert.alert('Cancelar Consulta', 'Deseja realmente cancelar esta consulta?', [
+        { text: 'NÃ£o', style: 'cancel' },
+        { text: 'Sim, Cancelar', style: 'destructive', onPress: doCancel },
+      ]);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Deseja excluir permanentemente o registro deste agendamento?')) {
+    const doDelete = async () => {
       try {
         await deleteMutation.mutateAsync(id);
       } catch (err) {
         console.error('Erro ao excluir agendamento:', err);
-        alert('Erro ao excluir consulta na API.');
       }
+    };
+
+    if (Platform.OS === 'web') {
+      if (confirm('Deseja excluir permanentemente o registro deste agendamento?')) {
+        await doDelete();
+      }
+    } else {
+      Alert.alert('Excluir Registro', 'Deseja excluir permanentemente este agendamento?', [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: doDelete },
+      ]);
     }
   };
 
   return (
-    <div>
-      {/* CABEÇALHO */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '28px',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#172422', margin: 0 }}>
+    <View style={styles.container}>
+      {/* CABEÃ‡ALHO */}
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={[styles.pageTitle, { color: colors.text }]}>
             Consultas & Agendamentos
-          </h1>
-          <p style={{ color: '#667085', fontSize: '14px', marginTop: '4px' }}>
-            Histórico e controle dos atendimentos veterinários com atualização reativa via TanStack Query
-          </p>
-        </div>
+          </Text>
+          <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
+            HistÃ³rico e controle dos atendimentos veterinÃ¡rios com atualizaÃ§Ã£o reativa via TanStack Query
+          </Text>
+        </View>
 
-        <button
-          onClick={() => router.push('/(dashboard)/appointments/new')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '13px 20px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-            color: '#ffffff',
-            fontSize: '14px',
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 10px 25px rgba(6, 78, 59, 0.15)',
-          }}
+        <TouchableOpacity
+          onPress={() => router.push('/(dashboard)/appointments/new')}
+          activeOpacity={0.85}
+          style={styles.newBtn}
         >
-          <Plus size={16} /> Nova Consulta
-        </button>
-      </div>
+          <Plus size={16} color="#ffffff" />
+          <Text style={styles.newBtnText}>Nova Consulta</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* FILTROS DE STATUS */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <button
-          onClick={() => setStatusFilter('all')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: statusFilter === 'all' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: statusFilter === 'all' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: statusFilter === 'all' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+      <View style={styles.filtersRow}>
+        <TouchableOpacity
+          onPress={() => setStatusFilter('all')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: statusFilter === 'all' ? colors.primaryLight : colors.surface,
+              borderColor: statusFilter === 'all' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          Todas ({appointments.length})
-        </button>
-        <button
-          onClick={() => setStatusFilter('scheduled')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: statusFilter === 'scheduled' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: statusFilter === 'scheduled' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: statusFilter === 'scheduled' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: statusFilter === 'all' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            Todas ({appointments.length})
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setStatusFilter('scheduled')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: statusFilter === 'scheduled' ? colors.primaryLight : colors.surface,
+              borderColor: statusFilter === 'scheduled' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          Agendadas ({appointments.filter((a) => a.status === 'scheduled').length})
-        </button>
-        <button
-          onClick={() => setStatusFilter('completed')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: statusFilter === 'completed' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: statusFilter === 'completed' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: statusFilter === 'completed' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: statusFilter === 'scheduled' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            Agendadas ({appointments.filter((a) => a.status === 'scheduled').length})
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setStatusFilter('completed')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: statusFilter === 'completed' ? colors.primaryLight : colors.surface,
+              borderColor: statusFilter === 'completed' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          Realizadas ({appointments.filter((a) => a.status === 'completed').length})
-        </button>
-        <button
-          onClick={() => setStatusFilter('cancelled')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '10px',
-            border: statusFilter === 'cancelled' ? '2px solid var(--verde, #10b981)' : '1px solid #cbd5e1',
-            background: statusFilter === 'cancelled' ? 'var(--verde-neve, #ecfdf5)' : '#ffffff',
-            color: statusFilter === 'cancelled' ? 'var(--verde-escuro, #064e3b)' : '#667085',
-            fontWeight: 700,
-            fontSize: '13px',
-            cursor: 'pointer',
-          }}
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: statusFilter === 'completed' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            Realizadas ({appointments.filter((a) => a.status === 'completed').length})
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setStatusFilter('cancelled')}
+          style={[
+            styles.filterBtn,
+            {
+              backgroundColor: statusFilter === 'cancelled' ? colors.primaryLight : colors.surface,
+              borderColor: statusFilter === 'cancelled' ? colors.accent : colors.border,
+            },
+          ]}
         >
-          Canceladas ({appointments.filter((a) => a.status === 'cancelled').length})
-        </button>
-      </div>
+          <Text
+            style={[
+              styles.filterBtnText,
+              { color: statusFilter === 'cancelled' ? colors.accent : colors.textSecondary },
+            ]}
+          >
+            Canceladas ({appointments.filter((a) => a.status === 'cancelled').length})
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       {/* ESTADO DE CARREGAMENTO */}
       {isLoading && (
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              border: '3px solid rgba(16, 185, 129, 0.2)',
-              borderTopColor: '#10b981',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              margin: '0 auto 16px',
-            }}
-          />
-          <p style={{ color: '#667085', fontSize: '14px', fontWeight: 600 }}>
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#10b981" />
+          <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
             Consultando agendamentos no servidor HTTP...
-          </p>
-        </div>
+          </Text>
+        </View>
       )}
 
       {/* ERRO NA API */}
       {isError && (
-        <div
-          style={{
-            padding: '16px 20px',
-            borderRadius: '16px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#b91c1c',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '20px',
-          }}
-        >
-          <AlertCircle size={20} />
-          <div>
-            <strong>Erro na API HTTP:</strong>
-            <div style={{ fontSize: '13px' }}>{(error as Error)?.message || 'Falha ao buscar agendamentos.'}</div>
-          </div>
-        </div>
+        <View style={styles.errorBox}>
+          <AlertCircle size={20} color="#b91c1c" />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.errorTitle}>Erro na API HTTP:</Text>
+            <Text style={styles.errorDesc}>
+              {(error as Error)?.message || 'Falha ao buscar agendamentos.'}
+            </Text>
+          </View>
+        </View>
       )}
 
       {/* LISTAGEM DE CONSULTAS */}
       {!isLoading && !isError && (
-        <div style={{ display: 'grid', gap: '16px' }}>
+        <View style={styles.listContainer}>
           {filtered.length === 0 ? (
-            <div
-              style={{
-                background: '#ffffff',
-                borderRadius: '24px',
-                border: '1px dashed #cbd5e1',
-                padding: '60px 20px',
-                textAlign: 'center',
-              }}
+            <View
+              style={[
+                styles.emptyBox,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
+              ]}
             >
-              <Calendar size={48} color="#94a3b8" style={{ margin: '0 auto 16px' }} />
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#334155', margin: 0 }}>
+              <Calendar size={44} color={colors.textMuted} />
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>
                 Nenhum agendamento encontrado
-              </h3>
-              <p style={{ color: '#667085', fontSize: '14px', marginTop: '6px', maxWidth: '400px', margin: '6px auto 20px' }}>
-                Você ainda não possui atendimentos marcados nesta categoria. Agende uma consulta com um dos especialistas da Clyvo.
-              </p>
-              <button
-                onClick={() => router.push('/(dashboard)/appointments/new')}
-                style={{
-                  padding: '12px 22px',
-                  borderRadius: '12px',
-                  background: 'var(--verde-escuro, #064e3b)',
-                  color: '#ffffff',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  border: 'none',
-                  cursor: 'pointer',
-                }}
+              </Text>
+              <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+                VocÃª nÃ£o possui atendimentos nesta categoria. Agende uma consulta com um dos especialistas da Clyvo.
+              </Text>
+              <TouchableOpacity
+                onPress={() => router.push('/(dashboard)/appointments/new')}
+                style={styles.emptyBtn}
               >
-                + Marcar Nova Consulta
-              </button>
-            </div>
+                <Text style={styles.emptyBtnText}>+ Marcar Nova Consulta</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             filtered.map((item) => (
-              <div
+              <View
                 key={item.id}
-                style={{
-                  background: '#ffffff',
-                  borderRadius: '20px',
-                  border: '1px solid #edf1ef',
-                  padding: '24px',
-                  boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexWrap: 'wrap',
-                  gap: '20px',
-                }}
+                style={[
+                  styles.card,
+                  {
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                  },
+                ]}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <div
-                    style={{
-                      width: '50px',
-                      height: '50px',
-                      borderRadius: '16px',
-                      background: 'var(--verde-neve, #ecfdf5)',
-                      display: 'grid',
-                      placeItems: 'center',
-                      color: '#08775a',
-                    }}
-                  >
-                    <Stethoscope size={22} />
-                  </div>
+                <View style={styles.cardMain}>
+                  <View style={[styles.iconCircle, { backgroundColor: colors.primaryLight }]}>
+                    <Stethoscope size={22} color={colors.accent} />
+                  </View>
 
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <strong style={{ fontSize: '16px', color: '#172422' }}>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.cardHeaderRow}>
+                      <Text style={[styles.serviceTitle, { color: colors.text }]}>
                         {item.serviceName}
-                      </strong>
+                      </Text>
                       {getStatusBadge(item.status)}
-                    </div>
-                    <div style={{ color: '#667085', fontSize: '13px', marginTop: '4px' }}>
-                      Paciente: <strong>{item.petName}</strong> • Especialista:{' '}
-                      <strong>{item.specialistName}</strong>
-                    </div>
+                    </View>
+                    <Text style={[styles.patientInfo, { color: colors.textSecondary }]}>
+                      Paciente: <Text style={{ fontWeight: '700', color: colors.text }}>{item.petName}</Text> â€¢ Especialista:{' '}
+                      <Text style={{ fontWeight: '700', color: colors.text }}>{item.specialistName}</Text>
+                    </Text>
                     {item.notes && (
-                      <div style={{ fontSize: '12px', color: '#8a94a3', marginTop: '4px' }}>
+                      <Text style={[styles.notesText, { color: colors.textMuted }]}>
                         Nota do tutor: {item.notes}
-                      </div>
+                      </Text>
                     )}
-                  </div>
-                </div>
+                  </View>
+                </View>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#172422', fontWeight: 700, fontSize: '14px' }}>
-                      <Calendar size={15} color="#10b981" /> {item.date}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#667085', fontSize: '13px', marginTop: '4px' }}>
-                      <Clock size={15} color="#7c3aed" /> {item.time}
-                    </div>
-                  </div>
+                <View style={styles.cardActions}>
+                  <View>
+                    <View style={styles.dateRow}>
+                      <Calendar size={14} color="#10b981" />
+                      <Text style={[styles.dateText, { color: colors.text }]}>
+                        {item.date}
+                      </Text>
+                    </View>
+                    <View style={[styles.dateRow, { marginTop: 4 }]}>
+                      <Clock size={14} color="#7c3aed" />
+                      <Text style={[styles.dateText, { color: colors.textSecondary }]}>
+                        {item.time}
+                      </Text>
+                    </View>
+                  </View>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <View style={styles.actionButtonsRow}>
                     {item.status === 'scheduled' && (
-                      <button
-                        onClick={() => handleCancel(item.id)}
+                      <TouchableOpacity
+                        onPress={() => handleCancel(item.id)}
                         disabled={cancelMutation.isPending}
-                        title="Cancelar consulta"
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          padding: '8px 12px',
-                          borderRadius: '10px',
-                          border: '1px solid #fecaca',
-                          background: '#fef2f2',
-                          color: '#dc2626',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
+                        style={[
+                          styles.actionBtn,
+                          {
+                            backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#fef2f2',
+                            borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fecaca',
+                          },
+                        ]}
                       >
-                        <Ban size={14} /> Cancelar
-                      </button>
+                        <Ban size={14} color="#dc2626" />
+                        <Text style={styles.cancelText}>Cancelar</Text>
+                      </TouchableOpacity>
                     )}
 
-                    <button
-                      onClick={() => handleDelete(item.id)}
+                    <TouchableOpacity
+                      onPress={() => handleDelete(item.id)}
                       disabled={deleteMutation.isPending}
-                      title="Excluir agendamento"
-                      style={{
-                        padding: '8px 10px',
-                        borderRadius: '10px',
-                        border: '1px solid #e2e8f0',
-                        background: '#f8fafc',
-                        color: '#64748b',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                      }}
+                      style={[
+                        styles.actionBtn,
+                        {
+                          backgroundColor: colors.surfaceSubtle,
+                          borderColor: colors.border,
+                        },
+                      ]}
                     >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-              </div>
+                      <Trash2 size={14} color={colors.textMuted} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
             ))
           )}
-        </div>
+        </View>
       )}
-    </div>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  pageTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  pageSubtitle: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  newBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 16,
+    paddingVertical: 11,
+    borderRadius: 12,
+  },
+  newBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  filtersRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 20,
+  },
+  filterBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  filterBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  centerContainer: {
+    paddingVertical: 60,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 14,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderRadius: 14,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 20,
+  },
+  errorTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#b91c1c',
+  },
+  errorDesc: {
+    fontSize: 12,
+    color: '#b91c1c',
+    marginTop: 2,
+  },
+  listContainer: {
+    gap: 14,
+  },
+  emptyBox: {
+    padding: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginTop: 12,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    textAlign: 'center',
+    marginTop: 6,
+    maxWidth: 400,
+    lineHeight: 20,
+  },
+  emptyBtn: {
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 18,
+  },
+  emptyBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  card: {
+    padding: 18,
+    borderRadius: 18,
+    borderWidth: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+  },
+  cardMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    flex: 1,
+    minWidth: 260,
+  },
+  iconCircle: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  serviceTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  badgeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  patientInfo: {
+    fontSize: 12,
+    marginTop: 4,
+  },
+  notesText: {
+    fontSize: 11,
+    marginTop: 3,
+  },
+  cardActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 18,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  dateText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  actionButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  cancelText: {
+    color: '#dc2626',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+});

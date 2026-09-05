@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../src/hooks/useAuth';
-import { Mail, Lock, User, UserPlus, AlertCircle } from 'lucide-react';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import { Mail, Lock, User, UserPlus, AlertCircle } from 'lucide-react-native';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register } = useAuth();
+  const { colors } = useTheme();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -14,8 +24,7 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRegister = async () => {
     setError(null);
 
     if (password !== confirmPassword) {
@@ -42,185 +51,217 @@ export default function RegisterPage() {
   };
 
   return (
-    <div>
-      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#172422', margin: 0 }}>
-          Criar Conta Tutor
-        </h1>
-        <p style={{ color: '#667085', fontSize: '13px', marginTop: '6px' }}>
+    <View style={styles.container}>
+      <View style={styles.headerArea}>
+        <Text style={[styles.title, { color: colors.text }]}>Criar Conta Tutor</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Junte-se à Clyvo e gerencie a saúde e consultas dos seus pets
-        </p>
-      </div>
+        </Text>
+      </View>
 
       {error && (
-        <div
-          style={{
-            padding: '10px 14px',
-            borderRadius: '10px',
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#b91c1c',
-            fontSize: '13px',
-            marginBottom: '18px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
-        >
-          <AlertCircle size={16} />
-          <span>{error}</span>
-        </div>
+        <View style={styles.errorBox}>
+          <AlertCircle size={16} color="#b91c1c" />
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
       )}
 
-      <form onSubmit={handleRegister}>
-        <div style={{ marginBottom: '14px' }}>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-            Seu Nome Completo
-          </label>
-          <div style={{ position: 'relative' }}>
-            <User
-              size={17}
-              style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
-            />
-            <input
-              type="text"
-              required
-              placeholder="Ex: Mariana Silva"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px 11px 42px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
-            />
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '14px' }}>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-            Email
-          </label>
-          <div style={{ position: 'relative' }}>
-            <Mail
-              size={17}
-              style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
-            />
-            <input
-              type="email"
-              required
-              placeholder="seu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px 11px 42px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
-            />
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '14px' }}>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-            Senha
-          </label>
-          <div style={{ position: 'relative' }}>
-            <Lock
-              size={17}
-              style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
-            />
-            <input
-              type="password"
-              required
-              placeholder="Mínimo de 6 caracteres"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px 11px 42px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
-            />
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#334155', marginBottom: '6px' }}>
-            Confirme sua Senha
-          </label>
-          <div style={{ position: 'relative' }}>
-            <Lock
-              size={17}
-              style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
-            />
-            <input
-              type="password"
-              required
-              placeholder="Repita sua senha"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '11px 14px 11px 42px',
-                borderRadius: '12px',
-                border: '1px solid #cbd5e1',
-                fontSize: '14px',
-                outline: 'none',
-              }}
-            />
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: '100%',
-            padding: '14px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-            color: '#ffffff',
-            fontSize: '14px',
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 12px 25px rgba(6, 78, 59, 0.18)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-          }}
+      {/* NOME */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.text }]}>Seu Nome Completo</Text>
+        <View
+          style={[
+            styles.inputRow,
+            { backgroundColor: colors.surfaceSubtle, borderColor: colors.border },
+          ]}
         >
-          <UserPlus size={18} />
-          {loading ? 'Cadastrando...' : 'Criar Minha Conta'}
-        </button>
-      </form>
+          <User size={16} color={colors.textMuted} />
+          <TextInput
+            placeholder="Ex: Ana Clara Silva"
+            placeholderTextColor={colors.textMuted}
+            value={name}
+            onChangeText={setName}
+            style={[styles.input, { color: colors.text }]}
+          />
+        </View>
+      </View>
 
-      <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '13px', color: '#667085' }}>
-        Já tem uma conta?{' '}
-        <button
-          onClick={() => router.push('/(auth)/login')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'var(--verde-escuro, #064e3b)',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
+      {/* EMAIL */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.text }]}>Email</Text>
+        <View
+          style={[
+            styles.inputRow,
+            { backgroundColor: colors.surfaceSubtle, borderColor: colors.border },
+          ]}
         >
-          Faça login
-        </button>
-      </div>
-    </div>
+          <Mail size={16} color={colors.textMuted} />
+          <TextInput
+            placeholder="seu@email.com"
+            placeholderTextColor={colors.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            style={[styles.input, { color: colors.text }]}
+          />
+        </View>
+      </View>
+
+      {/* SENHA */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.text }]}>Senha</Text>
+        <View
+          style={[
+            styles.inputRow,
+            { backgroundColor: colors.surfaceSubtle, borderColor: colors.border },
+          ]}
+        >
+          <Lock size={16} color={colors.textMuted} />
+          <TextInput
+            placeholder="Mínimo 6 caracteres"
+            placeholderTextColor={colors.textMuted}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={[styles.input, { color: colors.text }]}
+          />
+        </View>
+      </View>
+
+      {/* CONFIRMAR SENHA */}
+      <View style={styles.field}>
+        <Text style={[styles.label, { color: colors.text }]}>Confirmar Senha</Text>
+        <View
+          style={[
+            styles.inputRow,
+            { backgroundColor: colors.surfaceSubtle, borderColor: colors.border },
+          ]}
+        >
+          <Lock size={16} color={colors.textMuted} />
+          <TextInput
+            placeholder="Repita sua senha"
+            placeholderTextColor={colors.textMuted}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            style={[styles.input, { color: colors.text }]}
+          />
+        </View>
+      </View>
+
+      {/* BOTÃO CADASTRAR */}
+      <TouchableOpacity
+        onPress={handleRegister}
+        disabled={loading}
+        activeOpacity={0.85}
+        style={styles.submitBtn}
+      >
+        {loading ? (
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <>
+            <UserPlus size={16} color="#ffffff" />
+            <Text style={styles.submitBtnText}>Criar Minha Conta</Text>
+          </>
+        )}
+      </TouchableOpacity>
+
+      {/* LINK LOGIN */}
+      <View style={styles.footerRow}>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>
+          Já possui conta?{' '}
+        </Text>
+        <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+          <Text style={[styles.signupText, { color: colors.accent }]}>
+            Fazer login
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  headerArea: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '800',
+  },
+  subtitle: {
+    fontSize: 13,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    backgroundColor: '#fef2f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#b91c1c',
+    fontSize: 12,
+  },
+  field: {
+    marginBottom: 14,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  input: {
+    flex: 1,
+    fontSize: 14,
+    padding: 0,
+  },
+  submitBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#064e3b',
+    paddingVertical: 13,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  submitBtnText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  footerText: {
+    fontSize: 13,
+  },
+  signupText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+});

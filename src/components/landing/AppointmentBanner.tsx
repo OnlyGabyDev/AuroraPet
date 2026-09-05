@@ -1,175 +1,141 @@
 import React from 'react';
-import { CalendarDays, Stethoscope } from 'lucide-react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { CalendarDays, Stethoscope } from 'lucide-react-native';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface AppointmentBannerProps {
   onOpenBooking: () => void;
 }
 
 export const AppointmentBanner: React.FC<AppointmentBannerProps> = ({ onOpenBooking }) => {
+  const { colors, isDark } = useTheme();
+
   return (
-    <section
-      id="agendamento"
-      style={{
-        padding: '100px 0',
-        background: '#ffffff',
-      }}
+    <View
+      nativeID="agendamento"
+      style={[
+        styles.section,
+        {
+          backgroundColor: isDark ? '#121a17' : '#ffffff',
+          borderTopColor: colors.border,
+        },
+      ]}
     >
-      <div style={{ width: 'min(1180px, calc(100% - 48px))', margin: '0 auto' }}>
-        <div
-          style={{
-            position: 'relative',
-            overflow: 'hidden',
-            padding: '70px',
-            borderRadius: '32px',
-            background: '#092e2a',
-            color: '#ffffff',
-            boxShadow: '0 35px 75px rgba(6,78,59,.17)',
-          }}
+      <View style={styles.container}>
+        <View
+          style={[
+            styles.bannerBox,
+            {
+              backgroundColor: isDark ? '#06352b' : '#092e2a',
+              borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+            },
+          ]}
         >
-          {/* Efeitos de luz / aurora no banner */}
-          <div
-            style={{
-              position: 'absolute',
-              width: '480px',
-              height: '480px',
-              bottom: '-380px',
-              right: '140px',
-              background: 'var(--verde, #10b981)',
-              borderRadius: '50%',
-              filter: 'blur(80px)',
-              opacity: 0.55,
-              pointerEvents: 'none',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              width: '380px',
-              height: '380px',
-              right: '-190px',
-              top: '-180px',
-              background: 'var(--roxo, #7c3aed)',
-              borderRadius: '50%',
-              filter: 'blur(80px)',
-              opacity: 0.52,
-              pointerEvents: 'none',
-            }}
-          />
+          <View style={styles.contentRow}>
+            <View style={styles.textColumn}>
+              <Text style={styles.tagline}>
+                Atendimento Rápido e Humanizado
+              </Text>
 
-          <div
-            style={{
-              position: 'relative',
-              zIndex: 5,
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '60px',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <span
-                style={{
-                  display: 'block',
-                  marginBottom: '14px',
-                  color: 'var(--verde-claro, #a7f3d0)',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '1.3px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Entre em contato
-              </span>
-
-              <h2
-                style={{
-                  maxWidth: '630px',
-                  fontFamily: '"Manrope", sans-serif',
-                  fontSize: 'clamp(30px, 3.8vw, 42px)',
-                  lineHeight: 1.12,
-                  letterSpacing: '-2px',
-                  fontWeight: 800,
-                  margin: 0,
-                }}
-              >
+              <Text style={styles.heading}>
                 O próximo cuidado{' '}
-                <span style={{ color: 'var(--verde-claro, #a7f3d0)' }}>
-                  começa aqui.
-                </span>
-              </h2>
+                <Text style={{ color: '#a7f3d0' }}>começa aqui.</Text>
+              </Text>
 
-              <p
-                style={{
-                  marginTop: '19px',
-                  maxWidth: '580px',
-                  color: 'rgba(255,255,255,.75)',
-                  fontSize: '15px',
-                  lineHeight: 1.7,
-                }}
-              >
+              <Text style={styles.subtext}>
                 Agende uma consulta ou acompanhamento para o seu pet com poucos cliques.
                 Nossa equipe está pronta para oferecer o melhor acolhimento e tratamento especializado.
-              </p>
-            </div>
+              </Text>
+            </View>
 
-            <div
-              style={{
-                display: 'grid',
-                gap: '12px',
-                maxWidth: '320px',
-                marginLeft: 'auto',
-                width: '100%',
-              }}
-            >
-              <button
-                onClick={onOpenBooking}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '16px 20px',
-                  borderRadius: '14px',
-                  background: '#ffffff',
-                  color: 'var(--verde-escuro, #064e3b)',
-                  fontSize: '14px',
-                  fontWeight: 800,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
-                }}
-                className="hover:bg-[#7c3aed] hover:text-white hover:translate-y-[-3px]"
+            <View style={styles.buttonsColumn}>
+              <TouchableOpacity
+                onPress={onOpenBooking}
+                activeOpacity={0.85}
+                style={styles.primaryBtn}
               >
-                <CalendarDays size={18} />
-                Solicitar atendimento
-              </button>
-
-              <a
-                href="#servicos"
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  gap: '10px',
-                  padding: '15px 20px',
-                  borderRadius: '14px',
-                  border: '1px solid rgba(255,255,255,.25)',
-                  color: '#ffffff',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  textDecoration: 'none',
-                  transition: 'all 0.3s ease',
-                }}
-                className="hover:bg-[#10b981] hover:border-[#10b981] hover:translate-y-[-3px]"
-              >
-                <Stethoscope size={18} />
-                Ver serviços
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                <CalendarDays size={18} color="#064e3b" />
+                <Text style={styles.primaryBtnText}>Solicitar atendimento</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  section: {
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    width: '100%',
+  },
+  container: {
+    width: '100%',
+    maxWidth: 1180,
+    marginHorizontal: 'auto',
+  },
+  bannerBox: {
+    padding: 36,
+    borderRadius: 28,
+    borderWidth: 1,
+  },
+  contentRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 30,
+  },
+  textColumn: {
+    flex: 1,
+    minWidth: 280,
+    maxWidth: 620,
+  },
+  tagline: {
+    color: '#a7f3d0',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    marginBottom: 10,
+  },
+  heading: {
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: '800',
+    letterSpacing: -1,
+    color: '#ffffff',
+  },
+  subtext: {
+    marginTop: 14,
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 14,
+    lineHeight: 22,
+  },
+  buttonsColumn: {
+    minWidth: 220,
+  },
+  primaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#ffffff',
+    paddingVertical: 14,
+    paddingHorizontal: 22,
+    borderRadius: 14,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  primaryBtnText: {
+    color: '#064e3b',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+});

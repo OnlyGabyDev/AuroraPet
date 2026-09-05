@@ -1,5 +1,5 @@
-﻿export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001/api';
+﻿import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 export class ApiError extends Error {
   status: number;
@@ -9,6 +9,32 @@ export class ApiError extends Error {
     this.status = status;
   }
 }
+
+function resolveApiBaseUrl(): string {
+  // Se explicitamente definida no ambiente, usa-a
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
+  }
+
+  // Se estiver rodando em emulador Android nativo
+  if (Platform.OS === 'android') {
+    // Tenta detectar o IP do debugger da máquina host se disponível
+    const hostUri = Constants.expoConfig?.hostUri;
+    if (hostUri) {
+      const ip = hostUri.split(':')[0];
+      if (ip && ip !== 'localhost' && ip !== '127.0.0.1') {
+        return `http://${ip}:3001/api`;
+      }
+    }
+    // 10.0.2.2 é o loopback do emulador Android para o localhost do PC
+    return 'http://10.0.2.2:3001/api';
+  }
+
+  // Web e iOS Simulator
+  return 'http://localhost:3001/api';
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 export async function apiFetch<T>(
   endpoint: string,
@@ -34,12 +60,11 @@ export async function apiFetch<T>(
         errorMessage = errorJson.error;
       }
     } catch {
-      // Falha ao parsear JSON de erro
+      // Falha ao interpretar JSON de erro
     }
     throw new ApiError(errorMessage, response.status);
   }
 
-  // Se status 204 No Content
   if (response.status === 204) {
     return {} as T;
   }

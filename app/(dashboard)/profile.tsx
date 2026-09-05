@@ -1,11 +1,14 @@
-import React from 'react';
+﻿import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from '../../src/hooks/useAuth';
-import { User, Mail, Phone, Calendar, ShieldCheck, LogOut, ArrowLeft } from 'lucide-react';
+import { useTheme } from '../../src/contexts/ThemeContext';
+import { User, Mail, Phone, Calendar, ShieldCheck, LogOut } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, logout, isFirebaseActive, isDemoUser } = useAuth();
+  const { colors, isDark } = useTheme();
 
   const handleLogout = async () => {
     await logout();
@@ -13,144 +16,200 @@ export default function ProfilePage() {
   };
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#172422', margin: 0 }}>
-          Meu Perfil
-        </h1>
-        <p style={{ color: '#667085', fontSize: '14px', marginTop: '4px' }}>
+    <View style={styles.container}>
+      <View style={styles.headerBlock}>
+        <Text style={[styles.title, { color: colors.text }]}>Meu Perfil</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
           Gerencie seus dados de tutor e preferências de comunicação
-        </p>
-      </div>
+        </Text>
+      </View>
 
       {/* CARTÃO DO TUTOR */}
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid #edf1ef',
-          padding: '32px',
-          boxShadow: '0 6px 20px rgba(0,0,0,0.02)',
-          marginBottom: '24px',
-        }}
+      <View
+        style={[
+          styles.profileCard,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
+        ]}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '28px' }}>
-          <div
-            style={{
-              width: '72px',
-              height: '72px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, var(--verde, #10b981), var(--roxo, #7c3aed))',
-              color: '#ffffff',
-              display: 'grid',
-              placeItems: 'center',
-              fontSize: '26px',
-              fontWeight: 800,
-            }}
-          >
-            {user?.displayName?.charAt(0).toUpperCase() || 'T'}
-          </div>
+        <View style={styles.avatarRow}>
+          <View style={styles.avatarBox}>
+            <Text style={styles.avatarLetter}>
+              {user?.displayName?.charAt(0).toUpperCase() || 'T'}
+            </Text>
+          </View>
 
-          <div>
-            <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#172422', margin: 0 }}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.name, { color: colors.text }]}>
               {user?.displayName || 'Tutor Clyvo'}
-            </h2>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#667085', fontSize: '13px', marginTop: '4px' }}>
-              <Mail size={14} /> {user?.email}
-            </div>
+            </Text>
+            <View style={styles.infoLine}>
+              <Mail size={13} color={colors.textSecondary} />
+              <Text style={[styles.infoText, { color: colors.textSecondary }]}>
+                {user?.email}
+              </Text>
+            </View>
             {isDemoUser && (
-              <span
-                style={{
-                  display: 'inline-block',
-                  marginTop: '8px',
-                  padding: '3px 10px',
-                  borderRadius: '999px',
-                  background: 'var(--verde-neve, #ecfdf5)',
-                  color: '#08775a',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                }}
-              >
-                Conta de Demonstração
-              </span>
+              <View style={[styles.demoBadge, { backgroundColor: colors.primaryLight }]}>
+                <Text style={[styles.demoBadgeText, { color: colors.accent }]}>
+                  Sessão de Demonstração
+                </Text>
+              </View>
             )}
-          </div>
-        </div>
+          </View>
+        </View>
 
-        <div style={{ display: 'grid', gap: '16px', borderTop: '1px solid #f1f5f9', paddingTop: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-            <span style={{ color: '#667085' }}>ID do Tutor (UID)</span>
-            <span style={{ fontWeight: 600, color: '#172422', fontFamily: 'monospace' }}>
-              {user?.uid}
-            </span>
-          </div>
+        {/* DETALHES DA CONTA */}
+        <View style={[styles.detailsSection, { borderTopColor: colors.border }]}>
+          <View style={styles.detailItem}>
+            <View style={styles.detailIconRow}>
+              <ShieldCheck size={16} color={colors.accent} />
+              <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+                Status de Autenticação
+              </Text>
+            </View>
+            <Text style={[styles.detailValue, { color: colors.text }]}>
+              {isFirebaseActive ? 'Firebase Auth Ativo' : 'Mock Local Demonstrativo'}
+            </Text>
+          </View>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-            <span style={{ color: '#667085' }}>Status da Autenticação</span>
-            <span style={{ fontWeight: 600, color: isFirebaseActive ? '#15803d' : '#08775a' }}>
-              {isFirebaseActive ? 'Firebase Auth Ativo' : 'Sessão Local (Demo)'}
-            </span>
-          </div>
+          <View style={styles.detailItem}>
+            <View style={styles.detailIconRow}>
+              <User size={16} color={colors.accent} />
+              <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>
+                ID do Tutor
+              </Text>
+            </View>
+            <Text style={[styles.detailValue, { color: colors.text }]}>
+              {user?.uid || 'demo-tutor-123'}
+            </Text>
+          </View>
+        </View>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-            <span style={{ color: '#667085' }}>Telefone para Contato</span>
-            <span style={{ fontWeight: 600, color: '#172422' }}>
-              {user?.phoneNumber || '(11) 98765-4321'}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* AÇÕES DA CONTA */}
-      <div
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          border: '1px solid #edf1ef',
-          padding: '24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-        }}
-      >
-        <button
-          onClick={() => router.push('/')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'none',
-            border: 'none',
-            color: '#475467',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: 'pointer',
-          }}
+        {/* LOGOUT */}
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={[
+            styles.logoutBtn,
+            {
+              backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#fef2f2',
+              borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fee2e2',
+            },
+          ]}
         >
-          <ArrowLeft size={16} /> Ver Landing Page
-        </button>
-
-        <button
-          onClick={handleLogout}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 18px',
-            borderRadius: '12px',
-            border: '1px solid #fee2e2',
-            background: '#fef2f2',
-            color: '#dc2626',
-            fontSize: '13px',
-            fontWeight: 700,
-            cursor: 'pointer',
-          }}
-        >
-          <LogOut size={16} /> Desconectar da Conta
-        </button>
-      </div>
-    </div>
+          <LogOut size={16} color="#ef4444" />
+          <Text style={styles.logoutBtnText}>Encerrar Sessão</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    maxWidth: 680,
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  headerBlock: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  profileCard: {
+    borderRadius: 22,
+    borderWidth: 1,
+    padding: 24,
+  },
+  avatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  avatarBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#10b981',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarLetter: {
+    color: '#ffffff',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  name: {
+    fontSize: 19,
+    fontWeight: '800',
+  },
+  infoLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
+  infoText: {
+    fontSize: 13,
+  },
+  demoBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  demoBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  detailsSection: {
+    borderTopWidth: 1,
+    paddingTop: 18,
+    gap: 14,
+    marginBottom: 22,
+  },
+  detailItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  detailIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  detailLabel: {
+    fontSize: 13,
+  },
+  detailValue: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  logoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 13,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  logoutBtnText: {
+    color: '#ef4444',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+});

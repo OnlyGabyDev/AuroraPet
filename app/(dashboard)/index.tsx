@@ -1,7 +1,9 @@
 import React from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { useAuth } from '../../src/hooks/useAuth';
 import { usePets } from '../../src/hooks/usePets';
 import { useAppointments, useCancelAppointment } from '../../src/hooks/useAppointments';
+import { useTheme } from '../../src/contexts/ThemeContext';
 import {
   Calendar,
   Clock,
@@ -11,418 +13,567 @@ import {
   ArrowRight,
   Sparkles,
   HeartPulse,
-} from 'lucide-react';
+} from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
 export default function DashboardOverview() {
   const router = useRouter();
   const { user } = useAuth();
+  const { colors, isDark } = useTheme();
   const { data: pets = [] } = usePets(user?.uid);
   const { data: appointments = [] } = useAppointments(user?.uid);
   const cancelMutation = useCancelAppointment();
 
   const nextAppointment = appointments.find((a) => a.status === 'scheduled');
+  const scheduledCount = appointments.filter((a) => a.status === 'scheduled').length;
+  const completedCount = appointments.filter((a) => a.status === 'completed').length;
 
   return (
-    <div>
+    <View style={styles.container}>
       {/* BOAS-VINDAS */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '32px',
-          flexWrap: 'wrap',
-          gap: '20px',
-        }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 10px',
-              borderRadius: '999px',
-              background: 'var(--verde-neve, #ecfdf5)',
-              color: '#08775a',
-              fontSize: '11px',
-              fontWeight: 700,
-              marginBottom: '8px',
-            }}
+      <View style={styles.welcomeRow}>
+        <View>
+          <View
+            style={[
+              styles.welcomeBadge,
+              {
+                backgroundColor: colors.primaryLight,
+                borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+              },
+            ]}
           >
-            <Sparkles size={13} /> Área do Tutor Clyvo
-          </div>
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#172422', margin: 0 }}>
+            <Sparkles size={13} color={colors.accent} />
+            <Text style={[styles.welcomeBadgeText, { color: colors.accent }]}>
+              Área do Tutor Clyvo
+            </Text>
+          </View>
+          <Text style={[styles.welcomeTitle, { color: colors.text }]}>
             Olá, {user?.displayName || 'Tutor'} 👋
-          </h1>
-          <p style={{ color: '#667085', fontSize: '14px', marginTop: '4px' }}>
-            Acompanhe o bem-estar e as consultas veterinárias dos seus animais.
-          </p>
-        </div>
+          </Text>
+          <Text style={[styles.welcomeSubtitle, { color: colors.textSecondary }]}>
+            Acompanhe a saúde e as consultas veterinárias dos seus animais.
+          </Text>
+        </View>
 
-        <button
-          onClick={() => router.push('/(dashboard)/appointments/new')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 20px',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, var(--verde-escuro, #064e3b), #087c5d)',
-            color: '#ffffff',
-            fontSize: '13px',
-            fontWeight: 700,
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 10px 25px rgba(6, 78, 59, 0.18)',
-          }}
+        <TouchableOpacity
+          onPress={() => router.push('/(dashboard)/appointments/new')}
+          activeOpacity={0.85}
+          style={styles.newApptBtn}
         >
-          <Calendar size={17} /> Agendar Nova Consulta
-        </button>
-      </div>
+          <Calendar size={16} color="#ffffff" />
+          <Text style={styles.newApptBtnText}>Agendar Consulta</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* CARDS DE RESUMO */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '20px',
-          marginBottom: '32px',
-        }}
-      >
-        <div
-          style={{
-            background: '#ffffff',
-            padding: '24px',
-            borderRadius: '20px',
-            border: '1px solid #edf1ef',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-          }}
+      <View style={styles.statsGrid}>
+        {/* CARD PETS */}
+        <View
+          style={[
+            styles.statCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#667085', fontSize: '13px', fontWeight: 600 }}>Meus Pets</span>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'var(--verde-neve, #ecfdf5)',
-                color: 'var(--verde, #10b981)',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <PawPrint size={18} />
-            </div>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#172422', marginTop: '12px' }}>
-            {pets.length}
-          </div>
-          <small style={{ color: '#8a94a3', fontSize: '11px' }}>Cadastrados na sua conta</small>
-        </div>
+          <View style={styles.statHeader}>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Meus Pets</Text>
+            <View style={[styles.statIconBox, { backgroundColor: colors.primaryLight }]}>
+              <PawPrint size={18} color={colors.accent} />
+            </View>
+          </View>
+          <Text style={[styles.statValue, { color: colors.text }]}>{pets.length}</Text>
+          <Text style={[styles.statDesc, { color: colors.textMuted }]}>
+            Cadastrados na sua conta
+          </Text>
+        </View>
 
-        <div
-          style={{
-            background: '#ffffff',
-            padding: '24px',
-            borderRadius: '20px',
-            border: '1px solid #edf1ef',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-          }}
+        {/* CARD CONSULTAS */}
+        <View
+          style={[
+            styles.statCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#667085', fontSize: '13px', fontWeight: 600 }}>Consultas Marcadas</span>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'var(--roxo-neve, #f5f3ff)',
-                color: 'var(--roxo, #7c3aed)',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <Calendar size={18} />
-            </div>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#172422', marginTop: '12px' }}>
-            {appointments.filter((a) => a.status === 'scheduled').length}
-          </div>
-          <small style={{ color: '#8a94a3', fontSize: '11px' }}>Atendimentos futuros</small>
-        </div>
+          <View style={styles.statHeader}>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+              Consultas Marcadas
+            </Text>
+            <View style={[styles.statIconBox, { backgroundColor: 'rgba(124, 58, 237, 0.12)' }]}>
+              <Calendar size={18} color={isDark ? '#a78bfa' : '#7c3aed'} />
+            </View>
+          </View>
+          <Text style={[styles.statValue, { color: colors.text }]}>{scheduledCount}</Text>
+          <Text style={[styles.statDesc, { color: colors.textMuted }]}>Atendimentos futuros</Text>
+        </View>
 
-        <div
-          style={{
-            background: '#ffffff',
-            padding: '24px',
-            borderRadius: '20px',
-            border: '1px solid #edf1ef',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-          }}
+        {/* CARD HISTÓRICO */}
+        <View
+          style={[
+            styles.statCard,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+            },
+          ]}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: '#667085', fontSize: '13px', fontWeight: 600 }}>Atendimentos Realizados</span>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: '#e0f2fe',
-                color: '#0284c7',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <HeartPulse size={18} />
-            </div>
-          </div>
-          <div style={{ fontSize: '28px', fontWeight: 800, color: '#172422', marginTop: '12px' }}>
-            {appointments.filter((a) => a.status === 'completed').length}
-          </div>
-          <small style={{ color: '#8a94a3', fontSize: '11px' }}>Histórico completo</small>
-        </div>
-      </div>
+          <View style={styles.statHeader}>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+              Atendimentos Realizados
+            </Text>
+            <View style={[styles.statIconBox, { backgroundColor: 'rgba(2, 132, 199, 0.12)' }]}>
+              <HeartPulse size={18} color="#0284c7" />
+            </View>
+          </View>
+          <Text style={[styles.statValue, { color: colors.text }]}>{completedCount}</Text>
+          <Text style={[styles.statDesc, { color: colors.textMuted }]}>Histórico completo</Text>
+        </View>
+      </View>
 
-      {/* PRÓXIMA CONSULTA EM DESTAQUE */}
-      <div style={{ marginBottom: '36px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#172422', margin: 0 }}>
+      {/* PRÓXIMA CONSULTA */}
+      <View style={styles.sectionBlock}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
             Próximo Agendamento
-          </h2>
-          <button
-            onClick={() => router.push('/(dashboard)/appointments')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--verde-escuro, #064e3b)',
-              fontSize: '13px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push('/(dashboard)/appointments')}
+            style={styles.viewAllBtn}
           >
-            Ver todos <ArrowRight size={14} />
-          </button>
-        </div>
+            <Text style={[styles.viewAllText, { color: colors.accent }]}>Ver todos</Text>
+            <ArrowRight size={14} color={colors.accent} />
+          </TouchableOpacity>
+        </View>
 
         {nextAppointment ? (
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '20px',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
-              padding: '24px',
-              boxShadow: '0 10px 30px rgba(6, 78, 59, 0.05)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '20px',
-            }}
+          <View
+            style={[
+              styles.nextApptCard,
+              {
+                backgroundColor: colors.surface,
+                borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : colors.border,
+              },
+            ]}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div
-                style={{
-                  width: '52px',
-                  height: '52px',
-                  borderRadius: '16px',
-                  background: 'linear-gradient(135deg, var(--verde-neve, #ecfdf5), var(--roxo-neve, #f5f3ff))',
-                  display: 'grid',
-                  placeItems: 'center',
-                  color: 'var(--verde-escuro, #064e3b)',
-                }}
-              >
-                <Stethoscope size={24} />
-              </div>
+            <View style={styles.nextApptInfo}>
+              <View style={[styles.stethoscopeBox, { backgroundColor: colors.primaryLight }]}>
+                <Stethoscope size={24} color={colors.accent} />
+              </View>
 
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <strong style={{ fontSize: '16px', color: '#172422' }}>
+              <View>
+                <View style={styles.serviceRow}>
+                  <Text style={[styles.serviceName, { color: colors.text }]}>
                     {nextAppointment.serviceName}
-                  </strong>
-                  <span
-                    style={{
-                      padding: '3px 8px',
-                      borderRadius: '999px',
-                      background: '#dcfce7',
-                      color: '#15803d',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                    }}
-                  >
-                    Confirmado
-                  </span>
-                </div>
-                <div style={{ color: '#667085', fontSize: '13px', marginTop: '4px' }}>
-                  Pet: <strong>{nextAppointment.petName}</strong> • Especialista:{' '}
-                  <strong>{nextAppointment.specialistName}</strong>
-                </div>
-              </div>
-            </div>
+                  </Text>
+                  <View style={[styles.confirmedBadge, { backgroundColor: colors.primaryLight }]}>
+                    <Text style={[styles.confirmedBadgeText, { color: colors.accent }]}>
+                      Confirmado
+                    </Text>
+                  </View>
+                </View>
+                <Text style={[styles.apptDetails, { color: colors.textSecondary }]}>
+                  Pet: {nextAppointment.petName} • Especialista: {nextAppointment.specialistName}
+                </Text>
+              </View>
+            </View>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#172422', fontWeight: 700, fontSize: '14px' }}>
-                  <Calendar size={15} color="#10b981" /> {nextAppointment.date}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#667085', fontSize: '13px', marginTop: '4px' }}>
-                  <Clock size={15} color="#7c3aed" /> {nextAppointment.time}
-                </div>
-              </div>
+            <View style={styles.nextApptActions}>
+              <View>
+                <View style={styles.metaRow}>
+                  <Calendar size={14} color="#10b981" />
+                  <Text style={[styles.metaText, { color: colors.text }]}>
+                    {nextAppointment.date}
+                  </Text>
+                </View>
+                <View style={[styles.metaRow, { marginTop: 4 }]}>
+                  <Clock size={14} color="#7c3aed" />
+                  <Text style={[styles.metaText, { color: colors.textSecondary }]}>
+                    {nextAppointment.time}
+                  </Text>
+                </View>
+              </View>
 
-              <button
-                onClick={() => cancelMutation.mutate(nextAppointment.id)}
+              <TouchableOpacity
+                onPress={() => cancelMutation.mutate(nextAppointment.id)}
                 disabled={cancelMutation.isPending}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '10px',
-                  border: '1px solid #fecaca',
-                  background: '#fef2f2',
-                  color: '#dc2626',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
+                style={[
+                  styles.cancelBtn,
+                  {
+                    backgroundColor: isDark ? 'rgba(239, 68, 68, 0.12)' : '#fef2f2',
+                    borderColor: isDark ? 'rgba(239, 68, 68, 0.3)' : '#fecaca',
+                  },
+                ]}
               >
-                Cancelar
-              </button>
-            </div>
-          </div>
+                <Text style={styles.cancelBtnText}>Cancelar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : (
-          <div
-            style={{
-              background: '#ffffff',
-              borderRadius: '20px',
-              border: '1px dashed #cbd5e1',
-              padding: '32px',
-              textAlign: 'center',
-            }}
+          <View
+            style={[
+              styles.emptyApptBox,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
           >
-            <Calendar size={32} color="#94a3b8" style={{ margin: '0 auto 10px' }} />
-            <p style={{ color: '#667085', fontSize: '14px', margin: 0 }}>
+            <Calendar size={28} color={colors.textMuted} />
+            <Text style={[styles.emptyApptText, { color: colors.textSecondary }]}>
               Você não possui nenhuma consulta futura agendada.
-            </p>
-            <button
-              onClick={() => router.push('/(dashboard)/appointments/new')}
-              style={{
-                marginTop: '14px',
-                padding: '10px 18px',
-                borderRadius: '10px',
-                background: 'var(--verde-escuro, #064e3b)',
-                color: '#ffffff',
-                fontSize: '13px',
-                fontWeight: 700,
-                border: 'none',
-                cursor: 'pointer',
-              }}
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/(dashboard)/appointments/new')}
+              style={styles.emptyApptBtn}
             >
-              Agendar Agora
-            </button>
-          </div>
+              <Text style={styles.emptyApptBtnText}>Agendar Agora</Text>
+            </TouchableOpacity>
+          </View>
         )}
-      </div>
+      </View>
 
-      {/* SEÇÃO MEUS PETS */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 800, color: '#172422', margin: 0 }}>
-            Seus Pets
-          </h2>
-          <button
-            onClick={() => router.push('/(dashboard)/pets/new')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'none',
-              border: 'none',
-              color: 'var(--verde-escuro, #064e3b)',
-              fontSize: '13px',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
+      {/* MEUS PETS */}
+      <View style={styles.sectionBlock}>
+        <View style={styles.sectionHeaderRow}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Seus Pets</Text>
+          <TouchableOpacity
+            onPress={() => router.push('/(dashboard)/pets/new')}
+            style={styles.addPetHeaderBtn}
           >
-            <Plus size={16} /> Adicionar Pet
-          </button>
-        </div>
+            <Plus size={15} color={colors.accent} />
+            <Text style={[styles.addPetHeaderText, { color: colors.accent }]}>
+              Adicionar Pet
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '20px',
-          }}
-        >
+        <View style={styles.petsGrid}>
           {pets.map((pet) => (
-            <div
+            <TouchableOpacity
               key={pet.id}
-              style={{
-                background: '#ffffff',
-                borderRadius: '20px',
-                border: '1px solid #edf1ef',
-                overflow: 'hidden',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-                display: 'flex',
-                alignItems: 'center',
-                padding: '16px',
-                gap: '14px',
-              }}
+              activeOpacity={0.8}
+              onPress={() => router.push(`/(dashboard)/pets/${pet.id}` as any)}
+              style={[
+                styles.petCard,
+                {
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border,
+                },
+              ]}
             >
-              <img
-                src={pet.photoUrl || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80'}
-                alt={pet.name}
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '16px',
-                  objectFit: 'cover',
+              <Image
+                source={{
+                  uri:
+                    pet.photoUrl ||
+                    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80',
                 }}
+                style={styles.petAvatar}
+                resizeMode="cover"
               />
-              <div style={{ flex: 1 }}>
-                <strong style={{ display: 'block', fontSize: '16px', color: '#172422' }}>
-                  {pet.name}
-                </strong>
-                <span style={{ display: 'block', fontSize: '12px', color: '#667085', marginTop: '2px' }}>
+              <View style={styles.petInfo}>
+                <Text style={[styles.petName, { color: colors.text }]}>{pet.name}</Text>
+                <Text style={[styles.petBreed, { color: colors.textSecondary }]}>
                   {pet.breed} • {pet.age}
-                </span>
+                </Text>
                 {pet.weight && (
-                  <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', display: 'block' }}>
+                  <Text style={[styles.petWeight, { color: colors.textMuted }]}>
                     Peso: {pet.weight}
-                  </span>
+                  </Text>
                 )}
-              </div>
-            </div>
+              </View>
+            </TouchableOpacity>
           ))}
 
-          {/* Card botão para adicionar pet */}
-          <div
-            onClick={() => router.push('/(dashboard)/pets/new')}
-            style={{
-              background: '#f8faf9',
-              borderRadius: '20px',
-              border: '2px dashed #cbd5e1',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '24px',
-              cursor: 'pointer',
-              color: '#667085',
-              transition: 'all 0.2s ease',
-            }}
-            className="hover:bg-white hover:border-[#10b981]"
+          <TouchableOpacity
+            onPress={() => router.push('/(dashboard)/pets/new')}
+            style={[
+              styles.addPetCard,
+              {
+                backgroundColor: colors.surfaceSubtle,
+                borderColor: colors.border,
+              },
+            ]}
           >
-            <Plus size={24} color="#10b981" />
-            <span style={{ marginTop: '8px', fontSize: '13px', fontWeight: 700, color: '#334155' }}>
+            <Plus size={22} color={colors.accent} />
+            <Text style={[styles.addPetCardText, { color: colors.text }]}>
               Adicionar Novo Pet
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+  welcomeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 28,
+  },
+  welcomeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    borderWidth: 1,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  welcomeBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  welcomeTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  welcomeSubtitle: {
+    fontSize: 13,
+    marginTop: 4,
+  },
+  newApptBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    shadowColor: '#064e3b',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  newApptBtnText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    marginBottom: 32,
+  },
+  statCard: {
+    flex: 1,
+    minWidth: 200,
+    padding: 20,
+    borderRadius: 18,
+    borderWidth: 1,
+  },
+  statHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  statIconBox: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    marginTop: 10,
+  },
+  statDesc: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  sectionBlock: {
+    marginBottom: 32,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  viewAllBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  viewAllText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  nextApptCard: {
+    padding: 20,
+    borderRadius: 18,
+    borderWidth: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 16,
+  },
+  nextApptInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+  stethoscopeBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  serviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  serviceName: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  confirmedBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  confirmedBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  apptDetails: {
+    fontSize: 12,
+    marginTop: 4,
+  },
+  nextApptActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  metaText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  cancelBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  cancelBtnText: {
+    color: '#dc2626',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  emptyApptBox: {
+    padding: 28,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  emptyApptText: {
+    fontSize: 13,
+  },
+  emptyApptBtn: {
+    backgroundColor: '#064e3b',
+    paddingHorizontal: 16,
+    paddingVertical: 9,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  emptyApptBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  addPetHeaderBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  addPetHeaderText: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  petsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  petCard: {
+    flex: 1,
+    minWidth: 240,
+    padding: 14,
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  petAvatar: {
+    width: 54,
+    height: 54,
+    borderRadius: 14,
+  },
+  petInfo: {
+    flex: 1,
+  },
+  petName: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  petBreed: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  petWeight: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  addPetCard: {
+    flex: 1,
+    minWidth: 240,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addPetCardText: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 6,
+  },
+});
