@@ -20,7 +20,8 @@
     },
     "scheme": "clyvo-vet",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-asset"
     ],
     "web": {
       "bundler": "metro",
