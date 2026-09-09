@@ -36,7 +36,7 @@ export default function ClinicVetsPage() {
       try {
         await deleteMutation.mutateAsync(id);
       } catch (err) {
-        console.error('Erro ao remover veterinï¿½rio:', err);
+        console.error('Erro ao remover veterinário:', err);
       }
     };
 
@@ -46,7 +46,7 @@ export default function ClinicVetsPage() {
       }
     } else {
       Alert.alert(
-        'Remover Veterinï¿½rio',
+        'Remover Veterinário',
         `Deseja realmente remover ${name} do corpo clï¿½nico?`,
         [
           { text: 'Cancelar', style: 'cancel' },
@@ -65,7 +65,7 @@ export default function ClinicVetsPage() {
             Corpo Clï¿½nico da Unidade
           </Text>
           <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-            Gerenciamento de mï¿½dicos veterinï¿½rios, especialidades mï¿½dicas e escalas de plantï¿½o
+            Gerenciamento de médicos veterinários, especialidades mï¿½dicas e escalas de plantão
           </Text>
         </View>
 
@@ -75,7 +75,7 @@ export default function ClinicVetsPage() {
           activeOpacity={0.8}
         >
           <UserPlus size={16} color="#ffffff" />
-          <Text style={styles.newVetBtnText}>+ Novo Veterinï¿½rio</Text>
+          <Text style={styles.newVetBtnText}>+ Novo Veterinário</Text>
         </TouchableOpacity>
       </View>
 
@@ -84,7 +84,7 @@ export default function ClinicVetsPage() {
         <View style={styles.centerBox}>
           <ActivityIndicator size="large" color="#10b981" />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Carregando mï¿½dicos cadastrados...
+            Carregando médicos cadastrados...
           </Text>
         </View>
       ) : specialists.length === 0 ? (
@@ -96,16 +96,16 @@ export default function ClinicVetsPage() {
         >
           <Users size={44} color={colors.textMuted} />
           <Text style={[styles.emptyTitle, { color: colors.text }]}>
-            Nenhum veterinï¿½rio cadastrado
+            Nenhum veterinário cadastrado
           </Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-            Cadastre os profissionais da clï¿½nica para que os tutores possam selecionar especialistas e horï¿½rios de consulta.
+            Cadastre os profissionais da clínica para que os tutores possam selecionar especialistas e horários de consulta.
           </Text>
           <TouchableOpacity
             onPress={() => router.push('/(clinic)/vets/new')}
             style={[styles.emptyBtn, { backgroundColor: colors.accent }]}
           >
-            <Text style={styles.emptyBtnText}>+ Cadastrar Primeiro Veterinï¿½rio</Text>
+            <Text style={styles.emptyBtnText}>+ Cadastrar Primeiro Veterinário</Text>
           </TouchableOpacity>
         </View>
       ) : (

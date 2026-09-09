@@ -80,10 +80,10 @@ export default function ClinicAgendaPage() {
       <View style={styles.headerBox}>
         <View>
           <Text style={[styles.pageTitle, { color: colors.text }]}>
-            Agenda & Fila Clï¿½nica
+            Agenda & Fila Clínica
           </Text>
           <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-            Acompanhamento em tempo real de pacientes agendados, em atendimento e prontuï¿½rios
+            Acompanhamento em tempo real de pacientes agendados, em atendimento e prontuários
           </Text>
         </View>
       </View>
@@ -192,7 +192,7 @@ export default function ClinicAgendaPage() {
         <View style={styles.loadingBox}>
           <ActivityIndicator size="large" color="#10b981" />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Carregando agenda clï¿½nica...
+            Carregando agenda clínica...
           </Text>
         </View>
       ) : filtered.length === 0 ? (
@@ -207,7 +207,7 @@ export default function ClinicAgendaPage() {
             Nenhuma consulta encontrada com esses filtros
           </Text>
           <Text style={[styles.emptySub, { color: colors.textSecondary }]}>
-            Tente selecionar outro veterinï¿½rio ou alternar o status no filtro acima.
+            Tente selecionar outro veterinário ou alternar o status no filtro acima.
           </Text>
         </View>
       ) : (
@@ -244,7 +244,7 @@ export default function ClinicAgendaPage() {
                   <View style={styles.metaItem}>
                     <User size={14} color={colors.textSecondary} />
                     <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                      Mï¿½dico: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.specialistName}</Text>
+                      Médico: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.specialistName}</Text>
                     </Text>
                   </View>
 
@@ -299,7 +299,7 @@ export default function ClinicAgendaPage() {
                   >
                     <FileText size={16} color="#10b981" />
                     <Text style={[styles.viewReportBtnText, { color: '#10b981' }]}>
-                      Ver Prontuï¿½rio / Relatï¿½rio Emitido
+                      Ver Prontuário / Relatário Emitido
                     </Text>
                   </TouchableOpacity>
                 ) : (

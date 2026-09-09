@@ -71,14 +71,14 @@ export default function ClinicSettingsPage() {
 
       setFeedback({
         type: 'success',
-        message: 'Configuraï¿½ï¿½es da clï¿½nica atualizadas com sucesso!',
+        message: 'Configuraï¿½ï¿½es da clínica atualizadas com sucesso!',
       });
 
       setTimeout(() => setFeedback(null), 4000);
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err?.message || 'Falha ao atualizar dados da clï¿½nica.',
+        message: err?.message || 'Falha ao atualizar dados da clínica.',
       });
     }
   };
@@ -98,10 +98,10 @@ export default function ClinicSettingsPage() {
     <View style={styles.container}>
       <View style={styles.titleBox}>
         <Text style={[styles.pageTitle, { color: colors.text }]}>
-          Gestï¿½o & Configuraï¿½ï¿½es da Clï¿½nica
+          Gestão & Configuraï¿½ï¿½es da Clínica
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Defina o modelo operacional (Clï¿½nica com mï¿½ltiplos veterinï¿½rios ou Veterinï¿½rio autï¿½nomo) e os dados cadastrais
+          Defina o modelo operacional (Clínica com mï¿½ltiplos veterinários ou Veterinário autônomo) e os dados cadastrais
         </Text>
       </View>
 
@@ -139,10 +139,10 @@ export default function ClinicSettingsPage() {
         ]}
       >
         <Text style={[styles.cardTitle, { color: colors.text }]}>
-          Modelo de Gestï¿½o Operacional
+          Modelo de Gestão Operacional
         </Text>
         <Text style={[styles.cardDesc, { color: colors.textSecondary }]}>
-          Escolha como o sistema deve estruturar a visualizaï¿½ï¿½o de consultas e permissï¿½es de agendamento:
+          Escolha como o sistema deve estruturar a visualização de consultas e permissóes de agendamento:
         </Text>
 
         <View style={styles.modeGrid}>
@@ -167,10 +167,10 @@ export default function ClinicSettingsPage() {
               )}
             </View>
             <Text style={[styles.modeCardTitle, { color: colors.text }]}>
-              Clï¿½nica com Mï¿½ltiplos Veterinï¿½rios
+              Clínica com Mï¿½ltiplos Veterinários
             </Text>
             <Text style={[styles.modeCardDesc, { color: colors.textSecondary }]}>
-              Ideal para hospitais e clï¿½nicas com corpo clï¿½nico amplo, diferentes especialidades mï¿½dicas e escalas rotativas.
+              Ideal para hospitais e clínicas com corpo clï¿½nico amplo, diferentes especialidades mï¿½dicas e escalas rotativas.
             </Text>
           </TouchableOpacity>
 
@@ -195,10 +195,10 @@ export default function ClinicSettingsPage() {
               )}
             </View>
             <Text style={[styles.modeCardTitle, { color: colors.text }]}>
-              Veterinï¿½rio Autï¿½nomo / Consultï¿½rio
+              Veterinário Autônomo / Consultório
             </Text>
             <Text style={[styles.modeCardDesc, { color: colors.textSecondary }]}>
-              Ideal para o mï¿½dico veterinï¿½rio que administra seu prï¿½prio consultï¿½rio individual, horï¿½rios e fila de pacientes.
+              Ideal para o médico veterinário que administra seu próprio consultório individual, horários e fila de pacientes.
             </Text>
           </TouchableOpacity>
         </View>
@@ -248,7 +248,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              CNPJ da Clï¿½nica
+              CNPJ da Clínica
             </Text>
             <TextInput
               style={[
@@ -278,7 +278,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Telefone de Emergï¿½ncia / Plantï¿½o 24h
+              Telefone de Emergï¿½ncia / Plantão 24h
             </Text>
             <TextInput
               style={[
@@ -292,7 +292,7 @@ export default function ClinicSettingsPage() {
 
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Horï¿½rio de Funcionamento
+              Horário de Funcionamento
             </Text>
             <TextInput
               style={[
@@ -321,7 +321,7 @@ export default function ClinicSettingsPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Descriï¿½ï¿½o da Clï¿½nica
+            Descriï¿½ï¿½o da Clínica
           </Text>
           <TextInput
             style={[

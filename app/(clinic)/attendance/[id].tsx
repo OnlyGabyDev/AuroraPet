@@ -136,7 +136,7 @@ export default function ClinicalAttendancePage() {
 
       setFeedback({
         type: 'success',
-        message: 'Atendimento concluï¿½do e Prontuï¿½rio emitido com sucesso! O laudo jï¿½ estï¿½ disponï¿½vel para o tutor.',
+        message: 'Atendimento concluï¿½do e Prontuário emitido com sucesso! O laudo já está disponï¿½vel para o tutor.',
       });
 
       setTimeout(() => {
@@ -166,7 +166,7 @@ export default function ClinicalAttendancePage() {
       <View style={styles.centerBox}>
         <AlertCircle size={40} color="#ef4444" />
         <Text style={[styles.errorTitle, { color: colors.text }]}>
-          Consulta nï¿½o encontrada
+          Consulta não encontrada
         </Text>
         <TouchableOpacity
           onPress={() => router.replace('/(clinic)/agenda')}
@@ -255,12 +255,12 @@ export default function ClinicalAttendancePage() {
       >
         {/* IDENTIFICAï¿½ï¿½O DO PROFISSIONAL */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          1. Identificaï¿½ï¿½o do Mï¿½dico Responsï¿½vel
+          1. Identificação do Médico Responsóvel
         </Text>
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Nome do Mï¿½dico Veterinï¿½rio
+              Nome do Médico Veterinário
             </Text>
             <TextInput
               style={[
@@ -366,7 +366,7 @@ export default function ClinicalAttendancePage() {
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Freq. Respiratï¿½ria (rpm)
+              Freq. Respiratária (rpm)
             </Text>
             <TextInput
               style={[
@@ -387,7 +387,7 @@ export default function ClinicalAttendancePage() {
 
         {/* ANAMNESE & EXAME Fï¿½SICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          3. Anamnese & Queixa Clï¿½nica
+          3. Anamnese & Queixa Clínica
         </Text>
         <TextInput
           style={[
@@ -400,7 +400,7 @@ export default function ClinicalAttendancePage() {
           ]}
           value={anamnesis}
           onChangeText={setAnamnesis}
-          placeholder="Descreva a queixa do tutor, histï¿½rico clï¿½nico, comportamento do animal e sintomas relatados..."
+          placeholder="Descreva a queixa do tutor, histárico clï¿½nico, comportamento do animal e sintomas relatados..."
           placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={4}
@@ -408,7 +408,7 @@ export default function ClinicalAttendancePage() {
 
         {/* DIAGNï¿½STICO Mï¿½DICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          4. Diagnï¿½stico Clï¿½nico & Avaliaï¿½ï¿½o
+          4. Diagnï¿½stico Clï¿½nico & Avaliação
         </Text>
         <TextInput
           style={[
@@ -517,7 +517,7 @@ export default function ClinicalAttendancePage() {
 
               <View style={styles.fieldCol}>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-                  Duraï¿½ï¿½o do Tratamento
+                  Duração do Tratamento
                 </Text>
                 <TextInput
                   style={[
@@ -526,7 +526,7 @@ export default function ClinicalAttendancePage() {
                   ]}
                   value={rx.duration}
                   onChangeText={(v) => handleUpdatePrescription(rx.id, 'duration', v)}
-                  placeholder="Ex: 7 dias contï¿½nuos"
+                  placeholder="Ex: 7 dias contánuos"
                   placeholderTextColor={colors.textMuted}
                 />
               </View>
@@ -536,7 +536,7 @@ export default function ClinicalAttendancePage() {
 
         {/* ORIENTAï¿½ï¿½ES GERAIS E RETORNO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          6. Orientaï¿½ï¿½es Gerais ao Tutor & Previsï¿½o de Retorno
+          6. Orientaï¿½ï¿½es Gerais ao Tutor & Previsão de Retorno
         </Text>
         <View style={styles.fieldsGrid}>
           <View style={{ width: '100%' }}>
@@ -582,7 +582,7 @@ export default function ClinicalAttendancePage() {
           </View>
         </View>
 
-        {/* BOTï¿½O CONCLUIR ATENDIMENTO */}
+        {/* BOTáO CONCLUIR ATENDIMENTO */}
         <View style={[styles.submitRow, { borderTopColor: colors.border }]}>
           <TouchableOpacity
             onPress={handleConcludeAttendance}
@@ -596,7 +596,7 @@ export default function ClinicalAttendancePage() {
               <>
                 <CheckCircle2 size={18} color="#ffffff" />
                 <Text style={styles.submitBtnText}>
-                  Concluir Atendimento & Emitir Prontuï¿½rio Digital
+                  Concluir Atendimento & Emitir Prontuário Digital
                 </Text>
               </>
             )}

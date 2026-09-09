@@ -42,7 +42,7 @@ export default function ClinicDashboardPage() {
       <View style={styles.centerBox}>
         <ActivityIndicator size="large" color="#10b981" />
         <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-          Carregando indicadores da clï¿½nica...
+          Carregando indicadores da clínica...
         </Text>
       </View>
     );
@@ -67,7 +67,7 @@ export default function ClinicDashboardPage() {
           <View style={{ flex: 1 }}>
             <View style={styles.clinicTitleRow}>
               <Text style={[styles.clinicName, { color: colors.text }]}>
-                {clinic?.name || 'Clyvo Centro Mï¿½dico Veterinï¿½rio'}
+                {clinic?.name || 'Clyvo Centro Médico Veterinário'}
               </Text>
               <View
                 style={[
@@ -80,17 +80,17 @@ export default function ClinicDashboardPage() {
               >
                 <ShieldCheck size={12} color="#10b981" />
                 <Text style={styles.modeBadgeText}>
-                  {clinic?.mode === 'solo_vet' ? 'Consultï¿½rio Autï¿½nomo' : 'Clï¿½nica Multidisciplinar'}
+                  {clinic?.mode === 'solo_vet' ? 'Consultório Autônomo' : 'Clínica Multidisciplinar'}
                 </Text>
               </View>
             </View>
 
             <Text style={[styles.clinicDesc, { color: colors.textSecondary }]}>
-              {clinic?.description || 'Gestï¿½o integrada de consultas, corpo clï¿½nico veterinï¿½rio e emissï¿½o de prontuï¿½rios digitais.'}
+              {clinic?.description || 'Gestão integrada de consultas, corpo clï¿½nico veterinário e emissão de prontuários digitais.'}
             </Text>
 
             <Text style={[styles.clinicAddress, { color: colors.textMuted }]}>
-              ?? {clinic?.address || 'Sï¿½o Paulo - SP'} ï¿½ ?? {clinic?.phone || '(11) 3088-4200'}
+              ?? {clinic?.address || 'São Paulo - SP'} ï¿½ ?? {clinic?.phone || '(11) 3088-4200'}
             </Text>
           </View>
         </View>
@@ -145,7 +145,7 @@ export default function ClinicDashboardPage() {
             {specialists.length}
           </Text>
           <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>
-            Veterinï¿½rios Ativos
+            Veterinários Ativos
           </Text>
         </View>
 
@@ -162,7 +162,7 @@ export default function ClinicDashboardPage() {
             {completedApps.filter((a) => a.report).length}
           </Text>
           <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>
-            Prontuï¿½rios Emitidos
+            Prontuários Emitidos
           </Text>
         </View>
       </View>
@@ -188,7 +188,7 @@ export default function ClinicDashboardPage() {
         >
           <UserPlus size={18} color={colors.text} />
           <Text style={[styles.quickBtnSecondaryText, { color: colors.text }]}>
-            + Novo Veterinï¿½rio
+            + Novo Veterinário
           </Text>
         </TouchableOpacity>
       </View>
@@ -206,7 +206,7 @@ export default function ClinicDashboardPage() {
               Fila de Atendimento do Dia
             </Text>
             <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              Selecione uma consulta para iniciar o atendimento clï¿½nico e emitir o prontuï¿½rio
+              Selecione uma consulta para iniciar o atendimento clï¿½nico e emitir o prontuário
             </Text>
           </View>
 
@@ -226,7 +226,7 @@ export default function ClinicDashboardPage() {
               Fila zerada no momento!
             </Text>
             <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-              Nï¿½o hï¿½ pacientes aguardando atendimento agora. Todas as consultas marcadas jï¿½ foram concluï¿½das.
+              Não há pacientes aguardando atendimento agora. Todas as consultas marcadas já foram concluï¿½das.
             </Text>
           </View>
         ) : (

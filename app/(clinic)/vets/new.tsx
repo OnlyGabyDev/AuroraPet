@@ -27,7 +27,7 @@ const DAYS_OPTIONS = [
   'Quarta',
   'Quinta',
   'Sexta',
-  'Sï¿½bado',
+  'Sóbado',
   'Domingo',
 ];
 
@@ -74,7 +74,7 @@ export default function NewVeterinarianPage() {
     if (!name.trim() || !crmv.trim() || !specialty.trim()) {
       setFeedback({
         type: 'error',
-        message: 'Preencha o Nome Completo, CRMV e Especialidade do mï¿½dico veterinï¿½rio.',
+        message: 'Preencha o Nome Completo, CRMV e Especialidade do médico veterinário.',
       });
       return;
     }
@@ -86,7 +86,7 @@ export default function NewVeterinarianPage() {
         name: name.trim(),
         crmv: crmv.trim(),
         specialty: specialty.trim(),
-        bio: bio.trim() || 'Mï¿½dico veterinï¿½rio dedicado ao cuidado e bem-estar animal.',
+        bio: bio.trim() || 'Médico veterinário dedicado ao cuidado e bem-estar animal.',
         photoUrl: photoUrl.trim() || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=700&q=85',
         availableDays: selectedDays.length > 0 ? selectedDays : ['Segunda', 'Quarta', 'Sexta'],
         availableHours: selectedHours.length > 0 ? selectedHours : ['09:00', '14:00'],
@@ -95,7 +95,7 @@ export default function NewVeterinarianPage() {
 
       setFeedback({
         type: 'success',
-        message: 'Mï¿½dico Veterinï¿½rio cadastrado com sucesso no corpo clï¿½nico!',
+        message: 'Médico Veterinário cadastrado com sucesso no corpo clï¿½nico!',
       });
 
       setTimeout(() => {
@@ -104,7 +104,7 @@ export default function NewVeterinarianPage() {
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err?.message || 'Falha ao cadastrar veterinï¿½rio.',
+        message: err?.message || 'Falha ao cadastrar veterinário.',
       });
     }
   };
@@ -124,10 +124,10 @@ export default function NewVeterinarianPage() {
 
       <View style={styles.titleBox}>
         <Text style={[styles.pageTitle, { color: colors.text }]}>
-          Cadastrar Novo Mï¿½dico Veterinï¿½rio
+          Cadastrar Novo Médico Veterinário
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Adicione um profissional ï¿½ equipe da clï¿½nica, definindo CRMV, especialidade e escalas
+          Adicione um profissional ï¿½ equipe da clínica, definindo CRMV, especialidade e escalas
         </Text>
       </View>
 
@@ -167,7 +167,7 @@ export default function NewVeterinarianPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Nome Completo do Mï¿½dico(a) *
+              Nome Completo do Médico(a) *
             </Text>
             <TextInput
               style={[
@@ -243,7 +243,7 @@ export default function NewVeterinarianPage() {
             ]}
             value={bio}
             onChangeText={setBio}
-            placeholder="Resumo de formaï¿½ï¿½o, pï¿½s-graduaï¿½ï¿½o e atuaï¿½ï¿½o clï¿½nica do profissional..."
+            placeholder="Resumo de formação, pï¿½s-graduação e atuação clínica do profissional..."
             placeholderTextColor={colors.textMuted}
             multiline
             numberOfLines={3}
@@ -253,7 +253,7 @@ export default function NewVeterinarianPage() {
         {/* DIAS DE ATENDIMENTO */}
         <View style={styles.sectionBlock}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Dias de Plantï¿½o / Atendimento
+            Dias de Plantão / Atendimento
           </Text>
           <View style={styles.chipsRow}>
             {DAYS_OPTIONS.map((day) => {
@@ -288,7 +288,7 @@ export default function NewVeterinarianPage() {
         {/* HORï¿½RIOS DISPONï¿½VEIS */}
         <View style={styles.sectionBlock}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Horï¿½rios Disponï¿½veis para Consultas
+            Horários Disponï¿½veis para Consultas
           </Text>
           <View style={styles.chipsRow}>
             {HOURS_OPTIONS.map((hr) => {
@@ -333,7 +333,7 @@ export default function NewVeterinarianPage() {
             ) : (
               <>
                 <UserPlus size={18} color="#ffffff" />
-                <Text style={styles.submitBtnText}>Salvar e Cadastrar Veterinï¿½rio</Text>
+                <Text style={styles.submitBtnText}>Salvar e Cadastrar Veterinário</Text>
               </>
             )}
           </TouchableOpacity>
