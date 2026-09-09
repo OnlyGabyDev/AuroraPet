@@ -23,7 +23,7 @@ import {
 
 const DAYS_OPTIONS = [
   'Segunda',
-  'Terï¿½a',
+  'Terça',
   'Quarta',
   'Quinta',
   'Sexta',
@@ -95,7 +95,7 @@ export default function NewVeterinarianPage() {
 
       setFeedback({
         type: 'success',
-        message: 'Médico Veterinário cadastrado com sucesso no corpo clï¿½nico!',
+        message: 'Médico Veterinário cadastrado com sucesso no corpo clínico!',
       });
 
       setTimeout(() => {
@@ -118,7 +118,7 @@ export default function NewVeterinarianPage() {
       >
         <ArrowLeft size={18} color={colors.accent} />
         <Text style={[styles.backText, { color: colors.accent }]}>
-          Voltar para Corpo Clï¿½nico
+          Voltar para Corpo Clínico
         </Text>
       </TouchableOpacity>
 
@@ -127,7 +127,7 @@ export default function NewVeterinarianPage() {
           Cadastrar Novo Médico Veterinário
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Adicione um profissional ï¿½ equipe da clínica, definindo CRMV, especialidade e escalas
+          Adicione um profissional • equipe da clínica, definindo CRMV, especialidade e escalas
         </Text>
       </View>
 
@@ -163,7 +163,7 @@ export default function NewVeterinarianPage() {
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {/* CAMPOS Bï¿½SICOS */}
+        {/* CAMPOS BÁSICOS */}
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
@@ -201,7 +201,7 @@ export default function NewVeterinarianPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Especialidade Mï¿½dica *
+              Especialidade Mçãdica *
             </Text>
             <TextInput
               style={[
@@ -234,7 +234,7 @@ export default function NewVeterinarianPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Biografia & Experiï¿½ncia Profissional
+            Biografia & Experiência Profissional
           </Text>
           <TextInput
             style={[
@@ -243,7 +243,7 @@ export default function NewVeterinarianPage() {
             ]}
             value={bio}
             onChangeText={setBio}
-            placeholder="Resumo de formação, pï¿½s-graduação e atuação clínica do profissional..."
+            placeholder="Resumo de formação, pós-graduação e atuação clínica do profissional..."
             placeholderTextColor={colors.textMuted}
             multiline
             numberOfLines={3}
@@ -285,10 +285,10 @@ export default function NewVeterinarianPage() {
           </View>
         </View>
 
-        {/* HORï¿½RIOS DISPONï¿½VEIS */}
+        {/* HORÁRIOS DISPONÍVEIS */}
         <View style={styles.sectionBlock}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Horários Disponï¿½veis para Consultas
+            Horários Disponçãveis para Consultas
           </Text>
           <View style={styles.chipsRow}>
             {HOURS_OPTIONS.map((hr) => {

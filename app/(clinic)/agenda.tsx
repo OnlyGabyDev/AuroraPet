@@ -60,7 +60,7 @@ export default function ClinicAgendaPage() {
       case 'completed':
         return (
           <View style={[styles.badgeContainer, { backgroundColor: '#e0f2fe' }]}>
-            <Text style={[styles.badgeText, { color: '#0369a1' }]}>Atendido / Concluï¿½do</Text>
+            <Text style={[styles.badgeText, { color: '#0369a1' }]}>Atendido / Concluçãdo</Text>
           </View>
         );
       case 'cancelled':
@@ -76,7 +76,7 @@ export default function ClinicAgendaPage() {
 
   return (
     <View style={styles.container}>
-      {/* CABEï¿½ALHO */}
+      {/* CABEÇALHO */}
       <View style={styles.headerBox}>
         <View>
           <Text style={[styles.pageTitle, { color: colors.text }]}>
@@ -88,10 +88,10 @@ export default function ClinicAgendaPage() {
         </View>
       </View>
 
-      {/* FILTROS POR VETERINï¿½RIO */}
+      {/* FILTROS POR VETERINçãRIO */}
       <View style={styles.filterSection}>
         <Text style={[styles.filterSectionTitle, { color: colors.textSecondary }]}>
-          FILTRAR POR VETERINï¿½RIO DA EQUIPE:
+          FILTRAR POR VETERINçãRIO DA EQUIPE:
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.vetFilterRow}>
           <TouchableOpacity
@@ -156,7 +156,7 @@ export default function ClinicAgendaPage() {
               : st === 'scheduled'
               ? 'Aguardando'
               : st === 'completed'
-              ? 'Concluï¿½das'
+              ? 'Concluçãdas'
               : 'Canceladas';
 
           return (
@@ -251,7 +251,7 @@ export default function ClinicAgendaPage() {
                   <View style={styles.metaItem}>
                     <Clock size={14} color={colors.textSecondary} />
                     <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                      Agendado para: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.date} ï¿½s {item.time}</Text>
+                      Agendado para: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.date} às {item.time}</Text>
                     </Text>
                   </View>
                 </View>
@@ -273,7 +273,7 @@ export default function ClinicAgendaPage() {
                 ) : null}
               </View>
 
-              {/* Aï¿½ï¿½ES DA CLï¿½NICA */}
+              {/* AÇÕES DA CLçãNICA */}
               <View style={[styles.cardFooter, { borderTopColor: colors.border }]}>
                 {item.status === 'scheduled' ? (
                   <TouchableOpacity
@@ -282,7 +282,7 @@ export default function ClinicAgendaPage() {
                     activeOpacity={0.8}
                   >
                     <Stethoscope size={16} color="#ffffff" />
-                    <Text style={styles.attendBtnText}>Iniciar Atendimento Clï¿½nico</Text>
+                    <Text style={styles.attendBtnText}>Iniciar Atendimento Clínico</Text>
                     <ArrowRight size={14} color="#ffffff" />
                   </TouchableOpacity>
                 ) : item.status === 'completed' ? (
@@ -313,7 +313,7 @@ export default function ClinicAgendaPage() {
         </View>
       )}
 
-      {/* MODAL DE PRONTUï¿½RIO */}
+      {/* MODAL DE PRONTUçãRIO */}
       <ConsultationReportModal
         visible={Boolean(reportAppointment)}
         onClose={() => setReportAppointment(null)}

@@ -40,11 +40,11 @@ export default function ClinicalAttendancePage() {
   const { data: appointment, isLoading, isError } = useAppointment(id);
   const submitReportMutation = useSubmitConsultationReport();
 
-  // Estado do formulï¿½rio clï¿½nico
+  // Estado do formulário clínico
   const [vetName, setVetName] = useState('');
   const [crmv, setCrmv] = useState('CRMV-SP 42.109');
   const [weight, setWeight] = useState('');
-  const [temperature, setTemperature] = useState('38.5 ï¿½C');
+  const [temperature, setTemperature] = useState('38.5 °C');
   const [heartRate, setHeartRate] = useState('120 bpm');
   const [respiratoryRate, setRespiratoryRate] = useState('24 rpm');
   const [anamnesis, setAnamnesis] = useState('');
@@ -103,14 +103,14 @@ export default function ClinicalAttendancePage() {
     if (!anamnesis.trim() || !diagnosis.trim()) {
       setFeedback({
         type: 'error',
-        message: 'Por favor, preencha ao menos a Anamnese e o Diagnï¿½stico Clï¿½nico.',
+        message: 'Por favor, preencha ao menos a Anamnese e o Diagnóstico Clínico.',
       });
       return;
     }
 
     setFeedback(null);
 
-    // Filtrar prescriï¿½ï¿½es vazias
+    // Filtrar prescrições vazias
     const validPrescriptions = prescriptions.filter((p) => p.medication.trim().length > 0);
 
     try {
@@ -136,7 +136,7 @@ export default function ClinicalAttendancePage() {
 
       setFeedback({
         type: 'success',
-        message: 'Atendimento concluï¿½do e Prontuário emitido com sucesso! O laudo já está disponï¿½vel para o tutor.',
+        message: 'Atendimento concluçãdo e Prontuário emitido com sucesso! O laudo já está disponível para o tutor.',
       });
 
       setTimeout(() => {
@@ -180,7 +180,7 @@ export default function ClinicalAttendancePage() {
 
   return (
     <View style={styles.container}>
-      {/* NAVEGAï¿½ï¿½O DE VOLTA */}
+      {/* NAVEGAÇÃO DE VOLTA */}
       <TouchableOpacity
         onPress={() => router.back()}
         style={styles.navBackRow}
@@ -192,7 +192,7 @@ export default function ClinicalAttendancePage() {
         </Text>
       </TouchableOpacity>
 
-      {/* CABEï¿½ALHO DO PACIENTE */}
+      {/* CABEÇALHO DO PACIENTE */}
       <View
         style={[
           styles.patientHeaderCard,
@@ -206,14 +206,14 @@ export default function ClinicalAttendancePage() {
           <View style={{ flex: 1 }}>
             <View style={styles.patientTitleGroup}>
               <Text style={[styles.patientName, { color: colors.text }]}>
-                Atendimento Clï¿½nico: {appointment.petName}
+                Atendimento Clínico: {appointment.petName}
               </Text>
               <View style={[styles.activeTag, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
                 <Text style={styles.activeTagText}>Em Atendimento</Text>
               </View>
             </View>
             <Text style={[styles.patientSub, { color: colors.textSecondary }]}>
-              Procedimento: <Text style={{ fontWeight: '700', color: colors.text }}>{appointment.serviceName}</Text> ï¿½ Agendado para {appointment.date} ï¿½s {appointment.time}
+              Procedimento: <Text style={{ fontWeight: '700', color: colors.text }}>{appointment.serviceName}</Text> • Agendado para {appointment.date} às {appointment.time}
             </Text>
           </View>
         </View>
@@ -246,14 +246,14 @@ export default function ClinicalAttendancePage() {
         </View>
       )}
 
-      {/* FORMULï¿½RIO CLï¿½NICO */}
+      {/* FORMULçãRIO CLçãNICO */}
       <View
         style={[
           styles.formCard,
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {/* IDENTIFICAï¿½ï¿½O DO PROFISSIONAL */}
+        {/* IDENTIFICAçãçãO DO PROFISSIONAL */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
           1. Identificação do Médico Responsóvel
         </Text>
@@ -326,7 +326,7 @@ export default function ClinicalAttendancePage() {
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Temperatura (ï¿½C)
+              Temperatura (°C)
             </Text>
             <TextInput
               style={[
@@ -339,14 +339,14 @@ export default function ClinicalAttendancePage() {
               ]}
               value={temperature}
               onChangeText={setTemperature}
-              placeholder="Ex: 38.5 ï¿½C"
+              placeholder="Ex: 38.5 °C"
               placeholderTextColor={colors.textMuted}
             />
           </View>
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Freq. Cardï¿½aca (bpm)
+              Freq. Cardçãaca (bpm)
             </Text>
             <TextInput
               style={[
@@ -385,7 +385,7 @@ export default function ClinicalAttendancePage() {
           </View>
         </View>
 
-        {/* ANAMNESE & EXAME Fï¿½SICO */}
+        {/* ANAMNESE & EXAME FçãSICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
           3. Anamnese & Queixa Clínica
         </Text>
@@ -400,15 +400,15 @@ export default function ClinicalAttendancePage() {
           ]}
           value={anamnesis}
           onChangeText={setAnamnesis}
-          placeholder="Descreva a queixa do tutor, histárico clï¿½nico, comportamento do animal e sintomas relatados..."
+          placeholder="Descreva a queixa do tutor, histárico clínico, comportamento do animal e sintomas relatados..."
           placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={4}
         />
 
-        {/* DIAGNï¿½STICO Mï¿½DICO */}
+        {/* DIAGNçãSTICO MçãDICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          4. Diagnï¿½stico Clï¿½nico & Avaliação
+          4. Diagnóstico Clínico & Avaliação
         </Text>
         <TextInput
           style={[
@@ -421,16 +421,16 @@ export default function ClinicalAttendancePage() {
           ]}
           value={diagnosis}
           onChangeText={setDiagnosis}
-          placeholder="Diagnï¿½stico conclusivo ou hipï¿½teses diagnï¿½sticas com conduta terapï¿½utica..."
+          placeholder="Diagnóstico conclusivo ou hipçãteses diagnçãsticas com conduta terapçãutica..."
           placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={3}
         />
 
-        {/* PRESCRIï¿½ï¿½O E MEDICAMENTOS */}
+        {/* PRESCRIçãçãO E MEDICAMENTOS */}
         <View style={styles.rxHeaderRow}>
           <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 0 }]}>
-            5. Prescriï¿½ï¿½o de Medicamentos & Receituï¿½rio
+            5. Prescriçãção de Medicamentos & Receituçãrio
           </Text>
           <TouchableOpacity
             onPress={handleAddPrescription}
@@ -501,7 +501,7 @@ export default function ClinicalAttendancePage() {
 
               <View style={styles.fieldCol}>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-                  Frequï¿½ncia / Posologia
+                  Frequçãncia / Posologia
                 </Text>
                 <TextInput
                   style={[
@@ -534,14 +534,14 @@ export default function ClinicalAttendancePage() {
           </View>
         ))}
 
-        {/* ORIENTAï¿½ï¿½ES GERAIS E RETORNO */}
+        {/* ORIENTAÇÕES GERAIS E RETORNO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          6. Orientaï¿½ï¿½es Gerais ao Tutor & Previsão de Retorno
+          6. Orientaçãçães Gerais ao Tutor & Previsão de Retorno
         </Text>
         <View style={styles.fieldsGrid}>
           <View style={{ width: '100%' }}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Recomendaï¿½ï¿½es e Cuidados
+              Recomendaçãçães e Cuidados
             </Text>
             <TextInput
               style={[
@@ -554,7 +554,7 @@ export default function ClinicalAttendancePage() {
               ]}
               value={instructions}
               onChangeText={setInstructions}
-              placeholder="Instruï¿½ï¿½es de repouso, dieta recomendada, banhos, monitoramento de sintomas..."
+              placeholder="Instruçãçães de repouso, dieta recomendada, banhos, monitoramento de sintomas..."
               placeholderTextColor={colors.textMuted}
               multiline
               numberOfLines={3}

@@ -71,7 +71,7 @@ export default function ClinicSettingsPage() {
 
       setFeedback({
         type: 'success',
-        message: 'Configuraï¿½ï¿½es da clínica atualizadas com sucesso!',
+        message: 'Configurações da clínica atualizadas com sucesso!',
       });
 
       setTimeout(() => setFeedback(null), 4000);
@@ -88,7 +88,7 @@ export default function ClinicSettingsPage() {
       <View style={styles.centerBox}>
         <ActivityIndicator size="large" color="#10b981" />
         <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-          Carregando configuraï¿½ï¿½es...
+          Carregando configuraçãçães...
         </Text>
       </View>
     );
@@ -98,10 +98,10 @@ export default function ClinicSettingsPage() {
     <View style={styles.container}>
       <View style={styles.titleBox}>
         <Text style={[styles.pageTitle, { color: colors.text }]}>
-          Gestão & Configuraï¿½ï¿½es da Clínica
+          Gestão & Configurações da Clínica
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Defina o modelo operacional (Clínica com mï¿½ltiplos veterinários ou Veterinário autônomo) e os dados cadastrais
+          Defina o modelo operacional (Clínica com múltiplos veterinários ou Veterinário autônomo) e os dados cadastrais
         </Text>
       </View>
 
@@ -131,7 +131,7 @@ export default function ClinicSettingsPage() {
         </View>
       )}
 
-      {/* SELEï¿½ï¿½O DO MODELO OPERACIONAL */}
+      {/* SELEÇÃO DO MODELO OPERACIONAL */}
       <View
         style={[
           styles.card,
@@ -167,10 +167,10 @@ export default function ClinicSettingsPage() {
               )}
             </View>
             <Text style={[styles.modeCardTitle, { color: colors.text }]}>
-              Clínica com Mï¿½ltiplos Veterinários
+              Clínica com Múltiplos Veterinários
             </Text>
             <Text style={[styles.modeCardDesc, { color: colors.textSecondary }]}>
-              Ideal para hospitais e clínicas com corpo clï¿½nico amplo, diferentes especialidades mï¿½dicas e escalas rotativas.
+              Ideal para hospitais e clínicas com corpo clínico amplo, diferentes especialidades médicas e escalas rotativas.
             </Text>
           </TouchableOpacity>
 
@@ -204,7 +204,7 @@ export default function ClinicSettingsPage() {
         </View>
       </View>
 
-      {/* DADOS CADASTRAIS DA CLï¿½NICA */}
+      {/* DADOS CADASTRAIS DA CLçãNICA */}
       <View
         style={[
           styles.card,
@@ -218,7 +218,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Nome da Unidade / Razï¿½o Social
+              Nome da Unidade / Razão Social
             </Text>
             <TextInput
               style={[
@@ -278,7 +278,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Telefone de Emergï¿½ncia / Plantão 24h
+              Telefone de Emergência / Plantão 24h
             </Text>
             <TextInput
               style={[
@@ -307,7 +307,7 @@ export default function ClinicSettingsPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Endereï¿½o Completo
+            Endereço Completo
           </Text>
           <TextInput
             style={[
@@ -321,7 +321,7 @@ export default function ClinicSettingsPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Descriï¿½ï¿½o da Clínica
+            Descrição da Clínica
           </Text>
           <TextInput
             style={[
@@ -347,7 +347,7 @@ export default function ClinicSettingsPage() {
             ) : (
               <>
                 <Save size={18} color="#ffffff" />
-                <Text style={styles.submitBtnText}>Salvar Alteraï¿½ï¿½es</Text>
+                <Text style={styles.submitBtnText}>Salvar Alterações</Text>
               </>
             )}
           </TouchableOpacity>

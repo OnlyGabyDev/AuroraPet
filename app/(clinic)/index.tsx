@@ -50,7 +50,7 @@ export default function ClinicDashboardPage() {
 
   return (
     <View style={styles.container}>
-      {/* BANNER INSTITUCIONAL DA CLï¿½NICA */}
+      {/* BANNER INSTITUCIONAL DA CLçãNICA */}
       <View
         style={[
           styles.clinicBanner,
@@ -86,17 +86,17 @@ export default function ClinicDashboardPage() {
             </View>
 
             <Text style={[styles.clinicDesc, { color: colors.textSecondary }]}>
-              {clinic?.description || 'Gestão integrada de consultas, corpo clï¿½nico veterinário e emissão de prontuários digitais.'}
+              {clinic?.description || 'Gestão integrada de consultas, corpo clínico veterinário e emissão de prontuários digitais.'}
             </Text>
 
             <Text style={[styles.clinicAddress, { color: colors.textMuted }]}>
-              ?? {clinic?.address || 'São Paulo - SP'} ï¿½ ?? {clinic?.phone || '(11) 3088-4200'}
+              ?? {clinic?.address || 'São Paulo - SP'} • ?? {clinic?.phone || '(11) 3088-4200'}
             </Text>
           </View>
         </View>
       </View>
 
-      {/* CARDS DE Mï¿½TRICAS */}
+      {/* CARDS DE MÉTRICAS */}
       <View style={styles.metricsGrid}>
         <View
           style={[
@@ -128,7 +128,7 @@ export default function ClinicDashboardPage() {
             {completedApps.length}
           </Text>
           <Text style={[styles.metricLabel, { color: colors.textSecondary }]}>
-            Atendimentos Concluï¿½dos
+            Atendimentos Concluídos
           </Text>
         </View>
 
@@ -167,7 +167,7 @@ export default function ClinicDashboardPage() {
         </View>
       </View>
 
-      {/* Aï¿½ï¿½ES Rï¿½PIDAS */}
+      {/* AÇÕES RÁPIDAS */}
       <View style={styles.quickActionsRow}>
         <TouchableOpacity
           onPress={() => router.push('/(clinic)/agenda')}
@@ -193,7 +193,7 @@ export default function ClinicDashboardPage() {
         </TouchableOpacity>
       </View>
 
-      {/* PRï¿½XIMAS CONSULTAS PARA ATENDIMENTO */}
+      {/* PRÓXIMAS CONSULTAS PARA ATENDIMENTO */}
       <View
         style={[
           styles.sectionBox,
@@ -206,7 +206,7 @@ export default function ClinicDashboardPage() {
               Fila de Atendimento do Dia
             </Text>
             <Text style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              Selecione uma consulta para iniciar o atendimento clï¿½nico e emitir o prontuário
+              Selecione uma consulta para iniciar o atendimento clínico e emitir o prontuário
             </Text>
           </View>
 
@@ -226,7 +226,7 @@ export default function ClinicDashboardPage() {
               Fila zerada no momento!
             </Text>
             <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-              Não há pacientes aguardando atendimento agora. Todas as consultas marcadas já foram concluï¿½das.
+              Não há pacientes aguardando atendimento agora. Todas as consultas marcadas já foram concluçãdas.
             </Text>
           </View>
         ) : (
@@ -249,10 +249,10 @@ export default function ClinicDashboardPage() {
                     Paciente: {item.petName}
                   </Text>
                   <Text style={[styles.appMeta, { color: colors.textSecondary }]}>
-                    {item.serviceName} ï¿½ {item.specialistName}
+                    {item.serviceName} • {item.specialistName}
                   </Text>
                   <Text style={[styles.appDate, { color: colors.textMuted }]}>
-                    Data: {item.date} ï¿½s {item.time}
+                    Data: {item.date} às {item.time}
                   </Text>
                 </View>
               </View>

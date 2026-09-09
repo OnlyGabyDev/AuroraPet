@@ -41,13 +41,13 @@ export default function ClinicVetsPage() {
     };
 
     if (Platform.OS === 'web') {
-      if (confirm(`Deseja realmente remover ${name} do corpo clï¿½nico?`)) {
+      if (confirm(`Deseja realmente remover ${name} do corpo clínico?`)) {
         doDelete();
       }
     } else {
       Alert.alert(
         'Remover Veterinário',
-        `Deseja realmente remover ${name} do corpo clï¿½nico?`,
+        `Deseja realmente remover ${name} do corpo clínico?`,
         [
           { text: 'Cancelar', style: 'cancel' },
           { text: 'Remover', style: 'destructive', onPress: doDelete },
@@ -58,14 +58,14 @@ export default function ClinicVetsPage() {
 
   return (
     <View style={styles.container}>
-      {/* CABEï¿½ALHO */}
+      {/* CABEÇALHO */}
       <View style={styles.headerRow}>
         <View>
           <Text style={[styles.pageTitle, { color: colors.text }]}>
-            Corpo Clï¿½nico da Unidade
+            Corpo Clínico da Unidade
           </Text>
           <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-            Gerenciamento de médicos veterinários, especialidades mï¿½dicas e escalas de plantão
+            Gerenciamento de médicos veterinários, especialidades médicas e escalas de plantão
           </Text>
         </View>
 
@@ -79,7 +79,7 @@ export default function ClinicVetsPage() {
         </TouchableOpacity>
       </View>
 
-      {/* LISTAGEM DOS Mï¿½DICOS */}
+      {/* LISTAGEM DOS MçãDICOS */}
       {isLoading ? (
         <View style={styles.centerBox}>
           <ActivityIndicator size="large" color="#10b981" />
@@ -166,7 +166,7 @@ export default function ClinicVetsPage() {
                   <View style={styles.scheduleItem}>
                     <Clock size={14} color="#7c3aed" />
                     <Text style={[styles.scheduleText, { color: colors.textSecondary }]}>
-                      {vet.availableHours.slice(0, 4).join(' ï¿½ ')}
+                      {vet.availableHours.slice(0, 4).join(' • ')}
                       {vet.availableHours.length > 4 ? ` (+${vet.availableHours.length - 4})` : ''}
                     </Text>
                   </View>
