@@ -71,14 +71,14 @@ export default function ClinicSettingsPage() {
 
       setFeedback({
         type: 'success',
-        message: 'Configura��es da cl�nica atualizadas com sucesso!',
+        message: 'Configuraï¿½ï¿½es da clï¿½nica atualizadas com sucesso!',
       });
 
       setTimeout(() => setFeedback(null), 4000);
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err?.message || 'Falha ao atualizar dados da cl�nica.',
+        message: err?.message || 'Falha ao atualizar dados da clï¿½nica.',
       });
     }
   };
@@ -88,7 +88,7 @@ export default function ClinicSettingsPage() {
       <View style={styles.centerBox}>
         <ActivityIndicator size="large" color="#10b981" />
         <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-          Carregando configura��es...
+          Carregando configuraï¿½ï¿½es...
         </Text>
       </View>
     );
@@ -98,10 +98,10 @@ export default function ClinicSettingsPage() {
     <View style={styles.container}>
       <View style={styles.titleBox}>
         <Text style={[styles.pageTitle, { color: colors.text }]}>
-          Gest�o & Configura��es da Cl�nica
+          Gestï¿½o & Configuraï¿½ï¿½es da Clï¿½nica
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Defina o modelo operacional (Cl�nica com m�ltiplos veterin�rios ou Veterin�rio aut�nomo) e os dados cadastrais
+          Defina o modelo operacional (Clï¿½nica com mï¿½ltiplos veterinï¿½rios ou Veterinï¿½rio autï¿½nomo) e os dados cadastrais
         </Text>
       </View>
 
@@ -131,7 +131,7 @@ export default function ClinicSettingsPage() {
         </View>
       )}
 
-      {/* SELE��O DO MODELO OPERACIONAL */}
+      {/* SELEï¿½ï¿½O DO MODELO OPERACIONAL */}
       <View
         style={[
           styles.card,
@@ -139,10 +139,10 @@ export default function ClinicSettingsPage() {
         ]}
       >
         <Text style={[styles.cardTitle, { color: colors.text }]}>
-          Modelo de Gest�o Operacional
+          Modelo de Gestï¿½o Operacional
         </Text>
         <Text style={[styles.cardDesc, { color: colors.textSecondary }]}>
-          Escolha como o sistema deve estruturar a visualiza��o de consultas e permiss�es de agendamento:
+          Escolha como o sistema deve estruturar a visualizaï¿½ï¿½o de consultas e permissï¿½es de agendamento:
         </Text>
 
         <View style={styles.modeGrid}>
@@ -167,10 +167,10 @@ export default function ClinicSettingsPage() {
               )}
             </View>
             <Text style={[styles.modeCardTitle, { color: colors.text }]}>
-              Cl�nica com M�ltiplos Veterin�rios
+              Clï¿½nica com Mï¿½ltiplos Veterinï¿½rios
             </Text>
             <Text style={[styles.modeCardDesc, { color: colors.textSecondary }]}>
-              Ideal para hospitais e cl�nicas com corpo cl�nico amplo, diferentes especialidades m�dicas e escalas rotativas.
+              Ideal para hospitais e clï¿½nicas com corpo clï¿½nico amplo, diferentes especialidades mï¿½dicas e escalas rotativas.
             </Text>
           </TouchableOpacity>
 
@@ -195,16 +195,16 @@ export default function ClinicSettingsPage() {
               )}
             </View>
             <Text style={[styles.modeCardTitle, { color: colors.text }]}>
-              Veterin�rio Aut�nomo / Consult�rio
+              Veterinï¿½rio Autï¿½nomo / Consultï¿½rio
             </Text>
             <Text style={[styles.modeCardDesc, { color: colors.textSecondary }]}>
-              Ideal para o m�dico veterin�rio que administra seu pr�prio consult�rio individual, hor�rios e fila de pacientes.
+              Ideal para o mï¿½dico veterinï¿½rio que administra seu prï¿½prio consultï¿½rio individual, horï¿½rios e fila de pacientes.
             </Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* DADOS CADASTRAIS DA CL�NICA */}
+      {/* DADOS CADASTRAIS DA CLï¿½NICA */}
       <View
         style={[
           styles.card,
@@ -218,7 +218,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Nome da Unidade / Raz�o Social
+              Nome da Unidade / Razï¿½o Social
             </Text>
             <TextInput
               style={[
@@ -248,7 +248,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              CNPJ da Cl�nica
+              CNPJ da Clï¿½nica
             </Text>
             <TextInput
               style={[
@@ -278,7 +278,7 @@ export default function ClinicSettingsPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Telefone de Emerg�ncia / Plant�o 24h
+              Telefone de Emergï¿½ncia / Plantï¿½o 24h
             </Text>
             <TextInput
               style={[
@@ -292,7 +292,7 @@ export default function ClinicSettingsPage() {
 
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Hor�rio de Funcionamento
+              Horï¿½rio de Funcionamento
             </Text>
             <TextInput
               style={[
@@ -307,7 +307,7 @@ export default function ClinicSettingsPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Endere�o Completo
+            Endereï¿½o Completo
           </Text>
           <TextInput
             style={[
@@ -321,7 +321,7 @@ export default function ClinicSettingsPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Descri��o da Cl�nica
+            Descriï¿½ï¿½o da Clï¿½nica
           </Text>
           <TextInput
             style={[
@@ -347,7 +347,7 @@ export default function ClinicSettingsPage() {
             ) : (
               <>
                 <Save size={18} color="#ffffff" />
-                <Text style={styles.submitBtnText}>Salvar Altera��es</Text>
+                <Text style={styles.submitBtnText}>Salvar Alteraï¿½ï¿½es</Text>
               </>
             )}
           </TouchableOpacity>

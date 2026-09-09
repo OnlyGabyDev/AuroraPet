@@ -1,4 +1,4 @@
-﻿import {
+import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -8,8 +8,13 @@
   User as FirebaseUser,
 } from 'firebase/auth';
 import { auth, isFirebaseConfigured } from './firebase';
-import { UserProfile } from '../types/auth';
-import { DEMO_USER } from './mockData';
+import { UserProfile, UserRole } from '../types/auth';
+import {
+  DEMO_USER,
+  DEMO_TUTOR_USER,
+  DEMO_VET_USER,
+  DEMO_CLINIC_ADMIN_USER,
+} from './mockData';
 
 const DEMO_AUTH_KEY = 'clyvo_demo_current_user';
 
@@ -45,17 +50,20 @@ export const authService = {
           email: cred.user.email || '',
           displayName: cred.user.displayName || email.split('@')[0],
           photoURL: cred.user.photoURL || undefined,
+          role: 'tutor',
+          identifierType: 'CPF',
         };
       } catch (err) {
         throw new Error(formatAuthError(err));
       }
     }
 
-    // Modo Demonstração
+    // Modo Demonstração: aceita qualquer e-mail/senha
     const demoUser: UserProfile = {
       ...DEMO_USER,
       email,
       displayName: email.split('@')[0],
+      role: 'tutor',
     };
     if (typeof window !== 'undefined') {
       localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(demoUser));
@@ -72,6 +80,8 @@ export const authService = {
           uid: cred.user.uid,
           email: cred.user.email || '',
           displayName: name,
+          role: 'tutor',
+          identifierType: 'CPF',
         };
       } catch (err) {
         throw new Error(formatAuthError(err));
@@ -84,6 +94,8 @@ export const authService = {
       email,
       displayName: name,
       createdAt: new Date().toISOString().split('T')[0],
+      role: 'tutor',
+      identifierType: 'CPF',
     };
     if (typeof window !== 'undefined') {
       localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(demoUser));
@@ -93,9 +105,30 @@ export const authService = {
 
   async loginWithDemo(): Promise<UserProfile> {
     if (typeof window !== 'undefined') {
-      localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(DEMO_USER));
+      localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(DEMO_TUTOR_USER));
     }
-    return DEMO_USER;
+    return DEMO_TUTOR_USER;
+  },
+
+  async loginWithDemoRole(role: UserRole): Promise<UserProfile> {
+    let targetUser: UserProfile;
+    switch (role) {
+      case 'veterinarian':
+        targetUser = DEMO_VET_USER;
+        break;
+      case 'clinic_admin':
+        targetUser = DEMO_CLINIC_ADMIN_USER;
+        break;
+      case 'tutor':
+      default:
+        targetUser = DEMO_TUTOR_USER;
+        break;
+    }
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(targetUser));
+    }
+    return targetUser;
   },
 
   async logout(): Promise<void> {
@@ -120,15 +153,18 @@ export const authService = {
     console.info('[Auth] Email de recuperação simulado enviado para:', email);
   },
 
-  onAuthStateChange(callback: (user: UserProfile | null) => void): () => void {
+  onAuthStateChange(callback: (user: UserProfile | null) => void) {
     if (isFirebaseConfigured && auth) {
       return onAuthStateChanged(auth, (fbUser: FirebaseUser | null) => {
         if (fbUser) {
           callback({
             uid: fbUser.uid,
             email: fbUser.email || '',
-            displayName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Tutor',
+            displayName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Usuário',
+            phoneNumber: fbUser.phoneNumber || undefined,
             photoURL: fbUser.photoURL || undefined,
+            role: 'tutor',
+            identifierType: 'CPF',
           });
         } else {
           callback(null);
@@ -136,22 +172,22 @@ export const authService = {
       });
     }
 
-    // Modo Demonstração
+    // Modo Demonstração: verifica se há sessão salva explicitamente pelo usuário.
+    // NÃO faz login automático — retorna null para forçar a tela de login.
     if (typeof window !== 'undefined') {
-      const raw = localStorage.getItem(DEMO_AUTH_KEY);
-      if (raw) {
+      const stored = localStorage.getItem(DEMO_AUTH_KEY);
+      if (stored) {
         try {
-          callback(JSON.parse(raw));
+          callback(JSON.parse(stored));
+          return () => {};
         } catch {
-          callback(null);
+          // sessão corrompida, ignora
         }
-      } else {
-        callback(null);
       }
-    } else {
-      callback(null);
     }
 
+    // Sem sessão salva → usuário não autenticado
+    callback(null);
     return () => {};
   },
 };

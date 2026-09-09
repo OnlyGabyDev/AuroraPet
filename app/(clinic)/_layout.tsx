@@ -6,21 +6,25 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Platform,
 } from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { HeaderBrand } from '../../src/components/common/HeaderBrand';
+import { RoleSwitcherModal } from '../../src/components/common/RoleSwitcherModal';
+import { NotificationModal } from '../../src/components/common/NotificationModal';
 import {
   LayoutDashboard,
   CalendarDays,
   Users,
   Settings,
-  PawPrint,
   Sun,
   Moon,
   ShieldCheck,
   Stethoscope,
+  Sparkles,
+  Zap,
+  MessageSquareText,
+  HeartHandshake,
 } from 'lucide-react-native';
 
 export default function ClinicLayout() {
@@ -29,86 +33,122 @@ export default function ClinicLayout() {
   const { colors, isDark, toggleTheme } = useTheme();
 
   const navItems = [
-    { label: 'Painel', href: '/(clinic)', icon: LayoutDashboard },
+    { label: 'Painel Geral', href: '/(clinic)', icon: LayoutDashboard },
+    { label: 'Planos & Cotas', href: '/(clinic)/subscription', icon: Zap },
+    { label: 'Solicita√ß√µes', href: '/(clinic)/requests', icon: MessageSquareText },
+    { label: 'Portal do Vet', href: '/(clinic)/vet-portal', icon: Stethoscope },
+    { label: 'Corpo Cl√≠nico', href: '/(clinic)/vets', icon: Users },
     { label: 'Agenda & Fila', href: '/(clinic)/agenda', icon: CalendarDays },
-    { label: 'Corpo ClÌnico', href: '/(clinic)/vets', icon: Users },
-    { label: 'ConfiguraÁıes', href: '/(clinic)/settings', icon: Settings },
+    { label: 'Configura√ß√µes', href: '/(clinic)/settings', icon: Settings },
   ];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* HEADER SUPERIOR CLÕNICO */}
+      {/* HEADER SUPERIOR CL√çNICO */}
       <View
         style={[
-          styles.topHeader,
+          styles.header,
           {
             backgroundColor: colors.surface,
             borderBottomColor: colors.border,
           },
         ]}
       >
-        <View style={styles.brandRow}>
+        <View style={styles.headerLeft}>
           <TouchableOpacity activeOpacity={0.8} onPress={() => router.push('/(clinic)')}>
             <HeaderBrand size="sm" showSubtitle={false} />
           </TouchableOpacity>
-          <View
-            style={[
-              styles.portalBadge,
-              {
-                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : '#eff6ff',
-                borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : '#bfdbfe',
-              },
-            ]}
-          >
-            <Stethoscope size={13} color="#2563eb" />
-            <Text style={styles.portalBadgeText}>Gest„o & Corpo ClÌnico</Text>
+          <View style={styles.headerBadge}>
+            <ShieldCheck size={12} color="#10b981" />
+            <Text style={styles.headerBadgeText}>ClyvoVet Multi-tenant</Text>
           </View>
         </View>
 
-        <View style={styles.topActions}>
-          {/* THEME TOGGLE */}
+        <View style={styles.headerRight}>
+          {/* SINO DE NOTIFICA√á√ïES */}
+          <NotificationModal />
+
+          {/* TOGGLE TEMA */}
           <TouchableOpacity
             onPress={toggleTheme}
-            activeOpacity={0.7}
-            style={[
-              styles.iconBtn,
-              {
-                backgroundColor: colors.surfaceSubtle,
-                borderColor: colors.border,
-              },
-            ]}
+            style={[styles.actionBtn, { backgroundColor: colors.surfaceSubtle }]}
+            activeOpacity={0.8}
           >
-            {isDark ? <Sun size={17} color="#fbbf24" /> : <Moon size={17} color="#64748b" />}
+            {isDark ? (
+              <Sun size={18} color="#f59e0b" />
+            ) : (
+              <Moon size={18} color={colors.textSecondary} />
+            )}
           </TouchableOpacity>
 
-          {/* NAVEGA«√O ENTRE TELAS CLÕNICAS */}
+          {/* VOLTAR PARA O APP DO TUTOR */}
+          <TouchableOpacity
+            onPress={() => router.push('/(dashboard)')}
+            style={[
+              styles.tutorBtn,
+              {
+                backgroundColor: colors.primaryLight,
+                borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.2)',
+              },
+            ]}
+            activeOpacity={0.85}
+          >
+            <Sparkles size={14} color={colors.accent} />
+            <Text style={[styles.tutorBtnText, { color: colors.accent }]}>
+              √Årea do Tutor
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* BARRA DE NAVEGA√á√ÉO DE M√ìDULOS */}
+      <View
+        style={[
+          styles.navBar,
+          {
+            backgroundColor: colors.surface,
+            borderBottomColor: colors.border,
+          },
+        ]}
+      >
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.navScroll}
+        >
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive =
               item.href === '/(clinic)'
-                ? pathname === '/(clinic)' || pathname === '/(clinic)/'
+                ? pathname === '/(clinic)'
                 : pathname.startsWith(item.href);
+
+            const IconComponent = item.icon;
 
             return (
               <TouchableOpacity
                 key={item.href}
                 onPress={() => router.push(item.href as any)}
-                activeOpacity={0.7}
                 style={[
-                  styles.navItemBtn,
+                  styles.navItem,
                   {
-                    backgroundColor: isActive ? (isDark ? 'rgba(59, 130, 246, 0.2)' : '#dbeafe') : colors.surfaceSubtle,
-                    borderColor: isActive ? '#3b82f6' : colors.border,
+                    backgroundColor: isActive
+                      ? colors.primaryLight
+                      : 'transparent',
+                    borderBottomColor: isActive ? colors.accent : 'transparent',
                   },
                 ]}
+                activeOpacity={0.8}
               >
-                <Icon size={16} color={isActive ? '#2563eb' : colors.textSecondary} />
+                <IconComponent
+                  size={16}
+                  color={isActive ? colors.accent : colors.textSecondary}
+                />
                 <Text
                   style={[
-                    styles.navItemText,
+                    styles.navText,
                     {
-                      color: isActive ? '#2563eb' : colors.textSecondary,
-                      fontWeight: isActive ? '800' : '600',
+                      color: isActive ? colors.accent : colors.textSecondary,
+                      fontWeight: isActive ? '700' : '500',
                     },
                   ]}
                 >
@@ -117,35 +157,16 @@ export default function ClinicLayout() {
               </TouchableOpacity>
             );
           })}
-
-          {/* VOLTAR PARA ¡REA DO TUTOR */}
-          <TouchableOpacity
-            onPress={() => router.push('/(dashboard)')}
-            activeOpacity={0.7}
-            style={[
-              styles.switchPortalBtn,
-              {
-                backgroundColor: colors.primaryLight,
-                borderColor: colors.accent,
-              },
-            ]}
-          >
-            <PawPrint size={15} color={colors.accent} />
-            <Text style={[styles.switchPortalText, { color: colors.accent }]}>
-              ¡rea do Tutor
-            </Text>
-          </TouchableOpacity>
-        </View>
+        </ScrollView>
       </View>
 
-      {/* CONTE⁄DO PRINCIPAL */}
-      <ScrollView
-        style={styles.mainScroll}
-        contentContainerStyle={styles.mainContent}
-        showsVerticalScrollIndicator={false}
-      >
+      {/* CONTE√öDO PRINCIPAL DA ROTA */}
+      <View style={styles.body}>
         <Slot />
-      </ScrollView>
+      </View>
+
+      {/* SWITCHER DE PAPEL FLUTUANTE PARA TESTES IMEDIATOS */}
+      <RoleSwitcherModal />
     </SafeAreaView>
   );
 }
@@ -154,51 +175,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  topHeader: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    gap: 12,
-    zIndex: 100,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
   },
-  brandRow: {
+  headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  portalBadge: {
+  headerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    borderWidth: 1,
+    gap: 4,
+    backgroundColor: '#ecfdf5',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
   },
-  portalBadgeText: {
+  headerBadgeText: {
+    color: '#065f46',
     fontSize: 11,
     fontWeight: '700',
-    color: '#2563eb',
   },
-  topActions: {
+  headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
   },
-  iconBtn: {
-    width: 36,
-    height: 36,
+  actionBtn: {
+    padding: 8,
     borderRadius: 10,
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
-  navItemBtn: {
+  tutorBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -207,29 +220,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
   },
-  navItemText: {
+  tutorBtnText: {
     fontSize: 12,
+    fontWeight: '700',
   },
-  switchPortalBtn: {
+  navBar: {
+    borderBottomWidth: 1,
+  },
+  navScroll: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 6,
+  },
+  navItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10,
-    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderBottomWidth: 2,
   },
-  switchPortalText: {
-    fontSize: 12,
-    fontWeight: '800',
+  navText: {
+    fontSize: 13,
   },
-  mainScroll: {
+  body: {
     flex: 1,
-  },
-  mainContent: {
-    padding: 20,
-    maxWidth: 1200,
-    width: '100%',
-    marginHorizontal: 'auto',
   },
 });

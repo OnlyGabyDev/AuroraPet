@@ -1,4 +1,4 @@
-﻿# Clyvo | Clínica Veterinária 🐾
+# Clyvo | Clínica Veterinária 🐾
 
 > **Entrega da Sprint 3 - Desenvolvimento Front-End & Mobile**  
 > Aplicação desenvolvida com **React Native**, **Expo Router**, **TanStack Query**, **Firebase Authentication** e backend HTTP integrado com **Node.js/Express**.
@@ -7,7 +7,7 @@
 
 ## 📹 Link do Vídeo de Apresentação
 
-- **Link no YouTube:** [https://youtu.be/SEU_LINK_AQUI](https://youtu.be/SEU_LINK_AQUI) *(Substitua pelo link do vídeo gravado pelo grupo)*
+- **Link no YouTube:** [INSERIR_LINK_AQUI_ANTES_DE_ENVIAR](https://youtube.com/)
 - **Duração Máxima:** Até 5 minutos
 - **Formato:** Demonstração prática do aplicativo em execução real (Web / Emulador / Smartphone) com narração em áudio cobrindo todos os requisitos avaliativos.
 

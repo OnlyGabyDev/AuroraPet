@@ -23,11 +23,11 @@ import {
 
 const DAYS_OPTIONS = [
   'Segunda',
-  'Ter�a',
+  'Terï¿½a',
   'Quarta',
   'Quinta',
   'Sexta',
-  'S�bado',
+  'Sï¿½bado',
   'Domingo',
 ];
 
@@ -74,7 +74,7 @@ export default function NewVeterinarianPage() {
     if (!name.trim() || !crmv.trim() || !specialty.trim()) {
       setFeedback({
         type: 'error',
-        message: 'Preencha o Nome Completo, CRMV e Especialidade do m�dico veterin�rio.',
+        message: 'Preencha o Nome Completo, CRMV e Especialidade do mï¿½dico veterinï¿½rio.',
       });
       return;
     }
@@ -86,7 +86,7 @@ export default function NewVeterinarianPage() {
         name: name.trim(),
         crmv: crmv.trim(),
         specialty: specialty.trim(),
-        bio: bio.trim() || 'M�dico veterin�rio dedicado ao cuidado e bem-estar animal.',
+        bio: bio.trim() || 'Mï¿½dico veterinï¿½rio dedicado ao cuidado e bem-estar animal.',
         photoUrl: photoUrl.trim() || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=700&q=85',
         availableDays: selectedDays.length > 0 ? selectedDays : ['Segunda', 'Quarta', 'Sexta'],
         availableHours: selectedHours.length > 0 ? selectedHours : ['09:00', '14:00'],
@@ -95,7 +95,7 @@ export default function NewVeterinarianPage() {
 
       setFeedback({
         type: 'success',
-        message: 'M�dico Veterin�rio cadastrado com sucesso no corpo cl�nico!',
+        message: 'Mï¿½dico Veterinï¿½rio cadastrado com sucesso no corpo clï¿½nico!',
       });
 
       setTimeout(() => {
@@ -104,7 +104,7 @@ export default function NewVeterinarianPage() {
     } catch (err: any) {
       setFeedback({
         type: 'error',
-        message: err?.message || 'Falha ao cadastrar veterin�rio.',
+        message: err?.message || 'Falha ao cadastrar veterinï¿½rio.',
       });
     }
   };
@@ -118,16 +118,16 @@ export default function NewVeterinarianPage() {
       >
         <ArrowLeft size={18} color={colors.accent} />
         <Text style={[styles.backText, { color: colors.accent }]}>
-          Voltar para Corpo Cl�nico
+          Voltar para Corpo Clï¿½nico
         </Text>
       </TouchableOpacity>
 
       <View style={styles.titleBox}>
         <Text style={[styles.pageTitle, { color: colors.text }]}>
-          Cadastrar Novo M�dico Veterin�rio
+          Cadastrar Novo Mï¿½dico Veterinï¿½rio
         </Text>
         <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-          Adicione um profissional � equipe da cl�nica, definindo CRMV, especialidade e escalas
+          Adicione um profissional ï¿½ equipe da clï¿½nica, definindo CRMV, especialidade e escalas
         </Text>
       </View>
 
@@ -163,11 +163,11 @@ export default function NewVeterinarianPage() {
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {/* CAMPOS B�SICOS */}
+        {/* CAMPOS Bï¿½SICOS */}
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Nome Completo do M�dico(a) *
+              Nome Completo do Mï¿½dico(a) *
             </Text>
             <TextInput
               style={[
@@ -201,7 +201,7 @@ export default function NewVeterinarianPage() {
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>
-              Especialidade M�dica *
+              Especialidade Mï¿½dica *
             </Text>
             <TextInput
               style={[
@@ -234,7 +234,7 @@ export default function NewVeterinarianPage() {
 
         <View style={{ width: '100%' }}>
           <Text style={[styles.label, { color: colors.textSecondary }]}>
-            Biografia & Experi�ncia Profissional
+            Biografia & Experiï¿½ncia Profissional
           </Text>
           <TextInput
             style={[
@@ -243,7 +243,7 @@ export default function NewVeterinarianPage() {
             ]}
             value={bio}
             onChangeText={setBio}
-            placeholder="Resumo de forma��o, p�s-gradua��o e atua��o cl�nica do profissional..."
+            placeholder="Resumo de formaï¿½ï¿½o, pï¿½s-graduaï¿½ï¿½o e atuaï¿½ï¿½o clï¿½nica do profissional..."
             placeholderTextColor={colors.textMuted}
             multiline
             numberOfLines={3}
@@ -253,7 +253,7 @@ export default function NewVeterinarianPage() {
         {/* DIAS DE ATENDIMENTO */}
         <View style={styles.sectionBlock}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Dias de Plant�o / Atendimento
+            Dias de Plantï¿½o / Atendimento
           </Text>
           <View style={styles.chipsRow}>
             {DAYS_OPTIONS.map((day) => {
@@ -285,10 +285,10 @@ export default function NewVeterinarianPage() {
           </View>
         </View>
 
-        {/* HOR�RIOS DISPON�VEIS */}
+        {/* HORï¿½RIOS DISPONï¿½VEIS */}
         <View style={styles.sectionBlock}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            Hor�rios Dispon�veis para Consultas
+            Horï¿½rios Disponï¿½veis para Consultas
           </Text>
           <View style={styles.chipsRow}>
             {HOURS_OPTIONS.map((hr) => {
@@ -333,7 +333,7 @@ export default function NewVeterinarianPage() {
             ) : (
               <>
                 <UserPlus size={18} color="#ffffff" />
-                <Text style={styles.submitBtnText}>Salvar e Cadastrar Veterin�rio</Text>
+                <Text style={styles.submitBtnText}>Salvar e Cadastrar Veterinï¿½rio</Text>
               </>
             )}
           </TouchableOpacity>

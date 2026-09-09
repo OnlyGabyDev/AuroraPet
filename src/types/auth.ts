@@ -1,3 +1,5 @@
+export type UserRole = 'tutor' | 'veterinarian' | 'clinic_admin';
+
 export interface UserProfile {
   uid: string;
   email: string;
@@ -5,6 +7,15 @@ export interface UserProfile {
   phoneNumber?: string;
   photoURL?: string;
   createdAt?: string;
+  role: UserRole;
+  identifierType?: 'CPF' | 'CRMV' | 'CNPJ';
+  identifierValue?: string;
+  // Campos específicos de perfil
+  crmv?: string;
+  crmvUf?: string;
+  specialty?: string;
+  clinicId?: string;
+  clinicName?: string;
 }
 
 export interface AuthState {
@@ -12,3 +23,4 @@ export interface AuthState {
   loading: boolean;
   isDemoUser: boolean;
 }
+

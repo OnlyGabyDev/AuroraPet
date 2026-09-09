@@ -46,7 +46,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       window.print();
     } else {
-      alert('Laudo pronto para compartilhamento e impress„o.');
+      alert('Laudo pronto para compartilhamento e impress√£o.');
     }
   };
 
@@ -75,10 +75,10 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
               </View>
               <View>
                 <Text style={[styles.title, { color: colors.text }]}>
-                  Prontu·rio & RelatÛrio ClÌnico
+                  Prontu√°rio & Relat√≥rio Cl√≠nico
                 </Text>
                 <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-                  Registro oficial emitido pelo corpo clÌnico veterin·rio
+                  Registro oficial emitido pelo corpo cl√≠nico veterin√°rio
                 </Text>
               </View>
             </View>
@@ -92,13 +92,13 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
             </TouchableOpacity>
           </View>
 
-          {/* CONTE⁄DO DO RELAT”RIO */}
+          {/* CONTE√öDO DO RELAT√ìRIO */}
           <ScrollView
             style={styles.scrollArea}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* CARIMBO CLÕNICO OFICIAL */}
+            {/* CARIMBO CL√çNICO OFICIAL */}
             <View
               style={[
                 styles.clinicalBadgeBox,
@@ -112,21 +112,21 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                 <ShieldCheck size={24} color={colors.accent} />
                 <View>
                   <Text style={[styles.clinicOfficialName, { color: colors.text }]}>
-                    CLYVO CENTRO M…DICO VETERIN¡RIO 24H
+                    CLYVO CENTRO M√âDICO VETERIN√ÅRIO 24H
                   </Text>
                   <Text style={[styles.clinicOfficialSub, { color: colors.textSecondary }]}>
-                    Prontu·rio MÈdico Digital ï Consulta #{appointment.id}
+                    Prontu√°rio M√©dico Digital ¬ï Consulta #{appointment.id}
                   </Text>
                 </View>
               </View>
               <View style={styles.dateStampBox}>
                 <Text style={[styles.dateStampText, { color: colors.accent }]}>
-                  {appointment.date} ï {appointment.time}
+                  {appointment.date} ¬ï {appointment.time}
                 </Text>
               </View>
             </View>
 
-            {/* DADOS DO PACIENTE & M…DICO RESPONS¡VEL */}
+            {/* DADOS DO PACIENTE & M√âDICO RESPONS√ÅVEL */}
             <View style={styles.metaGrid}>
               <View
                 style={[
@@ -141,7 +141,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                   {appointment.petName}
                 </Text>
                 <Text style={[styles.metaCardSub, { color: colors.textSecondary }]}>
-                  ServiÁo: {appointment.serviceName}
+                  Servi√ßo: {appointment.serviceName}
                 </Text>
               </View>
 
@@ -152,13 +152,13 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                 ]}
               >
                 <Text style={[styles.metaCardLabel, { color: colors.textSecondary }]}>
-                  M…DICO VETERIN¡RIO
+                  M√âDICO VETERIN√ÅRIO
                 </Text>
                 <Text style={[styles.metaCardValue, { color: colors.text }]}>
                   {report?.veterinarianName || appointment.specialistName}
                 </Text>
                 <Text style={[styles.metaCardSub, { color: colors.accent, fontWeight: '700' }]}>
-                  {report?.crmv || 'CRMV Ativo'} ï {report?.specialty || 'ClÌnica Geral'}
+                  {report?.crmv || 'CRMV Ativo'} ¬ï {report?.specialty || 'Cl√≠nica Geral'}
                 </Text>
               </View>
             </View>
@@ -172,10 +172,10 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
               >
                 <AlertCircle size={32} color={colors.textSecondary} />
                 <Text style={[styles.emptyReportTitle, { color: colors.text }]}>
-                  RelatÛrio ainda n„o registrado
+                  Relat√≥rio ainda n√£o registrado
                 </Text>
                 <Text style={[styles.emptyReportDesc, { color: colors.textSecondary }]}>
-                  O veterin·rio respons·vel ainda est· processando os dados desta consulta ou o atendimento foi marcado como concluÌdo sem preenchimento detalhado do laudo.
+                  O veterin√°rio respons√°vel ainda est√° processando os dados desta consulta ou o atendimento foi marcado como conclu√≠do sem preenchimento detalhado do laudo.
                 </Text>
               </View>
             ) : (
@@ -207,7 +207,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                     <Thermometer size={18} color="#f59e0b" />
                     <Text style={[styles.vitalLabel, { color: colors.textSecondary }]}>Temperatura</Text>
                     <Text style={[styles.vitalValue, { color: colors.text }]}>
-                      {report.vitalSigns?.temperature || '38.5 ∞C'}
+                      {report.vitalSigns?.temperature || '38.5 ¬∞C'}
                     </Text>
                   </View>
 
@@ -218,7 +218,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                     ]}
                   >
                     <Heart size={18} color="#ef4444" />
-                    <Text style={[styles.vitalLabel, { color: colors.textSecondary }]}>FrequÍncia CardÌaca</Text>
+                    <Text style={[styles.vitalLabel, { color: colors.textSecondary }]}>Frequ√™ncia Card√≠aca</Text>
                     <Text style={[styles.vitalValue, { color: colors.text }]}>
                       {report.vitalSigns?.heartRate || '120 bpm'}
                     </Text>
@@ -237,15 +237,15 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                     ]}
                   >
                     <Text style={[styles.bodyText, { color: colors.text }]}>
-                      {report.anamnesis || 'Exame de rotina preventivo sem intercorrÍncias prÈvias.'}
+                      {report.anamnesis || 'Exame de rotina preventivo sem intercorr√™ncias pr√©vias.'}
                     </Text>
                   </View>
                 </View>
 
-                {/* DIAGN”STICO CLÕNICO */}
+                {/* DIAGN√ìSTICO CL√çNICO */}
                 <View style={styles.sectionBlock}>
                   <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                    DiagnÛstico ClÌnico & AvaliaÁ„o MÈdica
+                    Diagn√≥stico Cl√≠nico & Avalia√ß√£o M√©dica
                   </Text>
                   <View
                     style={[
@@ -262,13 +262,13 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                   </View>
                 </View>
 
-                {/* PRESCRI«√O E RECEITU¡RIO */}
+                {/* PRESCRI√á√ÉO E RECEITU√ÅRIO */}
                 {report.prescriptions && report.prescriptions.length > 0 && (
                   <View style={styles.sectionBlock}>
                     <View style={styles.sectionTitleRow}>
                       <Pill size={18} color={colors.accent} />
                       <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 0 }]}>
-                        PrescriÁ„o de Medicamentos & Tratamento
+                        Prescri√ß√£o de Medicamentos & Tratamento
                       </Text>
                     </View>
 
@@ -290,18 +290,18 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                         </View>
                         <View style={styles.rxDetails}>
                           <Text style={[styles.rxDetailText, { color: colors.textSecondary }]}>
-                            ï Dosagem: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.dosage}</Text>
+                            ¬ï Dosagem: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.dosage}</Text>
                           </Text>
                           <Text style={[styles.rxDetailText, { color: colors.textSecondary }]}>
-                            ï FrequÍncia: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.frequency}</Text>
+                            ¬ï Frequ√™ncia: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.frequency}</Text>
                           </Text>
                           <Text style={[styles.rxDetailText, { color: colors.textSecondary }]}>
-                            ï DuraÁ„o: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.duration}</Text>
+                            ¬ï Dura√ß√£o: <Text style={{ color: colors.text, fontWeight: '700' }}>{rx.duration}</Text>
                           </Text>
                         </View>
                         {rx.instructions && (
                           <Text style={[styles.rxNote, { color: colors.textMuted }]}>
-                            InstruÁ„o: {rx.instructions}
+                            Instru√ß√£o: {rx.instructions}
                           </Text>
                         )}
                       </View>
@@ -309,11 +309,11 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                   </View>
                 )}
 
-                {/* ORIENTA«’ES GERAIS */}
+                {/* ORIENTA√á√ïES GERAIS */}
                 {report.instructions ? (
                   <View style={styles.sectionBlock}>
                     <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                      OrientaÁıes Gerais & Cuidados Especiais
+                      Orienta√ß√µes Gerais & Cuidados Especiais
                     </Text>
                     <View
                       style={[
@@ -338,7 +338,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
                   >
                     <Calendar size={18} color="#7c3aed" />
                     <Text style={[styles.followUpText, { color: colors.text }]}>
-                      Data recomendada para retorno / reavaliaÁ„o:{' '}
+                      Data recomendada para retorno / reavalia√ß√£o:{' '}
                       <Text style={{ fontWeight: '800', color: '#7c3aed' }}>
                         {report.followUpDate}
                       </Text>
@@ -349,7 +349,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
             )}
           </ScrollView>
 
-          {/* RODAP… COM A«’ES */}
+          {/* RODAP√â COM A√á√ïES */}
           <View style={[styles.modalFooter, { borderTopColor: colors.border }]}>
             <TouchableOpacity
               onPress={handlePrint}
@@ -370,7 +370,7 @@ export const ConsultationReportModal: React.FC<ConsultationReportModalProps> = (
               style={[styles.actionBtnPrimary, { backgroundColor: colors.accent }]}
               activeOpacity={0.8}
             >
-              <Text style={styles.actionBtnPrimaryText}>Fechar Prontu·rio</Text>
+              <Text style={styles.actionBtnPrimaryText}>Fechar Prontu√°rio</Text>
             </TouchableOpacity>
           </View>
         </View>

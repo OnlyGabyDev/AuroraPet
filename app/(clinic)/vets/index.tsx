@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../../src/contexts/ThemeContext';
 import { useClinicSpecialists, useDeleteSpecialist } from '../../../src/hooks/useClinic';
+import { Specialist } from '../../../src/types/specialist';
 import {
   Users,
   UserPlus,
@@ -35,18 +36,18 @@ export default function ClinicVetsPage() {
       try {
         await deleteMutation.mutateAsync(id);
       } catch (err) {
-        console.error('Erro ao remover veterin�rio:', err);
+        console.error('Erro ao remover veterinï¿½rio:', err);
       }
     };
 
     if (Platform.OS === 'web') {
-      if (confirm(`Deseja realmente remover ${name} do corpo cl�nico?`)) {
+      if (confirm(`Deseja realmente remover ${name} do corpo clï¿½nico?`)) {
         doDelete();
       }
     } else {
       Alert.alert(
-        'Remover Veterin�rio',
-        `Deseja realmente remover ${name} do corpo cl�nico?`,
+        'Remover Veterinï¿½rio',
+        `Deseja realmente remover ${name} do corpo clï¿½nico?`,
         [
           { text: 'Cancelar', style: 'cancel' },
           { text: 'Remover', style: 'destructive', onPress: doDelete },
@@ -57,14 +58,14 @@ export default function ClinicVetsPage() {
 
   return (
     <View style={styles.container}>
-      {/* CABE�ALHO */}
+      {/* CABEï¿½ALHO */}
       <View style={styles.headerRow}>
         <View>
           <Text style={[styles.pageTitle, { color: colors.text }]}>
-            Corpo Cl�nico da Unidade
+            Corpo Clï¿½nico da Unidade
           </Text>
           <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-            Gerenciamento de m�dicos veterin�rios, especialidades m�dicas e escalas de plant�o
+            Gerenciamento de mï¿½dicos veterinï¿½rios, especialidades mï¿½dicas e escalas de plantï¿½o
           </Text>
         </View>
 
@@ -74,16 +75,16 @@ export default function ClinicVetsPage() {
           activeOpacity={0.8}
         >
           <UserPlus size={16} color="#ffffff" />
-          <Text style={styles.newVetBtnText}>+ Novo Veterin�rio</Text>
+          <Text style={styles.newVetBtnText}>+ Novo Veterinï¿½rio</Text>
         </TouchableOpacity>
       </View>
 
-      {/* LISTAGEM DOS M�DICOS */}
+      {/* LISTAGEM DOS Mï¿½DICOS */}
       {isLoading ? (
         <View style={styles.centerBox}>
           <ActivityIndicator size="large" color="#10b981" />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Carregando m�dicos cadastrados...
+            Carregando mï¿½dicos cadastrados...
           </Text>
         </View>
       ) : specialists.length === 0 ? (
@@ -95,21 +96,21 @@ export default function ClinicVetsPage() {
         >
           <Users size={44} color={colors.textMuted} />
           <Text style={[styles.emptyTitle, { color: colors.text }]}>
-            Nenhum veterin�rio cadastrado
+            Nenhum veterinï¿½rio cadastrado
           </Text>
           <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
-            Cadastre os profissionais da cl�nica para que os tutores possam selecionar especialistas e hor�rios de consulta.
+            Cadastre os profissionais da clï¿½nica para que os tutores possam selecionar especialistas e horï¿½rios de consulta.
           </Text>
           <TouchableOpacity
             onPress={() => router.push('/(clinic)/vets/new')}
             style={[styles.emptyBtn, { backgroundColor: colors.accent }]}
           >
-            <Text style={styles.emptyBtnText}>+ Cadastrar Primeiro Veterin�rio</Text>
+            <Text style={styles.emptyBtnText}>+ Cadastrar Primeiro Veterinï¿½rio</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.grid}>
-          {specialists.map((vet) => (
+          {specialists.map((vet: Specialist) => (
             <View
               key={vet.id}
               style={[
@@ -165,7 +166,7 @@ export default function ClinicVetsPage() {
                   <View style={styles.scheduleItem}>
                     <Clock size={14} color="#7c3aed" />
                     <Text style={[styles.scheduleText, { color: colors.textSecondary }]}>
-                      {vet.availableHours.slice(0, 4).join(' � ')}
+                      {vet.availableHours.slice(0, 4).join(' ï¿½ ')}
                       {vet.availableHours.length > 4 ? ` (+${vet.availableHours.length - 4})` : ''}
                     </Text>
                   </View>

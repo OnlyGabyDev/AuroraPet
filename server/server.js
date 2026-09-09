@@ -437,7 +437,221 @@ app.post('/api/appointments/:id/report', (req, res) => {
   res.status(200).json(updatedAppointment);
 });
 
+// -------------------------------------------------------------
+// PLANOS E ASSINATURA DA CLÍNICA (PLANO & ASSINATURA_CLINICA)
+// -------------------------------------------------------------
+app.get('/api/plans', (req, res) => {
+  const data = readData();
+  res.json(data.plans || []);
+});
+
+app.get('/api/clinic/subscription', (req, res) => {
+  const data = readData();
+  res.json(data.subscription || null);
+});
+
+app.put('/api/clinic/subscription', (req, res) => {
+  const data = readData();
+  data.subscription = {
+    ...(data.subscription || {}),
+    ...req.body,
+    updatedAt: new Date().toISOString()
+  };
+  writeData(data);
+  res.json(data.subscription);
+});
+
+// -------------------------------------------------------------
+// AUTORIZAÇÃO DE ACESSO AO PET (AUTORIZACAO_ACESSO_PET)
+// -------------------------------------------------------------
+app.get('/api/authorizations', (req, res) => {
+  const { petId, vetId } = req.query;
+  const data = readData();
+  let list = data.authorizations || [];
+  if (petId) {
+    list = list.filter(a => a.petId === petId);
+  }
+  if (vetId) {
+    list = list.filter(a => a.veterinarianId === vetId && a.status === 'ACTIVE');
+  }
+  res.json(list);
+});
+
+app.post('/api/authorizations', (req, res) => {
+  const { petId, petName, tutorId, veterinarianId, veterinarianName, crmv, clinicId, clinicName, expiresAt } = req.body;
+  if (!petId || !veterinarianId) {
+    return res.status(400).json({ error: 'petId e veterinarianId são obrigatórios.' });
+  }
+
+  const data = readData();
+  const newAuth = {
+    id: 'auth-' + Date.now(),
+    petId,
+    petName: petName || 'Pet',
+    tutorId: tutorId || 'tutor',
+    veterinarianId,
+    veterinarianName: veterinarianName || 'Veterinário',
+    crmv: crmv || 'CRMV Regular',
+    clinicId: clinicId || '',
+    clinicName: clinicName || '',
+    authorizedAt: new Date().toISOString().split('T')[0],
+    expiresAt: expiresAt || undefined,
+    status: 'ACTIVE'
+  };
+
+  data.authorizations = [newAuth, ...(data.authorizations || [])];
+  writeData(data);
+  res.status(201).json(newAuth);
+});
+
+app.put('/api/authorizations/:id/revoke', (req, res) => {
+  const { id } = req.params;
+  const { reason } = req.body;
+  const data = readData();
+  const index = (data.authorizations || []).findIndex(a => a.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Autorização não encontrada.' });
+  }
+
+  data.authorizations[index] = {
+    ...data.authorizations[index],
+    status: 'REVOKED',
+    revocationReason: reason || 'Revogado pelo tutor.',
+    revokedAt: new Date().toISOString().split('T')[0]
+  };
+
+  writeData(data);
+  res.json(data.authorizations[index]);
+});
+
+// -------------------------------------------------------------
+// SOLICITAÇÕES ADMINISTRATIVAS (SOLICITACAO_ADMINISTRATIVA)
+// -------------------------------------------------------------
+app.get('/api/requests', (req, res) => {
+  const { clinicId, veterinarianId } = req.query;
+  const data = readData();
+  let list = data.requests || [];
+  if (clinicId) {
+    list = list.filter(r => r.clinicId === clinicId);
+  }
+  if (veterinarianId) {
+    list = list.filter(r => r.veterinarianId === veterinarianId);
+  }
+  res.json(list);
+});
+
+app.post('/api/requests', (req, res) => {
+  const { veterinarianId, veterinarianName, crmv, clinicId, clinicName, title, description, priority } = req.body;
+  if (!title || !description) {
+    return res.status(400).json({ error: 'Título e descrição são obrigatórios.' });
+  }
+
+  const data = readData();
+  const newReq = {
+    id: 'req-' + Date.now(),
+    veterinarianId: veterinarianId || '',
+    veterinarianName: veterinarianName || '',
+    crmv: crmv || '',
+    clinicId: clinicId || '',
+    clinicName: clinicName || '',
+    title: title.trim(),
+    description: description.trim(),
+    priority: priority || 'NORMAL',
+    status: 'OPEN',
+    createdAt: new Date().toISOString().split('T')[0]
+  };
+
+  data.requests = [newReq, ...(data.requests || [])];
+  writeData(data);
+  res.status(201).json(newReq);
+});
+
+app.put('/api/requests/:id', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const index = (data.requests || []).findIndex(r => r.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Solicitação não encontrada.' });
+  }
+
+  data.requests[index] = {
+    ...data.requests[index],
+    ...req.body,
+    updatedAt: new Date().toISOString()
+  };
+
+  writeData(data);
+  res.json(data.requests[index]);
+});
+
+// -------------------------------------------------------------
+// NOTIFICAÇÕES (NOTIFICACAO)
+// -------------------------------------------------------------
+app.get('/api/notifications', (req, res) => {
+  const { userId } = req.query;
+  const data = readData();
+  let list = data.notifications || [];
+  if (userId) {
+    list = list.filter(n => n.userId === userId);
+  }
+  res.json(list);
+});
+
+app.put('/api/notifications/:id/read', (req, res) => {
+  const { id } = req.params;
+  const data = readData();
+  const index = (data.notifications || []).findIndex(n => n.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: 'Notificação não encontrada.' });
+  }
+
+  data.notifications[index].read = true;
+  writeData(data);
+  res.json(data.notifications[index]);
+});
+
+app.put('/api/notifications/read-all', (req, res) => {
+  const { userId } = req.query;
+  const data = readData();
+  let updated = false;
+  
+  (data.notifications || []).forEach(n => {
+    if (!userId || n.userId === userId) {
+      n.read = true;
+      updated = true;
+    }
+  });
+
+  if (updated) {
+    writeData(data);
+  }
+  res.json({ success: true });
+});
+
+app.post('/api/notifications', (req, res) => {
+  const notif = req.body;
+  if (!notif.userId || !notif.title) {
+    return res.status(400).json({ error: 'userId e title são obrigatórios' });
+  }
+
+  const data = readData();
+  const newNotif = {
+    ...notif,
+    id: 'notif-' + Date.now(),
+    read: false,
+    createdAt: new Date().toISOString()
+  };
+
+  data.notifications = [newNotif, ...(data.notifications || [])];
+  writeData(data);
+  res.status(201).json(newNotif);
+});
+
 // Inicia servidor
 app.listen(PORT, () => {
   console.log(`[Clyvo Backend API] Rodando na porta ${PORT} em http://localhost:${PORT}`);
 });
+

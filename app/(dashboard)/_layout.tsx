@@ -7,12 +7,13 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { useAuth } from '../../src/hooks/useAuth';
 import { useTheme } from '../../src/contexts/ThemeContext';
 import { HeaderBrand } from '../../src/components/common/HeaderBrand';
+import { RoleSwitcherModal } from '../../src/components/common/RoleSwitcherModal';
+import { NotificationModal } from '../../src/components/common/NotificationModal';
 import {
   LayoutDashboard,
   PawPrint,
@@ -79,6 +80,9 @@ export default function DashboardLayout() {
         </TouchableOpacity>
 
         <View style={styles.topActions}>
+          {/* SINO DE NOTIFICAÇÕES */}
+          <NotificationModal />
+
           {/* THEME TOGGLE */}
           <TouchableOpacity
             onPress={toggleTheme}
@@ -171,13 +175,16 @@ export default function DashboardLayout() {
           >
             <Sparkles size={14} color="#10b981" />
             <Text style={[styles.demoBadgeText, { color: colors.accent }]}>
-              Modo Demonstração Ativo — Acesso Total ao Sistema
+              Modo Demonstração Ativo — Modelo 3FN (Tutor: {user?.displayName})
             </Text>
           </View>
         )}
 
         <Slot />
       </ScrollView>
+
+      {/* SWITCHER DE PAPEL FLUTUANTE PARA TESTES IMEDIATOS */}
+      <RoleSwitcherModal />
     </SafeAreaView>
   );
 }
@@ -190,21 +197,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    gap: 12,
   },
   loadingText: {
-    marginTop: 14,
     fontSize: 14,
-    fontWeight: '600',
   },
   topHeader: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 100,
   },
   topActions: {
     flexDirection: 'row',
@@ -219,41 +223,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  clinicSwitchBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  clinicSwitchText: {
+    color: '#2563eb',
+    fontSize: 12,
+    fontWeight: '700',
+  },
   mainScroll: {
     flex: 1,
   },
   mainContent: {
-    padding: 20,
-    maxWidth: 1200,
-    width: '100%',
-    marginHorizontal: 'auto',
+    padding: 16,
+    paddingBottom: 90,
   },
   demoBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   demoBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-  },
-  clinicSwitchBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  clinicSwitchText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#2563eb',
   },
 });

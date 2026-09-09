@@ -40,11 +40,11 @@ export default function ClinicalAttendancePage() {
   const { data: appointment, isLoading, isError } = useAppointment(id);
   const submitReportMutation = useSubmitConsultationReport();
 
-  // Estado do formul�rio cl�nico
+  // Estado do formulï¿½rio clï¿½nico
   const [vetName, setVetName] = useState('');
   const [crmv, setCrmv] = useState('CRMV-SP 42.109');
   const [weight, setWeight] = useState('');
-  const [temperature, setTemperature] = useState('38.5 �C');
+  const [temperature, setTemperature] = useState('38.5 ï¿½C');
   const [heartRate, setHeartRate] = useState('120 bpm');
   const [respiratoryRate, setRespiratoryRate] = useState('24 rpm');
   const [anamnesis, setAnamnesis] = useState('');
@@ -103,14 +103,14 @@ export default function ClinicalAttendancePage() {
     if (!anamnesis.trim() || !diagnosis.trim()) {
       setFeedback({
         type: 'error',
-        message: 'Por favor, preencha ao menos a Anamnese e o Diagn�stico Cl�nico.',
+        message: 'Por favor, preencha ao menos a Anamnese e o Diagnï¿½stico Clï¿½nico.',
       });
       return;
     }
 
     setFeedback(null);
 
-    // Filtrar prescri��es vazias
+    // Filtrar prescriï¿½ï¿½es vazias
     const validPrescriptions = prescriptions.filter((p) => p.medication.trim().length > 0);
 
     try {
@@ -136,7 +136,7 @@ export default function ClinicalAttendancePage() {
 
       setFeedback({
         type: 'success',
-        message: 'Atendimento conclu�do e Prontu�rio emitido com sucesso! O laudo j� est� dispon�vel para o tutor.',
+        message: 'Atendimento concluï¿½do e Prontuï¿½rio emitido com sucesso! O laudo jï¿½ estï¿½ disponï¿½vel para o tutor.',
       });
 
       setTimeout(() => {
@@ -166,7 +166,7 @@ export default function ClinicalAttendancePage() {
       <View style={styles.centerBox}>
         <AlertCircle size={40} color="#ef4444" />
         <Text style={[styles.errorTitle, { color: colors.text }]}>
-          Consulta n�o encontrada
+          Consulta nï¿½o encontrada
         </Text>
         <TouchableOpacity
           onPress={() => router.replace('/(clinic)/agenda')}
@@ -180,7 +180,7 @@ export default function ClinicalAttendancePage() {
 
   return (
     <View style={styles.container}>
-      {/* NAVEGA��O DE VOLTA */}
+      {/* NAVEGAï¿½ï¿½O DE VOLTA */}
       <TouchableOpacity
         onPress={() => router.back()}
         style={styles.navBackRow}
@@ -192,7 +192,7 @@ export default function ClinicalAttendancePage() {
         </Text>
       </TouchableOpacity>
 
-      {/* CABE�ALHO DO PACIENTE */}
+      {/* CABEï¿½ALHO DO PACIENTE */}
       <View
         style={[
           styles.patientHeaderCard,
@@ -206,14 +206,14 @@ export default function ClinicalAttendancePage() {
           <View style={{ flex: 1 }}>
             <View style={styles.patientTitleGroup}>
               <Text style={[styles.patientName, { color: colors.text }]}>
-                Atendimento Cl�nico: {appointment.petName}
+                Atendimento Clï¿½nico: {appointment.petName}
               </Text>
               <View style={[styles.activeTag, { backgroundColor: 'rgba(16, 185, 129, 0.15)' }]}>
                 <Text style={styles.activeTagText}>Em Atendimento</Text>
               </View>
             </View>
             <Text style={[styles.patientSub, { color: colors.textSecondary }]}>
-              Procedimento: <Text style={{ fontWeight: '700', color: colors.text }}>{appointment.serviceName}</Text> � Agendado para {appointment.date} �s {appointment.time}
+              Procedimento: <Text style={{ fontWeight: '700', color: colors.text }}>{appointment.serviceName}</Text> ï¿½ Agendado para {appointment.date} ï¿½s {appointment.time}
             </Text>
           </View>
         </View>
@@ -246,21 +246,21 @@ export default function ClinicalAttendancePage() {
         </View>
       )}
 
-      {/* FORMUL�RIO CL�NICO */}
+      {/* FORMULï¿½RIO CLï¿½NICO */}
       <View
         style={[
           styles.formCard,
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {/* IDENTIFICA��O DO PROFISSIONAL */}
+        {/* IDENTIFICAï¿½ï¿½O DO PROFISSIONAL */}
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          1. Identifica��o do M�dico Respons�vel
+          1. Identificaï¿½ï¿½o do Mï¿½dico Responsï¿½vel
         </Text>
         <View style={styles.fieldsGrid}>
           <View style={styles.fieldCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Nome do M�dico Veterin�rio
+              Nome do Mï¿½dico Veterinï¿½rio
             </Text>
             <TextInput
               style={[
@@ -326,7 +326,7 @@ export default function ClinicalAttendancePage() {
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Temperatura (�C)
+              Temperatura (ï¿½C)
             </Text>
             <TextInput
               style={[
@@ -339,14 +339,14 @@ export default function ClinicalAttendancePage() {
               ]}
               value={temperature}
               onChangeText={setTemperature}
-              placeholder="Ex: 38.5 �C"
+              placeholder="Ex: 38.5 ï¿½C"
               placeholderTextColor={colors.textMuted}
             />
           </View>
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Freq. Card�aca (bpm)
+              Freq. Cardï¿½aca (bpm)
             </Text>
             <TextInput
               style={[
@@ -366,7 +366,7 @@ export default function ClinicalAttendancePage() {
 
           <View style={styles.vitalCol}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Freq. Respirat�ria (rpm)
+              Freq. Respiratï¿½ria (rpm)
             </Text>
             <TextInput
               style={[
@@ -385,9 +385,9 @@ export default function ClinicalAttendancePage() {
           </View>
         </View>
 
-        {/* ANAMNESE & EXAME F�SICO */}
+        {/* ANAMNESE & EXAME Fï¿½SICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          3. Anamnese & Queixa Cl�nica
+          3. Anamnese & Queixa Clï¿½nica
         </Text>
         <TextInput
           style={[
@@ -400,15 +400,15 @@ export default function ClinicalAttendancePage() {
           ]}
           value={anamnesis}
           onChangeText={setAnamnesis}
-          placeholder="Descreva a queixa do tutor, hist�rico cl�nico, comportamento do animal e sintomas relatados..."
+          placeholder="Descreva a queixa do tutor, histï¿½rico clï¿½nico, comportamento do animal e sintomas relatados..."
           placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={4}
         />
 
-        {/* DIAGN�STICO M�DICO */}
+        {/* DIAGNï¿½STICO Mï¿½DICO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          4. Diagn�stico Cl�nico & Avalia��o
+          4. Diagnï¿½stico Clï¿½nico & Avaliaï¿½ï¿½o
         </Text>
         <TextInput
           style={[
@@ -421,16 +421,16 @@ export default function ClinicalAttendancePage() {
           ]}
           value={diagnosis}
           onChangeText={setDiagnosis}
-          placeholder="Diagn�stico conclusivo ou hip�teses diagn�sticas com conduta terap�utica..."
+          placeholder="Diagnï¿½stico conclusivo ou hipï¿½teses diagnï¿½sticas com conduta terapï¿½utica..."
           placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={3}
         />
 
-        {/* PRESCRI��O E MEDICAMENTOS */}
+        {/* PRESCRIï¿½ï¿½O E MEDICAMENTOS */}
         <View style={styles.rxHeaderRow}>
           <Text style={[styles.sectionTitle, { color: colors.text, marginBottom: 0 }]}>
-            5. Prescri��o de Medicamentos & Receitu�rio
+            5. Prescriï¿½ï¿½o de Medicamentos & Receituï¿½rio
           </Text>
           <TouchableOpacity
             onPress={handleAddPrescription}
@@ -501,7 +501,7 @@ export default function ClinicalAttendancePage() {
 
               <View style={styles.fieldCol}>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-                  Frequ�ncia / Posologia
+                  Frequï¿½ncia / Posologia
                 </Text>
                 <TextInput
                   style={[
@@ -517,7 +517,7 @@ export default function ClinicalAttendancePage() {
 
               <View style={styles.fieldCol}>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-                  Dura��o do Tratamento
+                  Duraï¿½ï¿½o do Tratamento
                 </Text>
                 <TextInput
                   style={[
@@ -526,7 +526,7 @@ export default function ClinicalAttendancePage() {
                   ]}
                   value={rx.duration}
                   onChangeText={(v) => handleUpdatePrescription(rx.id, 'duration', v)}
-                  placeholder="Ex: 7 dias cont�nuos"
+                  placeholder="Ex: 7 dias contï¿½nuos"
                   placeholderTextColor={colors.textMuted}
                 />
               </View>
@@ -534,14 +534,14 @@ export default function ClinicalAttendancePage() {
           </View>
         ))}
 
-        {/* ORIENTA��ES GERAIS E RETORNO */}
+        {/* ORIENTAï¿½ï¿½ES GERAIS E RETORNO */}
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: 24 }]}>
-          6. Orienta��es Gerais ao Tutor & Previs�o de Retorno
+          6. Orientaï¿½ï¿½es Gerais ao Tutor & Previsï¿½o de Retorno
         </Text>
         <View style={styles.fieldsGrid}>
           <View style={{ width: '100%' }}>
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>
-              Recomenda��es e Cuidados
+              Recomendaï¿½ï¿½es e Cuidados
             </Text>
             <TextInput
               style={[
@@ -554,7 +554,7 @@ export default function ClinicalAttendancePage() {
               ]}
               value={instructions}
               onChangeText={setInstructions}
-              placeholder="Instru��es de repouso, dieta recomendada, banhos, monitoramento de sintomas..."
+              placeholder="Instruï¿½ï¿½es de repouso, dieta recomendada, banhos, monitoramento de sintomas..."
               placeholderTextColor={colors.textMuted}
               multiline
               numberOfLines={3}
@@ -582,7 +582,7 @@ export default function ClinicalAttendancePage() {
           </View>
         </View>
 
-        {/* BOT�O CONCLUIR ATENDIMENTO */}
+        {/* BOTï¿½O CONCLUIR ATENDIMENTO */}
         <View style={[styles.submitRow, { borderTopColor: colors.border }]}>
           <TouchableOpacity
             onPress={handleConcludeAttendance}
@@ -596,7 +596,7 @@ export default function ClinicalAttendancePage() {
               <>
                 <CheckCircle2 size={18} color="#ffffff" />
                 <Text style={styles.submitBtnText}>
-                  Concluir Atendimento & Emitir Prontu�rio Digital
+                  Concluir Atendimento & Emitir Prontuï¿½rio Digital
                 </Text>
               </>
             )}

@@ -13,6 +13,7 @@ import { useAppointments } from '../../src/hooks/useAppointments';
 import { useClinicSpecialists } from '../../src/hooks/useClinic';
 import { ConsultationReportModal } from '../../src/components/dashboard/ConsultationReportModal';
 import { Appointment, AppointmentStatus } from '../../src/types/appointment';
+import { Specialist } from '../../src/types/specialist';
 import {
   CalendarDays,
   Clock,
@@ -42,10 +43,11 @@ export default function ClinicAgendaPage() {
       selectedVetId === 'all' ||
       item.specialistId === selectedVetId ||
       item.specialistName?.toLowerCase().includes(
-        (specialists.find((s) => s.id === selectedVetId)?.name || '').toLowerCase()
+        (specialists.find((s: Specialist) => s.id === selectedVetId)?.name || '').toLowerCase()
       );
     return matchesStatus && matchesVet;
   });
+
 
   const getStatusBadge = (status: AppointmentStatus) => {
     switch (status) {
@@ -58,7 +60,7 @@ export default function ClinicAgendaPage() {
       case 'completed':
         return (
           <View style={[styles.badgeContainer, { backgroundColor: '#e0f2fe' }]}>
-            <Text style={[styles.badgeText, { color: '#0369a1' }]}>Atendido / Conclu�do</Text>
+            <Text style={[styles.badgeText, { color: '#0369a1' }]}>Atendido / Concluï¿½do</Text>
           </View>
         );
       case 'cancelled':
@@ -74,22 +76,22 @@ export default function ClinicAgendaPage() {
 
   return (
     <View style={styles.container}>
-      {/* CABE�ALHO */}
+      {/* CABEï¿½ALHO */}
       <View style={styles.headerBox}>
         <View>
           <Text style={[styles.pageTitle, { color: colors.text }]}>
-            Agenda & Fila Cl�nica
+            Agenda & Fila Clï¿½nica
           </Text>
           <Text style={[styles.pageSubtitle, { color: colors.textSecondary }]}>
-            Acompanhamento em tempo real de pacientes agendados, em atendimento e prontu�rios
+            Acompanhamento em tempo real de pacientes agendados, em atendimento e prontuï¿½rios
           </Text>
         </View>
       </View>
 
-      {/* FILTROS POR VETERIN�RIO */}
+      {/* FILTROS POR VETERINï¿½RIO */}
       <View style={styles.filterSection}>
         <Text style={[styles.filterSectionTitle, { color: colors.textSecondary }]}>
-          FILTRAR POR VETERIN�RIO DA EQUIPE:
+          FILTRAR POR VETERINï¿½RIO DA EQUIPE:
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.vetFilterRow}>
           <TouchableOpacity
@@ -108,11 +110,11 @@ export default function ClinicAgendaPage() {
                 { color: selectedVetId === 'all' ? colors.accent : colors.textSecondary },
               ]}
             >
-              Todos os M�dicos ({appointments.length})
+              Todos os MÃ©dicos ({appointments.length})
             </Text>
           </TouchableOpacity>
 
-          {specialists.map((vet) => {
+          {specialists.map((vet: Specialist) => {
             const count = appointments.filter(
               (a) => a.specialistId === vet.id || a.specialistName?.includes(vet.name)
             ).length;
@@ -154,7 +156,7 @@ export default function ClinicAgendaPage() {
               : st === 'scheduled'
               ? 'Aguardando'
               : st === 'completed'
-              ? 'Conclu�das'
+              ? 'Concluï¿½das'
               : 'Canceladas';
 
           return (
@@ -190,7 +192,7 @@ export default function ClinicAgendaPage() {
         <View style={styles.loadingBox}>
           <ActivityIndicator size="large" color="#10b981" />
           <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Carregando agenda cl�nica...
+            Carregando agenda clï¿½nica...
           </Text>
         </View>
       ) : filtered.length === 0 ? (
@@ -205,7 +207,7 @@ export default function ClinicAgendaPage() {
             Nenhuma consulta encontrada com esses filtros
           </Text>
           <Text style={[styles.emptySub, { color: colors.textSecondary }]}>
-            Tente selecionar outro veterin�rio ou alternar o status no filtro acima.
+            Tente selecionar outro veterinï¿½rio ou alternar o status no filtro acima.
           </Text>
         </View>
       ) : (
@@ -242,14 +244,14 @@ export default function ClinicAgendaPage() {
                   <View style={styles.metaItem}>
                     <User size={14} color={colors.textSecondary} />
                     <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                      M�dico: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.specialistName}</Text>
+                      Mï¿½dico: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.specialistName}</Text>
                     </Text>
                   </View>
 
                   <View style={styles.metaItem}>
                     <Clock size={14} color={colors.textSecondary} />
                     <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                      Agendado para: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.date} �s {item.time}</Text>
+                      Agendado para: <Text style={{ color: colors.text, fontWeight: '700' }}>{item.date} ï¿½s {item.time}</Text>
                     </Text>
                   </View>
                 </View>
@@ -271,7 +273,7 @@ export default function ClinicAgendaPage() {
                 ) : null}
               </View>
 
-              {/* A��ES DA CL�NICA */}
+              {/* Aï¿½ï¿½ES DA CLï¿½NICA */}
               <View style={[styles.cardFooter, { borderTopColor: colors.border }]}>
                 {item.status === 'scheduled' ? (
                   <TouchableOpacity
@@ -280,7 +282,7 @@ export default function ClinicAgendaPage() {
                     activeOpacity={0.8}
                   >
                     <Stethoscope size={16} color="#ffffff" />
-                    <Text style={styles.attendBtnText}>Iniciar Atendimento Cl�nico</Text>
+                    <Text style={styles.attendBtnText}>Iniciar Atendimento Clï¿½nico</Text>
                     <ArrowRight size={14} color="#ffffff" />
                   </TouchableOpacity>
                 ) : item.status === 'completed' ? (
@@ -297,7 +299,7 @@ export default function ClinicAgendaPage() {
                   >
                     <FileText size={16} color="#10b981" />
                     <Text style={[styles.viewReportBtnText, { color: '#10b981' }]}>
-                      Ver Prontu�rio / Relat�rio Emitido
+                      Ver Prontuï¿½rio / Relatï¿½rio Emitido
                     </Text>
                   </TouchableOpacity>
                 ) : (
@@ -311,7 +313,7 @@ export default function ClinicAgendaPage() {
         </View>
       )}
 
-      {/* MODAL DE PRONTU�RIO */}
+      {/* MODAL DE PRONTUï¿½RIO */}
       <ConsultationReportModal
         visible={Boolean(reportAppointment)}
         onClose={() => setReportAppointment(null)}
