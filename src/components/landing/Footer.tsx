@@ -21,7 +21,7 @@ export const Footer: React.FC = () => {
           <View style={styles.brandBox}>
             <HeaderBrand size="sm" />
             <Text style={[styles.description, { color: colors.textSecondary }]}>
-              Plataforma digital integrada para cuidados veterinários, prontuário
+              Plataforma dEquipe médica integrada à plataforma, utilizando dados reaisterinários, prontuário
               clínico e acompanhamento de pets.
             </Text>
           </View>
@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
 
         <View style={[styles.bottomRow, { borderTopColor: colors.border }]}>
           <Text style={[styles.copyright, { color: colors.textMuted }]}>
-            © 2026 Clyvo Clínica Veterinária. Todos os direitos reservados.
+            © 2026 Your Clinic. All rights reserved.
           </Text>
           <Text style={[styles.sprintInfo, { color: colors.textMuted }]}>
             Engenharia de Software • Sprint 3 Delivery

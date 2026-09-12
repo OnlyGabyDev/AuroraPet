@@ -1,4 +1,4 @@
-# Clyvo | Clínica Veterinária 🐾
+# AuroraPet | Veterinary Management 🐾
 
 > **Entrega da Sprint 3 - Desenvolvimento Front-End & Mobile**  
 > Aplicação desenvolvida com **React Native**, **Expo Router**, **TanStack Query**, **Firebase Authentication** e backend HTTP integrado com **Node.js/Express**.
