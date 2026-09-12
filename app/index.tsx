@@ -11,52 +11,16 @@ import { AppointmentBanner } from '../src/components/landing/AppointmentBanner';
 import { Footer } from '../src/components/landing/Footer';
 import { QuickBookingModal } from '../src/components/landing/QuickBookingModal';
 
-export default function LandingPage() {
-  const { colors } = useTheme();
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const scrollViewRef = useRef<ScrollView>(null);
+import React, { useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
-  const handleNavigateSection = (sectionId: string) => {
-    // Para web e mobile, rola ou foca suavemente
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  };
-
-  return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* NAVBAR FIXA NO TOPO */}
-      <Navbar
-        onOpenBooking={() => setIsBookingModalOpen(true)}
-        onNavigateSection={handleNavigateSection}
-      />
-
-      {/* CONTEÚDO SCROLLÁVEL */}
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Hero onOpenBooking={() => setIsBookingModalOpen(true)} />
-        <Benefits />
-        <Services />
-        <Clinic />
-        <Specialists onOpenBooking={() => setIsBookingModalOpen(true)} />
-        <AppointmentBanner onOpenBooking={() => setIsBookingModalOpen(true)} />
-        <Footer />
-      </ScrollView>
-
-      {/* MODAL DE AGENDAMENTO */}
-      <QuickBookingModal
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-      />
-    </SafeAreaView>
-  );
+export default function RootRedirect() {
+  const router = useRouter();
+  // Immediately redirect to login page
+  useEffect(() => {
+    router.replace('/(auth)/login');
+  }, []);
+  return null;
 }
 
 const styles = StyleSheet.create({
