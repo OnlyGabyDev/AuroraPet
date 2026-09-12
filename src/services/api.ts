@@ -1,4 +1,4 @@
-﻿import { Platform } from 'react-native';
+import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
 export class ApiError extends Error {
@@ -70,4 +70,10 @@ export async function apiFetch<T>(
   }
 
   return (await response.json()) as T;
+}
+export async function apiLogin(email: string, password: string): Promise<UserProfile> {
+  return apiFetch<UserProfile>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+  });
 }

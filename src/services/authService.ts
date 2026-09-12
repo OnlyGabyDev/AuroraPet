@@ -60,17 +60,27 @@ export const authService = {
       }
     }
 
-    // Modo Demonstração: aceita qualquer e-mail/senha
-    const demoUser: UserProfile = {
-      ...DEMO_USER,
-      email,
-      displayName: email.split('@')[0],
-      role: 'tutor',
-    };
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(demoUser));
+    // Real API fallback: use apiLogin; if fails, fall back to demo mode
+    try {
+      const apiUser = await apiLogin(email, password);
+      // Persist auth key for consistency
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(apiUser));
+      }
+      return apiUser;
+    } catch (err) {
+      // If API call fails, fallback to demo user
+      const demoUser: UserProfile = {
+        ...DEMO_USER,
+        email,
+        displayName: email.split('@')[0],
+        role: 'tutor',
+      };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(demoUser));
+      }
+      return demoUser;
     }
-    return demoUser;
   },
 
   async registerWithEmail(name: string, email: string, password: string): Promise<UserProfile> {
