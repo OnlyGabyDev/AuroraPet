@@ -15,6 +15,8 @@ import {
   DEMO_VET_USER,
   DEMO_CLINIC_ADMIN_USER,
 } from './mockData';
+import { apiLogin } from './api';
+
 
 const DEMO_AUTH_KEY = 'clyvo_demo_current_user';
 
