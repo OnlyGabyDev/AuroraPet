@@ -73,7 +73,7 @@ export const INITIAL_SERVICES: ClinicService[] = [
 // 3 Perfis principais do modelo relacional 3FN
 export const DEMO_TUTOR_USER: UserProfile = {
   uid: 'demo-tutor-123',
-  email: 'tutor@clyvo.com.br',
+  email: 'tutor@clinic.com',
   displayName: 'Mariana Silva',
   phoneNumber: '(11) 98765-4321',
   photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=256&q=80',
@@ -85,7 +85,7 @@ export const DEMO_TUTOR_USER: UserProfile = {
 
 export const DEMO_VET_USER: UserProfile = {
   uid: 'demo-vet-spec-2',
-  email: 'leonardo.vet@clyvo.com.br',
+  email: 'leonardo.vet@clinic.com',
   displayName: 'Dr. Leonardo Albuquerque',
   phoneNumber: '(11) 97654-3210',
   photoURL: 'https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&w=256&q=80',
@@ -96,13 +96,13 @@ export const DEMO_VET_USER: UserProfile = {
   crmv: 'CRMV-SP 38.541',
   crmvUf: 'SP',
   specialty: 'Cardiologia & Diagnóstico',
-  clinicId: 'clinic-clyvo-matriz',
-  clinicName: 'Clyvo Centro Médico Veterinário',
+  clinicId: 'clinic-default',
+  clinicName: 'Your Clinic',
 };
 
 export const DEMO_CLINIC_ADMIN_USER: UserProfile = {
   uid: 'demo-admin-clyvo',
-  email: 'admin@clyvovet.com.br',
+  email: 'admin@clinic.com',
   displayName: 'Dra. Beatriz Santos (Admin)',
   phoneNumber: '(11) 3088-4200',
   photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
@@ -110,8 +110,8 @@ export const DEMO_CLINIC_ADMIN_USER: UserProfile = {
   role: 'clinic_admin',
   identifierType: 'CNPJ',
   identifierValue: '12.345.678/0001-90',
-  clinicId: 'clinic-clyvo-matriz',
-  clinicName: 'Clyvo Centro Médico Veterinário 24h',
+  clinicId: 'clinic-default',
+  clinicName: 'Your Clinic',
 };
 
 // Retrocompatibilidade
@@ -228,7 +228,7 @@ export const INITIAL_PLANS: Plan[] = [
   {
     id: 'plan-basic',
     code: 'basic',
-    name: 'Clyvo Start',
+    name: 'Start',
     description: 'Ideal para consultórios individuais e pequenos atendimentos veterinários.',
     monthlyPrice: 149,
     maxVeterinarians: 2,
@@ -245,7 +245,7 @@ export const INITIAL_PLANS: Plan[] = [
   {
     id: 'plan-pro',
     code: 'pro',
-    name: 'Clyvo Pro',
+    name: 'Pro',
     description: 'Para clínicas em expansão com equipe multidisciplinar e alta demanda.',
     monthlyPrice: 389,
     maxVeterinarians: 10,
@@ -265,7 +265,7 @@ export const INITIAL_PLANS: Plan[] = [
   {
     id: 'plan-enterprise',
     code: 'enterprise',
-    name: 'Clyvo Hospital 24h',
+    name: 'Hospital 24h',
     description: 'Estrutura completa para hospitais veterinários e redes com múltiplas filiais.',
     monthlyPrice: 890,
     maxVeterinarians: 50,

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Slot, useRouter, usePathname } from 'expo-router';
 import { useTheme } from '../../src/contexts/ThemeContext';
+import { useClinic } from '../../src/contexts/ClinicContext';
 import { HeaderBrand } from '../../src/components/common/HeaderBrand';
 import { RoleSwitcherModal } from '../../src/components/common/RoleSwitcherModal';
 import { NotificationModal } from '../../src/components/common/NotificationModal';
@@ -31,9 +32,22 @@ export default function ClinicLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { colors, isDark, toggleTheme } = useTheme();
+  const { clinic } = useClinic();
 
   const navItems = [
     { label: 'Painel Geral', href: '/(clinic)', icon: LayoutDashboard },
+    { label: 'Planos & Cotas', href: '/(clinic)/subscription', icon: Zap },
+    { label: 'Solicitações', href: '/(clinic)/requests', icon: MessageSquareText },
+    { label: 'Portal do Vet', href: '/(clinic)/vet-portal', icon: Stethoscope },
+    { label: 'Corpo Clínico', href: '/(clinic)/vets', icon: Users },
+    { label: 'Agenda & Fila', href: '/(clinic)/agenda', icon: CalendarDays },
+    { label: 'Configurações', href: '/(clinic)/settings', icon: Settings },
+  ];
+  const showRegister = !clinic?.id;
+  if (showRegister) {
+    navItems.push({ label: 'Registrar Clínica', href: '/(clinic)/register-clinic', icon: Users });
+  }
+
     { label: 'Planos & Cotas', href: '/(clinic)/subscription', icon: Zap },
     { label: 'Solicitações', href: '/(clinic)/requests', icon: MessageSquareText },
     { label: 'Portal do Vet', href: '/(clinic)/vet-portal', icon: Stethoscope },
@@ -60,7 +74,7 @@ export default function ClinicLayout() {
           </TouchableOpacity>
           <View style={styles.headerBadge}>
             <ShieldCheck size={12} color="#10b981" />
-            <Text style={styles.headerBadgeText}>ClyvoVet Multi-tenant</Text>
+            <Text style={styles.headerBadgeText}>{clinic?.name ?? 'Unregistered Clinic'}</Text>
           </View>
         </View>
 
